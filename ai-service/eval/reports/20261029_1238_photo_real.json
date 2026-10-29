@@ -1,0 +1,669 @@
+{
+  "meta": {
+    "tag": "photo_real",
+    "time": "2026-10-29 12:37",
+    "model": "gemini-2.5-flash",
+    "prompt_version": "v6",
+    "threshold": 0.7,
+    "dataset": "dataset_photo",
+    "cache": "tắt"
+  },
+  "overall": {
+    "documents": 6,
+    "failed_calls": 0,
+    "doc_accuracy": 100.0,
+    "field_accuracy": 100.0,
+    "missed_rate": 0.0,
+    "hallucination_rate": 0.0,
+    "classification_accuracy": 100.0,
+    "critical_errors": 0,
+    "review_recall": null,
+    "false_alarms": 0,
+    "expected_flags_raised": 100.0,
+    "co2e_total_error_pct": 0.0,
+    "co2e_mean_abs_error_pct": 0.0,
+    "co2e_total_error_after_review_pct": 0.0,
+    "co2e_mean_abs_error_after_review_pct": 0.0,
+    "co2e_not_computable": 0
+  },
+  "by_type": {
+    "ELECTRICITY": {
+      "documents": 3,
+      "failed_calls": 0,
+      "doc_accuracy": 100.0,
+      "field_accuracy": 100.0,
+      "missed_rate": 0.0,
+      "hallucination_rate": 0.0,
+      "classification_accuracy": 100.0,
+      "critical_errors": 0,
+      "review_recall": null,
+      "false_alarms": 0,
+      "expected_flags_raised": null,
+      "co2e_total_error_pct": 0.0,
+      "co2e_mean_abs_error_pct": 0.0,
+      "co2e_total_error_after_review_pct": 0.0,
+      "co2e_mean_abs_error_after_review_pct": 0.0,
+      "co2e_not_computable": 0
+    },
+    "FUEL": {
+      "documents": 1,
+      "failed_calls": 0,
+      "doc_accuracy": 100.0,
+      "field_accuracy": 100.0,
+      "missed_rate": 0.0,
+      "hallucination_rate": 0.0,
+      "classification_accuracy": 100.0,
+      "critical_errors": 0,
+      "review_recall": null,
+      "false_alarms": 0,
+      "expected_flags_raised": null,
+      "co2e_total_error_pct": 0.0,
+      "co2e_mean_abs_error_pct": 0.0,
+      "co2e_total_error_after_review_pct": 0.0,
+      "co2e_mean_abs_error_after_review_pct": 0.0,
+      "co2e_not_computable": 0
+    },
+    "MATERIAL": {},
+    "FREIGHT": {
+      "documents": 2,
+      "failed_calls": 0,
+      "doc_accuracy": 100.0,
+      "field_accuracy": 100.0,
+      "missed_rate": 0.0,
+      "hallucination_rate": 0.0,
+      "classification_accuracy": 100.0,
+      "critical_errors": 0,
+      "review_recall": null,
+      "false_alarms": 0,
+      "expected_flags_raised": 100.0,
+      "co2e_total_error_pct": 0.0,
+      "co2e_mean_abs_error_pct": 0.0,
+      "co2e_total_error_after_review_pct": 0.0,
+      "co2e_mean_abs_error_after_review_pct": 0.0,
+      "co2e_not_computable": 0
+    },
+    "OTHER": {}
+  },
+  "by_quality": {
+    "Ảnh sạch": {},
+    "Ảnh xấu": {
+      "documents": 6,
+      "failed_calls": 0,
+      "doc_accuracy": 100.0,
+      "field_accuracy": 100.0,
+      "missed_rate": 0.0,
+      "hallucination_rate": 0.0,
+      "classification_accuracy": 100.0,
+      "critical_errors": 0,
+      "review_recall": null,
+      "false_alarms": 0,
+      "expected_flags_raised": 100.0,
+      "co2e_total_error_pct": 0.0,
+      "co2e_mean_abs_error_pct": 0.0,
+      "co2e_total_error_after_review_pct": 0.0,
+      "co2e_mean_abs_error_after_review_pct": 0.0,
+      "co2e_not_computable": 0
+    }
+  },
+  "by_degradation": {
+    "photo_real": {
+      "documents": 6,
+      "failed_calls": 0,
+      "doc_accuracy": 100.0,
+      "field_accuracy": 100.0,
+      "missed_rate": 0.0,
+      "hallucination_rate": 0.0,
+      "classification_accuracy": 100.0,
+      "critical_errors": 0,
+      "review_recall": null,
+      "false_alarms": 0,
+      "expected_flags_raised": 100.0,
+      "co2e_total_error_pct": 0.0,
+      "co2e_mean_abs_error_pct": 0.0,
+      "co2e_total_error_after_review_pct": 0.0,
+      "co2e_mean_abs_error_after_review_pct": 0.0,
+      "co2e_not_computable": 0
+    }
+  },
+  "per_field": {
+    "activity_type": {
+      "correct": 6,
+      "accuracy": 100.0
+    },
+    "scope": {
+      "correct": 6,
+      "accuracy": 100.0
+    },
+    "factor_code": {
+      "correct": 6,
+      "accuracy": 100.0
+    },
+    "supplier": {
+      "correct": 6,
+      "accuracy": 100.0
+    },
+    "invoice_date": {
+      "correct": 6,
+      "accuracy": 100.0
+    },
+    "quantity": {
+      "correct": 4,
+      "accuracy": 100.0
+    },
+    "unit": {
+      "correct": 4,
+      "accuracy": 100.0
+    },
+    "amount": {
+      "correct": 6,
+      "accuracy": 100.0
+    },
+    "currency": {
+      "correct": 6,
+      "accuracy": 100.0
+    },
+    "origin": {
+      "both_null": 4,
+      "correct": 2,
+      "accuracy": 100.0
+    },
+    "destination": {
+      "both_null": 4,
+      "correct": 2,
+      "accuracy": 100.0
+    },
+    "transport_mode": {
+      "both_null": 4,
+      "correct": 2,
+      "accuracy": 100.0
+    },
+    "weight_kg": {
+      "both_null": 4,
+      "correct": 2,
+      "accuracy": 100.0
+    },
+    "distance_km": {
+      "both_null": 6,
+      "accuracy": null
+    }
+  },
+  "documents": [
+    {
+      "file": "03_E3_evn_song_ngu_photo_real.webp",
+      "doc_type": "ELECTRICITY",
+      "layout": "E3_evn_song_ngu",
+      "degradation": "photo_real",
+      "ok": true,
+      "fields": {
+        "activity_type": "correct",
+        "scope": "correct",
+        "factor_code": "correct",
+        "supplier": "correct",
+        "invoice_date": "correct",
+        "quantity": "correct",
+        "unit": "correct",
+        "amount": "correct",
+        "currency": "correct",
+        "origin": "both_null",
+        "destination": "both_null",
+        "transport_mode": "both_null",
+        "weight_kg": "both_null",
+        "distance_km": "both_null"
+      },
+      "errors": [],
+      "critical_ok": true,
+      "wrong_critical": [],
+      "caught": [],
+      "flagged": [],
+      "false_alarms": [],
+      "expected_review": [],
+      "expected_review_raised": [],
+      "co2e_expected": 49684.8,
+      "co2e_predicted": 49684.8,
+      "co2e_after_review": 49684.8,
+      "elapsed_ms": 11769,
+      "error": null
+    },
+    {
+      "file": "04_E3_evn_song_ngu_photo_real.webp",
+      "doc_type": "ELECTRICITY",
+      "layout": "E3_evn_song_ngu",
+      "degradation": "photo_real",
+      "ok": true,
+      "fields": {
+        "activity_type": "correct",
+        "scope": "correct",
+        "factor_code": "correct",
+        "supplier": "correct",
+        "invoice_date": "correct",
+        "quantity": "correct",
+        "unit": "correct",
+        "amount": "correct",
+        "currency": "correct",
+        "origin": "both_null",
+        "destination": "both_null",
+        "transport_mode": "both_null",
+        "weight_kg": "both_null",
+        "distance_km": "both_null"
+      },
+      "errors": [],
+      "critical_ok": true,
+      "wrong_critical": [],
+      "caught": [],
+      "flagged": [],
+      "false_alarms": [],
+      "expected_review": [],
+      "expected_review_raised": [],
+      "co2e_expected": 49684.8,
+      "co2e_predicted": 49684.8,
+      "co2e_after_review": 49684.8,
+      "elapsed_ms": 9623,
+      "error": null
+    },
+    {
+      "file": "05_E3_evn_song_ngu_photo_real.webp",
+      "doc_type": "ELECTRICITY",
+      "layout": "E3_evn_song_ngu",
+      "degradation": "photo_real",
+      "ok": true,
+      "fields": {
+        "activity_type": "correct",
+        "scope": "correct",
+        "factor_code": "correct",
+        "supplier": "correct",
+        "invoice_date": "correct",
+        "quantity": "correct",
+        "unit": "correct",
+        "amount": "correct",
+        "currency": "correct",
+        "origin": "both_null",
+        "destination": "both_null",
+        "transport_mode": "both_null",
+        "weight_kg": "both_null",
+        "distance_km": "both_null"
+      },
+      "errors": [],
+      "critical_ok": true,
+      "wrong_critical": [],
+      "caught": [],
+      "flagged": [],
+      "false_alarms": [],
+      "expected_review": [],
+      "expected_review_raised": [],
+      "co2e_expected": 49684.8,
+      "co2e_predicted": 49684.8,
+      "co2e_after_review": 49684.8,
+      "elapsed_ms": 7030,
+      "error": null
+    },
+    {
+      "file": "06_F3_meinvoice_chiet_khau_photo_real.webp",
+      "doc_type": "FUEL",
+      "layout": "F3_meinvoice_chiet_khau",
+      "degradation": "photo_real",
+      "ok": true,
+      "fields": {
+        "activity_type": "correct",
+        "scope": "correct",
+        "factor_code": "correct",
+        "supplier": "correct",
+        "invoice_date": "correct",
+        "quantity": "correct",
+        "unit": "correct",
+        "amount": "correct",
+        "currency": "correct",
+        "origin": "both_null",
+        "destination": "both_null",
+        "transport_mode": "both_null",
+        "weight_kg": "both_null",
+        "distance_km": "both_null"
+      },
+      "errors": [],
+      "critical_ok": true,
+      "wrong_critical": [],
+      "caught": [],
+      "flagged": [],
+      "false_alarms": [],
+      "expected_review": [],
+      "expected_review_raised": [],
+      "co2e_expected": 2355.72,
+      "co2e_predicted": 2355.72,
+      "co2e_after_review": 2355.72,
+      "elapsed_ms": 6742,
+      "error": null
+    },
+    {
+      "file": "07_T3_giao_nhan_vn_photo_real.webp",
+      "doc_type": "FREIGHT",
+      "layout": "T3_giao_nhan_vn",
+      "degradation": "photo_real",
+      "ok": true,
+      "fields": {
+        "activity_type": "correct",
+        "scope": "correct",
+        "factor_code": "correct",
+        "supplier": "correct",
+        "invoice_date": "correct",
+        "amount": "correct",
+        "currency": "correct",
+        "origin": "correct",
+        "destination": "correct",
+        "transport_mode": "correct",
+        "weight_kg": "correct",
+        "distance_km": "both_null"
+      },
+      "errors": [],
+      "critical_ok": true,
+      "wrong_critical": [],
+      "caught": [],
+      "flagged": [
+        "distance_km"
+      ],
+      "false_alarms": [],
+      "expected_review": [
+        "distance_km"
+      ],
+      "expected_review_raised": [
+        "distance_km"
+      ],
+      "co2e_expected": 295.0,
+      "co2e_predicted": 295.0,
+      "co2e_after_review": 295.0,
+      "elapsed_ms": 8512,
+      "error": null
+    },
+    {
+      "file": "08_T3_giao_nhan_vn_photo_real.webp",
+      "doc_type": "FREIGHT",
+      "layout": "T3_giao_nhan_vn",
+      "degradation": "photo_real",
+      "ok": true,
+      "fields": {
+        "activity_type": "correct",
+        "scope": "correct",
+        "factor_code": "correct",
+        "supplier": "correct",
+        "invoice_date": "correct",
+        "amount": "correct",
+        "currency": "correct",
+        "origin": "correct",
+        "destination": "correct",
+        "transport_mode": "correct",
+        "weight_kg": "correct",
+        "distance_km": "both_null"
+      },
+      "errors": [],
+      "critical_ok": true,
+      "wrong_critical": [],
+      "caught": [],
+      "flagged": [
+        "distance_km"
+      ],
+      "false_alarms": [],
+      "expected_review": [
+        "distance_km"
+      ],
+      "expected_review_raised": [
+        "distance_km"
+      ],
+      "co2e_expected": 295.0,
+      "co2e_predicted": 295.0,
+      "co2e_after_review": 295.0,
+      "elapsed_ms": 7336,
+      "error": null
+    }
+  ],
+  "raw": [
+    {
+      "file": "03_E3_evn_song_ngu_photo_real.webp",
+      "predicted": {
+        "activity_type": "ELECTRICITY",
+        "scope": 2,
+        "factor_code": "ELEC_GRID",
+        "supplier": "CÔNG TY ĐIỆN LỰC THỬ NGHIỆM ĐỒNG NAI",
+        "invoice_date": "2025-11-02",
+        "invoice_series": "1C25TAA",
+        "description": "Điện tiêu thụ tháng 10 năm 2025",
+        "quantity": 75280.0,
+        "unit": "kWh",
+        "unit_price": null,
+        "line_amount": null,
+        "amount": 178521257.0,
+        "currency": "VND",
+        "origin": null,
+        "destination": null,
+        "transport_mode": null,
+        "weight_kg": null,
+        "distance_km": null,
+        "material_type": null,
+        "confidence": {
+          "activity_type": 1.0,
+          "supplier": 1.0,
+          "invoice_date": 1.0,
+          "invoice_series": 1.0,
+          "description": 0.9,
+          "quantity": 1.0,
+          "unit": 1.0,
+          "unit_price": 1.0,
+          "line_amount": 1.0,
+          "amount": 1.0,
+          "currency": 1.0
+        },
+        "needs_review": false,
+        "review_fields": []
+      },
+      "error": null
+    },
+    {
+      "file": "04_E3_evn_song_ngu_photo_real.webp",
+      "predicted": {
+        "activity_type": "ELECTRICITY",
+        "scope": 2,
+        "factor_code": "ELEC_GRID",
+        "supplier": "CÔNG TY ĐIỆN LỰC THỬ NGHIỆM ĐỒNG NAI",
+        "invoice_date": "2025-11-02",
+        "invoice_series": "1C25TAA",
+        "description": "Điện tiêu thụ tháng 10 năm 2025",
+        "quantity": 75280.0,
+        "unit": "kWh",
+        "unit_price": null,
+        "line_amount": 165297460.0,
+        "amount": 178521257.0,
+        "currency": "VND",
+        "origin": null,
+        "destination": null,
+        "transport_mode": null,
+        "weight_kg": null,
+        "distance_km": null,
+        "material_type": null,
+        "confidence": {
+          "activity_type": 1.0,
+          "supplier": 1.0,
+          "invoice_date": 1.0,
+          "invoice_series": 1.0,
+          "description": 0.9,
+          "quantity": 1.0,
+          "unit": 1.0,
+          "line_amount": 1.0,
+          "amount": 1.0,
+          "currency": 1.0
+        },
+        "needs_review": false,
+        "review_fields": []
+      },
+      "error": null
+    },
+    {
+      "file": "05_E3_evn_song_ngu_photo_real.webp",
+      "predicted": {
+        "activity_type": "ELECTRICITY",
+        "scope": 2,
+        "factor_code": "ELEC_GRID",
+        "supplier": "CÔNG TY ĐIỆN LỰC THỬ NGHIỆM ĐỒNG NAI",
+        "invoice_date": "2025-11-02",
+        "invoice_series": "1C25TAA",
+        "description": "Điện tiêu thụ tháng 10 năm 2025 từ ngày 01/10/2025 đến ngày 31/10/2025 (giờ bình thường, cao điểm, thấp điểm)",
+        "quantity": 75280.0,
+        "unit": "kWh",
+        "unit_price": null,
+        "line_amount": null,
+        "amount": 178521257.0,
+        "currency": "VND",
+        "origin": null,
+        "destination": null,
+        "transport_mode": null,
+        "weight_kg": null,
+        "distance_km": null,
+        "material_type": null,
+        "confidence": {
+          "activity_type": 1.0,
+          "supplier": 0.95,
+          "invoice_date": 1.0,
+          "invoice_series": 1.0,
+          "description": 0.9,
+          "quantity": 0.95,
+          "unit": 1.0,
+          "amount": 0.95,
+          "currency": 0.9
+        },
+        "needs_review": false,
+        "review_fields": []
+      },
+      "error": null
+    },
+    {
+      "file": "06_F3_meinvoice_chiet_khau_photo_real.webp",
+      "predicted": {
+        "activity_type": "FUEL",
+        "scope": 1,
+        "factor_code": "FUEL_DIESEL",
+        "supplier": "CÔNG TY CỔ PHẦN NHIÊN LIỆU DEMO MIỀN NAM",
+        "invoice_date": "2025-08-27",
+        "invoice_series": "1C25MSP",
+        "description": "Dầu DO 0.05S-II",
+        "quantity": 879.0,
+        "unit": "L",
+        "unit_price": 20660.0,
+        "line_amount": 17796937.0,
+        "amount": 19220692.0,
+        "currency": "VND",
+        "origin": null,
+        "destination": null,
+        "transport_mode": null,
+        "weight_kg": null,
+        "distance_km": null,
+        "material_type": null,
+        "confidence": {
+          "activity_type": 1.0,
+          "supplier": 0.95,
+          "invoice_date": 1.0,
+          "invoice_series": 1.0,
+          "description": 1.0,
+          "quantity": 1.0,
+          "unit": 1.0,
+          "unit_price": 1.0,
+          "line_amount": 1.0,
+          "amount": 1.0,
+          "currency": 0.9
+        },
+        "needs_review": false,
+        "review_fields": []
+      },
+      "error": null
+    },
+    {
+      "file": "07_T3_giao_nhan_vn_photo_real.webp",
+      "predicted": {
+        "activity_type": "FREIGHT",
+        "scope": 3,
+        "factor_code": "FREIGHT_SEA",
+        "supplier": "CÔNG TY TNHH GIAO NHẬN VẬN TẢI DEMO GLOBAL",
+        "invoice_date": "2025-05-05",
+        "invoice_series": "1C25TGN",
+        "description": "Cước vận chuyển đường biển (Ocean freight)",
+        "quantity": 1.0,
+        "unit": "Lô",
+        "unit_price": 58000000.0,
+        "line_amount": 58000000.0,
+        "amount": 67090000.0,
+        "currency": "VND",
+        "origin": "Cảng Cát Lái (TP.HCM)",
+        "destination": "Cảng Singapore",
+        "transport_mode": "SEA",
+        "weight_kg": 14750.0,
+        "distance_km": null,
+        "material_type": null,
+        "confidence": {
+          "activity_type": 1.0,
+          "supplier": 1.0,
+          "invoice_date": 1.0,
+          "invoice_series": 1.0,
+          "description": 1.0,
+          "quantity": 1.0,
+          "unit": 1.0,
+          "unit_price": 1.0,
+          "line_amount": 1.0,
+          "amount": 1.0,
+          "currency": 1.0,
+          "origin": 1.0,
+          "destination": 1.0,
+          "transport_mode": 1.0,
+          "weight_kg": 1.0
+        },
+        "needs_review": true,
+        "review_fields": [
+          "distance_km"
+        ]
+      },
+      "error": null
+    },
+    {
+      "file": "08_T3_giao_nhan_vn_photo_real.webp",
+      "predicted": {
+        "activity_type": "FREIGHT",
+        "scope": 3,
+        "factor_code": "FREIGHT_SEA",
+        "supplier": "CÔNG TY TNHH GIAO NHẬN VẬN TẢI DEMO GLOBAL",
+        "invoice_date": "2025-05-05",
+        "invoice_series": "1C25TGN",
+        "description": "Cước vận chuyển đường biển (Ocean freight)",
+        "quantity": 1.0,
+        "unit": "Lô",
+        "unit_price": 58000000.0,
+        "line_amount": 58000000.0,
+        "amount": 67090000.0,
+        "currency": "VND",
+        "origin": "Cảng Cát Lái (TP.HCM)",
+        "destination": "Cảng Singapore",
+        "transport_mode": "SEA",
+        "weight_kg": 14750.0,
+        "distance_km": null,
+        "material_type": null,
+        "confidence": {
+          "activity_type": 1.0,
+          "supplier": 0.95,
+          "invoice_date": 1.0,
+          "invoice_series": 1.0,
+          "description": 0.95,
+          "quantity": 1.0,
+          "unit": 0.9,
+          "unit_price": 1.0,
+          "line_amount": 1.0,
+          "amount": 1.0,
+          "currency": 1.0,
+          "origin": 0.95,
+          "destination": 0.95,
+          "transport_mode": 1.0,
+          "weight_kg": 1.0,
+          "distance_km": 1.0,
+          "material_type": 1.0
+        },
+        "needs_review": true,
+        "review_fields": [
+          "distance_km"
+        ]
+      },
+      "error": null
+    }
+  ]
+}

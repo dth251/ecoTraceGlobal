@@ -1,0 +1,18 @@
+# bí mật và môi trường cục bộ
+.env
+.venv/
+.claude/
+
+# file sinh tự động / cache
+__pycache__/
+*.pyc
+.pytest_cache/
+ai-service/.cache/
+ai-service/output/
+
+# bộ dữ liệu giả lập sinh lại được bằng seed (xem ai-service/eval/README.md)
+ai-service/eval/dataset/
+ai-service/eval/dataset_holdout/
+
+# tài liệu Word nội bộ (không phải mã nguồn)
+*.docx

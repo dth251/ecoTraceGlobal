@@ -1,0 +1,152 @@
+[
+  {
+    "file": "03_E3_evn_song_ngu_photo_real.webp",
+    "doc_type": "ELECTRICITY",
+    "layout": "E3_evn_song_ngu",
+    "degradation": "photo_real",
+    "expected": {
+      "activity_type": "ELECTRICITY",
+      "factor_code": "ELEC_GRID",
+      "scope": 2,
+      "supplier": "CÔNG TY ĐIỆN LỰC THỬ NGHIỆM ĐỒNG NAI",
+      "invoice_date": "2025-11-02",
+      "quantity": 75280.0,
+      "unit": "kWh",
+      "amount": 178521257.0,
+      "currency": "VND",
+      "origin": null,
+      "destination": null,
+      "transport_mode": null,
+      "distance_km": null
+    },
+    "expected_review": [],
+    "keywords": {}
+  },
+  {
+    "file": "04_E3_evn_song_ngu_photo_real.webp",
+    "doc_type": "ELECTRICITY",
+    "layout": "E3_evn_song_ngu",
+    "degradation": "photo_real",
+    "expected": {
+      "activity_type": "ELECTRICITY",
+      "factor_code": "ELEC_GRID",
+      "scope": 2,
+      "supplier": "CÔNG TY ĐIỆN LỰC THỬ NGHIỆM ĐỒNG NAI",
+      "invoice_date": "2025-11-02",
+      "quantity": 75280.0,
+      "unit": "kWh",
+      "amount": 178521257.0,
+      "currency": "VND",
+      "origin": null,
+      "destination": null,
+      "transport_mode": null,
+      "distance_km": null
+    },
+    "expected_review": [],
+    "keywords": {}
+  },
+  {
+    "file": "05_E3_evn_song_ngu_photo_real.webp",
+    "doc_type": "ELECTRICITY",
+    "layout": "E3_evn_song_ngu",
+    "degradation": "photo_real",
+    "expected": {
+      "activity_type": "ELECTRICITY",
+      "factor_code": "ELEC_GRID",
+      "scope": 2,
+      "supplier": "CÔNG TY ĐIỆN LỰC THỬ NGHIỆM ĐỒNG NAI",
+      "invoice_date": "2025-11-02",
+      "quantity": 75280.0,
+      "unit": "kWh",
+      "amount": 178521257.0,
+      "currency": "VND",
+      "origin": null,
+      "destination": null,
+      "transport_mode": null,
+      "distance_km": null
+    },
+    "expected_review": [],
+    "keywords": {}
+  },
+  {
+    "file": "06_F3_meinvoice_chiet_khau_photo_real.webp",
+    "doc_type": "FUEL",
+    "layout": "F3_meinvoice_chiet_khau",
+    "degradation": "photo_real",
+    "expected": {
+      "activity_type": "FUEL",
+      "factor_code": "FUEL_DIESEL",
+      "scope": 1,
+      "supplier": "CÔNG TY CỔ PHẦN NHIÊN LIỆU DEMO MIỀN NAM",
+      "invoice_date": "2025-08-27",
+      "quantity": 879.0,
+      "unit": "L",
+      "amount": 19220692.0,
+      "currency": "VND",
+      "origin": null,
+      "destination": null,
+      "transport_mode": null,
+      "distance_km": null
+    },
+    "expected_review": [],
+    "keywords": {}
+  },
+  {
+    "file": "07_T3_giao_nhan_vn_photo_real.webp",
+    "doc_type": "FREIGHT",
+    "layout": "T3_giao_nhan_vn",
+    "degradation": "photo_real",
+    "expected": {
+      "activity_type": "FREIGHT",
+      "factor_code": "FREIGHT_SEA",
+      "scope": 3,
+      "supplier": "CÔNG TY TNHH GIAO NHẬN VẬN TẢI DEMO GLOBAL",
+      "invoice_date": "2025-05-05",
+      "quantity": null,
+      "unit": null,
+      "amount": 67090000.0,
+      "currency": "VND",
+      "origin": "Cảng Cát Lái (TP.HCM)",
+      "destination": "Cảng Singapore",
+      "transport_mode": "SEA",
+      "distance_km": null,
+      "weight_kg": 14750.0
+    },
+    "expected_review": [
+      "distance_km"
+    ],
+    "keywords": {
+      "origin": "cat lai",
+      "destination": "singapore"
+    }
+  },
+  {
+    "file": "08_T3_giao_nhan_vn_photo_real.webp",
+    "doc_type": "FREIGHT",
+    "layout": "T3_giao_nhan_vn",
+    "degradation": "photo_real",
+    "expected": {
+      "activity_type": "FREIGHT",
+      "factor_code": "FREIGHT_SEA",
+      "scope": 3,
+      "supplier": "CÔNG TY TNHH GIAO NHẬN VẬN TẢI DEMO GLOBAL",
+      "invoice_date": "2025-05-05",
+      "quantity": null,
+      "unit": null,
+      "amount": 67090000.0,
+      "currency": "VND",
+      "origin": "Cảng Cát Lái (TP.HCM)",
+      "destination": "Cảng Singapore",
+      "transport_mode": "SEA",
+      "distance_km": null,
+      "weight_kg": 14750.0
+    },
+    "expected_review": [
+      "distance_km"
+    ],
+    "keywords": {
+      "origin": "cat lai",
+      "destination": "singapore"
+    }
+  }
+]
