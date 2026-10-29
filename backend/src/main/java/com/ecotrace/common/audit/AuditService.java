@@ -1,6 +1,9 @@
 package com.ecotrace.common.audit;
 
 import com.ecotrace.common.tenant.TenantContext;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +24,10 @@ public class AuditService {
     public static final String UNLOCK = "UNLOCK";
     public static final String ISSUE_PASSPORT = "ISSUE_PASSPORT";
 
+    /** Hibernate 6.6 ép thuộc tính kiểu Object (cột JSON) sang String, nên DTO phải được chuyển thành chuỗi JSON trước. */
+    private static final ObjectMapper JSON = new ObjectMapper().findAndRegisterModules()
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
     private final AuditLogRepository repository;
 
     public AuditService(AuditLogRepository repository) {
@@ -38,7 +45,17 @@ public class AuditService {
     public void record(UUID orgId, UUID userId, String action, String entity, Object entityId,
                        Object before, Object after) {
         repository.save(new AuditLog(orgId, userId, action, entity,
-                entityId == null ? null : entityId.toString(), before, after));
+                entityId == null ? null : entityId.toString(), toJson(before), toJson(after)));
+    }
+
+    static Object toJson(Object value) {
+        if (value == null || value instanceof String) {
+            return value;
+        }
+        try {
+            return JSON.writeValueAsString(value);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("Không chuyển được dữ liệu audit sang JSON: " + value.getClass(), e);
+        }
     }
 }
-
