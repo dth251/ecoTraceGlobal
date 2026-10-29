@@ -8,7 +8,19 @@ export interface LineItem {
   confidence: number;
 }
 
+/** Khối `data` gốc của AI service (có khi gọi trực tiếp AI service; backend hiện chưa chuyển tiếp). */
+export interface ExtractedData extends Record<string, unknown> {
+  activity_type?: string;
+  scope?: number | null;
+  factor_code?: string | null;
+  needs_review?: boolean;
+  review_fields?: string[];
+}
+
 export interface ExtractionResponse {
+  status?: string;
+  mock?: boolean;
+  data?: ExtractedData;
   doc_type: string;
   supplier_name: string;
   invoice_no: string;
@@ -43,6 +55,42 @@ export interface SuggestionItem {
 export interface OptimizeResponse {
   suggestions: SuggestionItem[];
   summary: string;
+}
+
+/** Gợi ý tối ưu từ AI service: ngoài các trường của SuggestionItem còn có số liệu và các bước thực hiện. */
+export interface EstimateSuggestion extends SuggestionItem {
+  id: string;
+  estimated_reduction_kg: number;
+  estimated_reduction_pct: number;
+  estimated_cost_usd: number;
+  steps: string[];
+}
+
+export interface EstimateDocument {
+  name: string;
+  activity_type: string;
+  scope: number | null;
+  factor_code: string | null;
+  co2e_kg: number | null;
+  status: "CALCULATED" | "MISSING_DATA" | "UNIT_MISMATCH" | "NO_FACTOR";
+  formula: string | null;
+  note: string | null;
+  factor_value: number | null;
+  factor_unit: string | null;
+  factor_source: string | null;
+  distance_km_used: number | null;
+  needs_review: boolean;
+  review_fields: string[];
+}
+
+export interface EstimateResponse {
+  total_co2e_kg: number;
+  by_scope: Record<string, number>;
+  by_factor: Record<string, number>;
+  documents: EstimateDocument[];
+  calculated: number;
+  optimization: { mock: boolean; total_co2e_kg: number; summary: string; suggestions: EstimateSuggestion[] };
+  disclaimer: string;
 }
 
 export interface PassportAuditCheck {
@@ -82,6 +130,13 @@ export const aiApi = {
   optimize: (periodId: string, language = "vi", maxSuggestions = 5) =>
     api<OptimizeResponse>(`/ai/optimize/${periodId}?language=${language}&maxSuggestions=${maxSuggestions}`, {
       method: "POST",
+    }),
+
+  /** Ước tính CO2e cho cả lô chứng từ đã bóc tách và sinh gợi ý tối ưu (AI service, hệ số tham khảo). */
+  estimate: (items: { name: string; data: ExtractedData }[], language = "vi", maxSuggestions = 5) =>
+    api<EstimateResponse>("/ai/estimate", {
+      method: "POST",
+      body: JSON.stringify({ items, language, max_suggestions: maxSuggestions }),
     }),
 
   auditPassport: (code: string) => api<PassportAuditResponse>(`/ai/passports/${code}/audit`),
