@@ -1,6 +1,5 @@
 package com.ecotrace.entry;
 
-import com.ecotrace.validation.ValidationIssue;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,7 +38,7 @@ public class DocumentEntryController {
 
     @PostMapping("/entry/validate")
     @PreAuthorize("hasAnyRole('OWNER','EDITOR')")
-    public List<ValidationIssue> validate(@PathVariable UUID id, @RequestBody Map<String, Object> body) {
+    public List<Map<String, Object>> validate(@PathVariable UUID id, @RequestBody Map<String, Object> body) {
         return service.validateOnly(id, body);
     }
 

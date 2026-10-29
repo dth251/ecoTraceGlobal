@@ -3,10 +3,7 @@ package com.ecotrace.ai;
 import com.ecotrace.ai.dto.AiDtos.*;
 import com.ecotrace.calculation.SummaryService;
 import com.ecotrace.common.exception.ApiException;
-import com.ecotrace.organization.domain.ReportingPeriod;
 import com.ecotrace.organization.service.OrganizationService;
-import com.ecotrace.passport.PassportRepository;
-import com.ecotrace.passport.domain.Passport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
@@ -29,16 +26,13 @@ public class AiServiceClient {
     private final RestClient aiRestClient;
     private final SummaryService summaryService;
     private final OrganizationService organizationService;
-    private final PassportRepository passportRepository;
 
     public AiServiceClient(RestClient aiRestClient,
                            SummaryService summaryService,
-                           OrganizationService organizationService,
-                           PassportRepository passportRepository) {
+                           OrganizationService organizationService) {
         this.aiRestClient = aiRestClient;
         this.summaryService = summaryService;
         this.organizationService = organizationService;
-        this.passportRepository = passportRepository;
     }
 
     public Map<String, Object> checkHealth() {
@@ -134,63 +128,18 @@ public class AiServiceClient {
         }
     }
 
-    public PassportAuditResponse auditPassport(String publicCode) {
-        Passport passport = passportRepository.findByPublicCode(publicCode)
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "PASSPORT_NOT_FOUND", "Passport not found"));
-
-        List<PassportAuditCheck> checks = new ArrayList<>();
-        int score = 100;
-
-        // Check 1: Chữ ký số
-        if (passport.isRevoked()) {
-            checks.add(new PassportAuditCheck("SIGNATURE_STATUS", "Tính pháp lý chữ ký", "FAILED",
-                    "Hộ chiếu đã bị thu hồi vào " + passport.getRevokedAt(), "Cần phát hành hộ chiếu mới"));
-            score -= 40;
-        } else {
-            checks.add(new PassportAuditCheck("SIGNATURE_STATUS", "Tính pháp lý chữ ký", "PASSED",
-                    "Chữ ký ECDSA P-256 nguyên vẹn, mã SHA-256 hợp lệ", "Đạt chuẩn niêm phong số"));
+    /** Xét điều kiện cấp hộ chiếu ở AI service. Không gọi được thì từ chối (không cấp khi thiếu căn cứ), không tự quyết ở backend. */
+    public PassportReadinessResponse passportReadiness(PassportReadinessRequest req) {
+        try {
+            return aiRestClient.post()
+                    .uri("/ai/passport-readiness")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(req)
+                    .retrieve()
+                    .body(PassportReadinessResponse.class);
+        } catch (Exception e) {
+            log.error("AI passport readiness error: {}", e.getMessage());
+            throw new ApiException(HttpStatus.BAD_GATEWAY, "AI_SERVICE_ERROR", "Cannot evaluate passport readiness: " + e.getMessage());
         }
-
-        // Check 2: Trực tiếp / Gián tiếp
-        Map<String, Object> payload = passport.getPayload();
-        double actualShare = 0.72;
-        if (payload != null && payload.containsKey("actualDataShare")) {
-            actualShare = ((Number) payload.get("actualDataShare")).doubleValue();
-        }
-
-        if (actualShare >= 0.7) {
-            checks.add(new PassportAuditCheck("ACTUAL_DATA_SHARE", "Tỷ lệ dữ liệu đo thực tế", "PASSED",
-                    String.format("Tỷ lệ dữ liệu thực tế đạt %.1f%% (vượt mức tối thiểu 50%% của EU CBAM)", actualShare * 100),
-                    "Duy trì thu thập số liệu hóa đơn thực tế"));
-        } else {
-            checks.add(new PassportAuditCheck("ACTUAL_DATA_SHARE", "Tỷ lệ dữ liệu đo thực tế", "WARNING",
-                    String.format("Tỷ lệ dữ liệu thực tế chỉ đạt %.1f%%, phần còn lại đang dùng hệ số mặc định", actualShare * 100),
-                    "Yêu cầu nhà cung cấp nguyên liệu cung cấp số liệu thực tế"));
-            score -= 15;
-        }
-
-        // Check 3: Thẩm định bên thứ 3
-        if (passport.getVerification() == Passport.Verification.VERIFIED) {
-            checks.add(new PassportAuditCheck("VERIFICATION_LEVEL", "Mức độ kiểm định", "PASSED",
-                    "Đã được bên thứ ba thẩm định độc lập: " + (passport.getVerifierName() != null ? passport.getVerifierName() : "Đơn vị kiểm toán"),
-                    "Hồ sơ có độ tin cậy cao"));
-        } else {
-            checks.add(new PassportAuditCheck("VERIFICATION_LEVEL", "Mức độ kiểm định", "WARNING",
-                    "Hồ sơ đang ở mức Tự khai báo (Self-declared)",
-                    "Liên hệ tổ chức chứng nhận độc lập trước khi gửi thẩm định chính thức vào EU"));
-            score -= 10;
-        }
-
-        // Check 4: Tiền chất CBAM
-        checks.add(new PassportAuditCheck("PRECURSOR_EMISSIONS", "Kiểm kê tiền chất nguyên liệu (CBAM Precursors)", "PASSED",
-                "Đã phân bổ phát thải tiền chất (thép/nhôm) theo đúng hướng dẫn phân bổ khối lượng",
-                "Tiếp tục truy vết Scope 3 từ nhà cung ứng"));
-
-        String overall = score >= 85 
-                ? "Hồ sơ đạt độ tin cậy cao, sẵn sàng xuất trình đối tác và khai báo CBAM."
-                : "Hồ sơ hợp lệ nhưng cần nâng cao tỷ lệ dữ liệu thực tế từ nhà cung cấp.";
-
-        return new PassportAuditResponse(publicCode, score, overall, checks);
     }
 }
-

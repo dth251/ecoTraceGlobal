@@ -138,5 +138,17 @@ public class ActivityData extends AuditableEntity {
     public Map<String, Object> getMetadata() {
         return metadata;
     }
+
+    public UUID getCreatedBy() {
+        return createdBy;
+    }
+
+    /** Gắn chứng từ gốc (bằng chứng), người nhập và dữ liệu gốc của form để truy vết. */
+    public ActivityData withEvidence(UUID sourceDocumentId, UUID createdBy, Map<String, Object> metadata) {
+        this.sourceDocumentId = sourceDocumentId;
+        this.createdBy = createdBy;
+        this.metadata = metadata != null ? metadata : Map.of();
+        return this;
+    }
 }
 

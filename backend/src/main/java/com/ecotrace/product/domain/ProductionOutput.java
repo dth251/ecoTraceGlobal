@@ -54,5 +54,10 @@ public class ProductionOutput extends BaseEntity {
     public String getUnit() {
         return unit;
     }
+
+    public void update(BigDecimal quantity, String unit) {
+        this.quantity = quantity;
+        if (unit != null && !unit.isBlank()) this.unit = unit;
+    }
 }
 

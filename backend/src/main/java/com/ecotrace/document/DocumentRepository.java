@@ -17,5 +17,7 @@ public interface DocumentRepository extends JpaRepository<Document, UUID> {
     Optional<Document> findByIdAndOrganizationId(UUID id, UUID organizationId);
 
     boolean existsByOrganizationIdAndSha256(UUID organizationId, String sha256);
+
+    Optional<Document> findByOrganizationIdAndSha256(UUID organizationId, String sha256);
 }
 

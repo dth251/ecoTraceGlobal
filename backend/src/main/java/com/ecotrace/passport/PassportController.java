@@ -1,6 +1,6 @@
 package com.ecotrace.passport;
 
-import com.ecotrace.passport.domain.Passport;
+import com.ecotrace.ai.dto.AiDtos.PassportReadinessResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,14 +31,21 @@ public class PassportController {
     }
 
     @GetMapping("/periods/{id}/passports")
-    public List<Passport> list(@PathVariable UUID id) {
+    public List<PassportService.PassportView> list(@PathVariable UUID id) {
         return service.listByPeriod(id);
+    }
+
+    /** Xét trước điều kiện cấp hộ chiếu cho sản phẩm: quyết định, điểm, điều kiện đạt và chưa đạt kèm lý do. */
+    @GetMapping("/periods/{id}/passports/readiness")
+    public PassportReadinessResponse readiness(@PathVariable UUID id, @RequestParam UUID productId,
+                                               @RequestParam(defaultValue = "vi") String language) {
+        return service.readiness(id, productId, language);
     }
 
     @PostMapping("/periods/{id}/passports")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('OWNER')")
-    public Passport issue(@PathVariable UUID id, @Valid @RequestBody IssuePassportRequest req) {
+    public PassportService.PassportView issue(@PathVariable UUID id, @Valid @RequestBody IssuePassportRequest req) {
         return service.issue(id, req.productId());
     }
 

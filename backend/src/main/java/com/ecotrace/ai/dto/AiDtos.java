@@ -58,19 +58,54 @@ public final class AiDtos {
             @JsonProperty("overall_confidence") Double overallConfidence
     ) {}
 
-    public record PassportAuditCheck(
+    /** Ảnh chụp dữ liệu của kỳ và sản phẩm gửi sang AI service để xét điều kiện cấp hộ chiếu. Trường null nghĩa là chưa có dữ liệu. */
+    public record PassportReadinessRequest(
+            @JsonProperty("period_locked") Boolean periodLocked,
+            @JsonProperty("documents_pending") Integer documentsPending,
+            @JsonProperty("documents_rejected") Integer documentsRejected,
+            @JsonProperty("activities_total") Integer activitiesTotal,
+            @JsonProperty("activities_without_factor") Integer activitiesWithoutFactor,
+            @JsonProperty("months_expected") Integer monthsExpected,
+            @JsonProperty("months_covered") Integer monthsCovered,
+            @JsonProperty("precursors_required") Boolean precursorsRequired,
+            @JsonProperty("precursors_covered") Boolean precursorsCovered,
+            @JsonProperty("actual_data_share") Double actualDataShare,
+            @JsonProperty("unconfirmed_ai_records") Integer unconfirmedAiRecords,
+            @JsonProperty("records_without_source") Integer recordsWithoutSource,
+            @JsonProperty("production_output_present") Boolean productionOutputPresent,
+            @JsonProperty("allocation_method") String allocationMethod,
+            @JsonProperty("allocation_error_pct") Double allocationErrorPct,
+            @JsonProperty("unresolved_anomalies") Integer unresolvedAnomalies,
+            String stage,
+            @JsonProperty("signature_valid") Boolean signatureValid,
+            boolean revoked,
+            String verification,
+            @JsonProperty("verifier_name") String verifierName,
+            String language
+    ) {}
+
+    public record ReadinessCheck(
             String code,
             String title,
-            String status, // PASSED, WARNING, FAILED
+            String status, // PASSED, FAILED
             String message,
-            String suggestion
+            String action,
+            int weight,
+            double earned
     ) {}
 
-    public record PassportAuditResponse(
-            String publicCode,
-            int readinessScore,
-            String overallAssessment,
-            List<PassportAuditCheck> checks
+    public record ReadinessReason(String code, String title, String message, String action) {}
+
+    public record PassportReadinessResponse(
+            String decision, // ISSUED, PROVISIONAL, NOT_ISSUED
+            @JsonProperty("can_issue") boolean canIssue,
+            int score,
+            @JsonProperty("min_score") int minScore,
+            List<ReadinessCheck> checks,
+            List<String> blockers,
+            List<ReadinessReason> reasons,
+            @JsonProperty("overall_assessment") String overallAssessment,
+            String source, // AI, RULES
+            boolean mock
     ) {}
 }
-

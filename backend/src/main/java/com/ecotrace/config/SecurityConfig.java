@@ -47,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/auth/**",
                                 "/public/**",
+                                "/files/**",            // file chứng từ qua URL ký HMAC có hạn (LocalFileStorage)
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",

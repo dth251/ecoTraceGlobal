@@ -8,6 +8,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -31,7 +33,7 @@ public class DocumentController {
     }
 
     @GetMapping
-    public List<Document> list(@RequestParam UUID periodId,
+    public List<DocumentService.DocumentDto> list(@RequestParam UUID periodId,
                                @RequestParam(required = false) Document.Status status) {
         return service.list(periodId, status);
     }
@@ -39,10 +41,17 @@ public class DocumentController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('OWNER','EDITOR')")
-    public Document upload(@RequestParam UUID periodId,
-                           @RequestParam Document.DocType docType,
-                           @RequestPart("file") MultipartFile file) {
+    public DocumentService.DocumentDto upload(@RequestParam UUID periodId,
+                                              @RequestParam(required = false) Document.DocType docType,
+                                              @RequestPart("file") MultipartFile file) {
         return service.upload(periodId, docType, file);
+    }
+
+    /** Lưu kết quả AI bóc tách làm bản nháp (chưa tính vào kiểm kê cho tới khi người dùng xác nhận). */
+    @PutMapping("/{id}/ai-draft")
+    @PreAuthorize("hasAnyRole('OWNER','EDITOR')")
+    public DocumentService.DocumentDto aiDraft(@PathVariable UUID id, @RequestBody Map<String, Object> extraction) {
+        return service.attachAiDraft(id, extraction);
     }
 
     @GetMapping("/{id}/file")

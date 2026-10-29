@@ -1,6 +1,7 @@
 package com.ecotrace.ai;
 
 import com.ecotrace.ai.dto.AiDtos.*;
+import com.ecotrace.passport.PassportReadinessService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,9 +17,11 @@ import java.util.UUID;
 public class AiController {
 
     private final AiServiceClient client;
+    private final PassportReadinessService passportReadiness;
 
-    public AiController(AiServiceClient client) {
+    public AiController(AiServiceClient client, PassportReadinessService passportReadiness) {
         this.client = client;
+        this.passportReadiness = passportReadiness;
     }
 
     @GetMapping("/health")
@@ -50,8 +53,9 @@ public class AiController {
     }
 
     @GetMapping("/passports/{code}/audit")
-    public PassportAuditResponse auditPassport(@PathVariable String code) {
-        return client.auditPassport(code);
+    public PassportReadinessResponse auditPassport(@PathVariable String code,
+                                                   @RequestParam(defaultValue = "vi") String language) {
+        return passportReadiness.audit(code, language);
     }
 }
 

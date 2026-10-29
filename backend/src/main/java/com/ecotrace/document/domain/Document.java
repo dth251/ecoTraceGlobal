@@ -6,8 +6,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
+import java.util.Map;
 import java.util.UUID;
 
 /** Chứng từ người dùng tải lên làm bằng chứng và nhập liệu — bảng document. */
@@ -73,7 +76,55 @@ public class Document extends AuditableEntity {
     @Column(name = "entered_at")
     private Instant enteredAt;
 
+    /** Bản nháp AI bóc tách (khối JSON của AI service). Chỉ là gợi ý cho tới khi người dùng xác nhận khi lưu nhập liệu. */
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "ai_extraction")
+    private Map<String, Object> aiExtraction;
+
     protected Document() {
+    }
+
+    public Document(UUID organizationId, UUID facilityId, UUID periodId, DocType docType, String storageKey,
+                    String fileName, String mimeType, long sizeBytes, String sha256, UUID uploadedBy) {
+        this.organizationId = organizationId;
+        this.facilityId = facilityId;
+        this.periodId = periodId;
+        this.docType = docType;
+        this.storageKey = storageKey;
+        this.fileName = fileName;
+        this.mimeType = mimeType;
+        this.sizeBytes = sizeBytes;
+        this.sha256 = sha256;
+        this.uploadedBy = uploadedBy;
+    }
+
+    /** Lưu bản nháp AI; nếu chứng từ đang để loại OTHER thì nhận loại AI nhận diện được. */
+    public void attachAiDraft(Map<String, Object> extraction, DocType detectedType) {
+        this.aiExtraction = extraction;
+        if (detectedType != null && this.docType == DocType.OTHER) {
+            this.docType = detectedType;
+        }
+    }
+
+    public void changeDocType(DocType docType) {
+        this.docType = docType;
+    }
+
+    /** Người dùng đã xác nhận số liệu (lưu nhập liệu): từ đây số liệu được tính vào kiểm kê. */
+    public void markEntered(UUID userId) {
+        this.status = Status.ENTERED;
+        this.enteredBy = userId;
+        this.enteredAt = Instant.now();
+        this.rejectReason = null;
+    }
+
+    public void reject(String reason) {
+        this.status = Status.REJECTED;
+        this.rejectReason = reason;
+    }
+
+    public Map<String, Object> getAiExtraction() {
+        return aiExtraction;
     }
 
     public UUID getOrganizationId() {

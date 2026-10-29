@@ -72,3 +72,6 @@ ai-service/eval/dataset_holdout/
 
 # Tài liệu Word nội bộ (không phải mã nguồn)
 *.docx
+
+# Backend chạy local: chứng từ tải lên và khóa ký hộ chiếu (không được commit)
+backend/data/

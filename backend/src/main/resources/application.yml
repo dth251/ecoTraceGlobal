@@ -60,6 +60,9 @@ app:
     access-token-ttl: PT30M       # 30 phút (mục 22)
     refresh-token-ttl: P14D       # 14 ngày
   storage:
+    type: ${STORAGE_TYPE:local}   # local: lưu file trên ổ đĩa (chạy local không Docker); s3: MinIO/S3
+    local-dir: ${STORAGE_LOCAL_DIR:./data/uploads}
+    local-public-base-url: ${STORAGE_PUBLIC_BASE_URL:http://localhost:8080/api/v1}
     endpoint: ${S3_ENDPOINT:http://localhost:9000}
     region: ${S3_REGION:us-east-1}
     bucket: ${S3_BUCKET:ecotrace-documents}
@@ -68,7 +71,7 @@ app:
     path-style-access: true
     presigned-url-ttl: PT5M       # URL ký tạm thời 5 phút (mục 12)
   passport:
-    signing-key-path: ${PASSPORT_SIGNING_KEY_PATH:}
+    signing-key-path: ${PASSPORT_SIGNING_KEY_PATH:./data/passport-signing-key.txt}   # local: tự sinh lần đầu, giữ nguyên sau khi khởi động lại
     public-verify-base-url: ${PUBLIC_VERIFY_BASE_URL:http://localhost:5173/verify}
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}

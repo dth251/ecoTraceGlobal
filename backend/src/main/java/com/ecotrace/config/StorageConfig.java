@@ -1,5 +1,6 @@
 package com.ecotrace.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,9 @@ public class StorageConfig {
 
     @ConfigurationProperties(prefix = "app.storage")
     public record StorageProperties(
+            String type,              // local (mặc định, lưu ổ đĩa) | s3 (MinIO / AWS S3 / GCS)
+            String localDir,
+            String localPublicBaseUrl,
             String endpoint,
             String region,
             String bucket,
@@ -28,6 +32,7 @@ public class StorageConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(prefix = "app.storage", name = "type", havingValue = "s3")
     public S3Client s3Client(StorageProperties props) {
         return S3Client.builder()
                 .endpointOverride(URI.create(props.endpoint()))
@@ -41,6 +46,7 @@ public class StorageConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(prefix = "app.storage", name = "type", havingValue = "s3")
     public S3Presigner s3Presigner(StorageProperties props) {
         return S3Presigner.builder()
                 .endpointOverride(URI.create(props.endpoint()))

@@ -31,8 +31,8 @@ public class CalculationController {
     }
 
     @GetMapping("/summary")
-    public SummaryService.PeriodSummary summary(@PathVariable UUID id) {
-        return summaryService.getSummary(id);
+    public SummaryService.SummaryView summary(@PathVariable UUID id) {
+        return summaryService.view(id);
     }
 }
 

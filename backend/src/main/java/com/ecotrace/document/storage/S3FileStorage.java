@@ -1,6 +1,7 @@
 package com.ecotrace.document.storage;
 
 import com.ecotrace.config.StorageConfig.StorageProperties;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -14,6 +15,7 @@ import java.time.Duration;
 
 /** Triển khai {@link FileStorage} bằng S3 API (tương thích MinIO, AWS S3, GCS). */
 @Component
+@ConditionalOnProperty(prefix = "app.storage", name = "type", havingValue = "s3")
 public class S3FileStorage implements FileStorage {
 
     private final S3Client s3;

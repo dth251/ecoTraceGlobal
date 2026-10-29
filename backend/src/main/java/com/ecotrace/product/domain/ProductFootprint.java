@@ -45,6 +45,23 @@ public class ProductFootprint extends BaseEntity {
     protected ProductFootprint() {
     }
 
+    public ProductFootprint(UUID periodId, UUID productId) {
+        this.periodId = periodId;
+        this.productId = productId;
+    }
+
+    /** Ghi kết quả phân bổ (kgCO2e trên một đơn vị sản phẩm). */
+    public void update(BigDecimal direct, BigDecimal indirect, BigDecimal precursor, BigDecimal actualDataShare,
+                       String allocationMethod) {
+        this.directCo2ePerUnit = direct;
+        this.indirectCo2ePerUnit = indirect;
+        this.precursorCo2ePerUnit = precursor;
+        this.totalCo2ePerUnit = direct.add(indirect).add(precursor);
+        this.actualDataShare = actualDataShare;
+        this.allocationMethod = allocationMethod;
+        this.calculatedAt = Instant.now();
+    }
+
     @PrePersist
     void onCalc() {
         if (calculatedAt == null) calculatedAt = Instant.now();

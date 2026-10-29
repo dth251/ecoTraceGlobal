@@ -13,5 +13,7 @@ public interface ActivityRepository extends JpaRepository<ActivityData, UUID> {
 
     List<ActivityData> findAllByOrganizationIdAndPeriodIdAndCategoryOrderByActivityDateDesc(
             UUID organizationId, UUID periodId, ActivityCategory category);
+
+    List<ActivityData> findAllBySourceDocumentId(UUID sourceDocumentId);
 }
 
