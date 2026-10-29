@@ -31,9 +31,9 @@ export function EntryForm({
   const [formData, setFormData] = useState<Record<string, unknown>>(initialData ?? {});
   const [ackWarnings, setAckWarnings] = useState(false);
 
-  const hasBlockingErrors = issues.some((i) => i.severity === "ERROR");
+  // Lỗi hiển thị là kết quả kiểm tra lần trước; sau khi sửa form vẫn cho bấm lưu, máy chủ kiểm tra lại và trả lỗi mới nếu còn
   const hasWarnings = issues.some((i) => i.severity === "WARNING");
-  const canSubmit = !disabled && !hasBlockingErrors && (!hasWarnings || ackWarnings);
+  const canSubmit = !disabled && (!hasWarnings || ackWarnings);
 
   return (
     <div className="flex h-full flex-col justify-between space-y-4 rounded-lg border border-slate-200 bg-white p-4">

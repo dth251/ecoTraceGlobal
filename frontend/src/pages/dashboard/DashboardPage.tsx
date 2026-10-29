@@ -9,7 +9,9 @@ import { MonthlyTrend } from "@/pages/dashboard/widgets/MonthlyTrend";
 import { ProductIntensity } from "@/pages/dashboard/widgets/ProductIntensity";
 import { useDocuments } from "@/queries/useDocuments";
 import { useFootprints } from "@/queries/useProducts";
+import { batchToSummary } from "@/pages/ai/batchSummary";
 import { useSummary } from "@/queries/useSummary";
+import { useAiBatchStore } from "@/stores/aiBatchStore";
 import type { EmissionSummary } from "@/types/domain";
 
 const DEMO_SUMMARY: EmissionSummary = {
@@ -44,11 +46,17 @@ export function DashboardPage() {
   const docsQuery = useDocuments(periodId);
   const footprintsQuery = useFootprints(periodId);
 
+  const aiBatch = useAiBatchStore((s) => s.batch);
+
   const [, setActiveTimeframe] = useState("Q3 2026");
 
-  // Sử dụng dữ liệu thực nếu có, hoặc dùng mock chuẩn Skymetrics demo
+  // Ưu tiên số liệu backend của kỳ; chưa có thì dùng lô chứng từ AI vừa xử lý; cuối cùng mới là dữ liệu mẫu
   const summary: EmissionSummary =
-    summaryQuery.data && summaryQuery.data.totalKg > 0 ? summaryQuery.data : DEMO_SUMMARY;
+    summaryQuery.data && summaryQuery.data.totalKg > 0
+      ? summaryQuery.data
+      : aiBatch
+        ? batchToSummary(aiBatch)
+        : DEMO_SUMMARY;
 
   const documents = docsQuery.data ?? [];
   const footprints = footprintsQuery.data ?? [];
@@ -67,7 +75,7 @@ export function DashboardPage() {
           <MonthlyTrend summary={summary} />
         </div>
         <div className="lg:col-span-5">
-          <AiIntelligenceWidget />
+          <AiIntelligenceWidget suggestions={aiBatch?.estimate.optimization.suggestions} />
         </div>
       </div>
 

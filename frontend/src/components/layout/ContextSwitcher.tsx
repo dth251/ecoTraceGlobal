@@ -37,6 +37,19 @@ export function ContextSwitcher() {
     }
   }, [periods.data, periodId, searchParams, setPeriod]);
 
+  // Nhà máy hoặc kỳ đã lưu không còn trong danh sách (ví dụ mã mẫu cũ): chọn lại cho khớp dữ liệu hiện có
+  useEffect(() => {
+    if (facilityId && facilities.data && !facilities.data.some((f) => f.id === facilityId)) {
+      setFacility(facilities.data[0]?.id ?? "");
+    }
+  }, [facilities.data, facilityId, setFacility]);
+
+  useEffect(() => {
+    if (periodId && periods.data && !periods.data.some((p) => p.id === periodId)) {
+      setPeriod(periods.data[0]?.id ?? "");
+    }
+  }, [periods.data, periodId, setPeriod]);
+
   const currentPeriod = periods.data?.find((p) => p.id === periodId) ?? null;
 
   return (

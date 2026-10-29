@@ -9,24 +9,26 @@ import { Skeleton } from "@/components/ui/Skeleton";
 import { setLanguage } from "@/i18n";
 import { formatPercent } from "@/lib/format";
 import { usePublicVerification } from "@/queries/usePassports";
-import { aiApi, type PassportAuditResponse } from "@/api/ai";
+import { aiApi, type PassportReadiness } from "@/api/ai";
+import { PassportReadinessView } from "@/pages/passports/PassportReadinessView";
 import { useState } from "react";
 
 export function PublicVerifyPage() {
   const { code } = useParams<{ code: string }>();
   const { t, i18n } = useTranslation();
   const verification = usePublicVerification(code);
-  const [auditResult, setAuditResult] = useState<PassportAuditResponse | null>(null);
+  const [auditResult, setAuditResult] = useState<PassportReadiness | null>(null);
   const [loadingAudit, setLoadingAudit] = useState(false);
+  const [auditError, setAuditError] = useState<string | null>(null);
 
   const handleRunAiAudit = async () => {
     if (!code) return;
     setLoadingAudit(true);
+    setAuditError(null);
     try {
-      const res = await aiApi.auditPassport(code);
-      setAuditResult(res);
+      setAuditResult(await aiApi.auditPassport(code, i18n.language.startsWith("en") ? "en" : "vi"));
     } catch (e) {
-      console.error(e);
+      setAuditError(e instanceof Error ? e.message : "Audit failed");
     } finally {
       setLoadingAudit(false);
     }
@@ -126,41 +128,14 @@ export function PublicVerifyPage() {
           loading={loadingAudit}
           onClick={handleRunAiAudit}
         >
-          🤖 {loadingAudit ? "AI is reviewing compliance..." : "Verify with AI Audit Agent"}
+          🤖 {loadingAudit ? "Reviewing compliance..." : "Check passport requirements (AI)"}
         </Button>
       </div>
 
+      {auditError && <p className="rounded-md bg-danger-light p-2 text-xs text-danger-dark">{auditError}</p>}
       {auditResult && (
-        <div className="mt-3 rounded-lg border border-brand/20 bg-brand/5 p-3.5 space-y-2 text-xs">
-          <div className="flex items-center justify-between">
-            <span className="font-bold text-slate-800">EU CBAM AI Readiness Score</span>
-            <Badge variant={auditResult.readinessScore >= 80 ? "success" : "warning"}>
-              {auditResult.readinessScore}/100
-            </Badge>
-          </div>
-          <p className="text-slate-600 italic">&ldquo;{auditResult.overallAssessment}&rdquo;</p>
-
-          <div className="space-y-1.5 pt-1.5">
-            {auditResult.checks.map((chk, i) => (
-              <div key={i} className="rounded bg-white p-2 border border-slate-100">
-                <div className="flex items-center justify-between font-medium">
-                  <span>{chk.title}</span>
-                  <span
-                    className={
-                      chk.status === "PASSED"
-                        ? "text-success font-semibold"
-                        : chk.status === "WARNING"
-                        ? "text-amber-600 font-semibold"
-                        : "text-danger font-semibold"
-                    }
-                  >
-                    {chk.status === "PASSED" ? "✓" : "⚠"} {chk.status}
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-500 mt-0.5">{chk.message}</p>
-              </div>
-            ))}
-          </div>
+        <div className="mt-3 rounded-lg border border-brand/20 bg-brand/5 p-3.5">
+          <PassportReadinessView result={auditResult} lang={lang} />
         </div>
       )}
     </Card>

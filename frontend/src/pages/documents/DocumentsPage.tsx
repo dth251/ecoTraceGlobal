@@ -13,6 +13,9 @@ import { usePermission } from "@/hooks/usePermission";
 import { formatDate } from "@/lib/format";
 import { keys } from "@/queries/keys";
 import { useDocuments } from "@/queries/useDocuments";
+import { AiProcessedDocuments } from "@/pages/documents/AiProcessedDocuments";
+import { PeriodActions } from "@/pages/documents/PeriodActions";
+import { Badge } from "@/components/ui/Badge";
 import type { DocType } from "@/types/domain";
 
 export function DocumentsPage() {
@@ -38,6 +41,8 @@ export function DocumentsPage() {
         <h1 className="text-lg font-bold text-slate-900">{t("documents.title")}</h1>
       </div>
 
+      <PeriodActions />
+
       {canEdit && !isLocked && (
         <Card>
           <div className="mb-3 max-w-xs">
@@ -46,6 +51,8 @@ export function DocumentsPage() {
           <FileDropzone onFilesAccepted={handleFilesAccepted} />
         </Card>
       )}
+
+      <AiProcessedDocuments />
 
       <Card>
         <div className="overflow-x-auto">
@@ -65,13 +72,16 @@ export function DocumentsPage() {
                   <td className="px-3 py-2 font-medium text-slate-900">{doc.fileName}</td>
                   <td className="px-3 py-2 text-slate-600">{t(`documents.types.${doc.docType}`)}</td>
                   <td className="px-3 py-2">
-                    <DocumentStatusBadge status={doc.status} />
+                    <span className="flex items-center gap-1.5">
+                      <DocumentStatusBadge status={doc.status} />
+                      {doc.aiDraft && doc.status === "PENDING_ENTRY" && <Badge variant="info">Bản nháp AI</Badge>}
+                    </span>
                   </td>
                   <td className="px-3 py-2 text-slate-500">{formatDate(doc.uploadedAt, lang)}</td>
                   <td className="px-3 py-2 text-right">
                     <Link to={`/documents/${doc.id}/entry`}>
-                      <Button size="sm" variant="secondary">
-                        {t("common.edit")}
+                      <Button size="sm" variant={doc.status === "PENDING_ENTRY" ? "primary" : "secondary"}>
+                        {doc.status === "PENDING_ENTRY" ? "Xác nhận" : t("common.edit")}
                       </Button>
                     </Link>
                   </td>

@@ -19,6 +19,19 @@ import type { AuthResponse, LoginRequest } from "@/types/domain";
 
 export const BASE: string = import.meta.env.VITE_API_BASE_URL ?? "/api/v1";
 
+const DEMO_READINESS = {
+  decision: "PROVISIONAL",
+  can_issue: true,
+  score: 92,
+  min_score: 85,
+  checks: [],
+  blockers: [],
+  reasons: [],
+  overall_assessment: "Dữ liệu mẫu của chế độ demo (chưa kết nối backend), không phải kết quả kiểm tra thật.",
+  source: "DEMO",
+  mock: true,
+};
+
 /** Trả dữ liệu demo khi chạy giao diện độc lập (chưa bật backend) với token demo */
 function resolveDemoResponse(path: string, init: RequestInit): unknown | undefined {
   const method = (init.method ?? "GET").toUpperCase();
@@ -48,36 +61,7 @@ function resolveDemoResponse(path: string, init: RequestInit): unknown | undefin
   if (path.startsWith("/public/verify/")) {
     return sampleVerification;
   }
-  if (path.startsWith("/ai/passports/") && path.endsWith("/audit")) {
-    return {
-      publicCode: "ET-7KQ2-9XMA",
-      readinessScore: 92,
-      overallAssessment: "Hồ sơ đạt độ tin cậy cao, phương pháp phân bổ MASS và hệ số nguồn hợp lệ theo tiêu chuẩn EU CBAM.",
-      checks: [
-        {
-          code: "SIGNATURE_STATUS",
-          title: "Tính pháp lý chữ ký ECDSA",
-          status: "PASSED",
-          message: "Chữ ký ECDSA P-256 nguyên vẹn, mã SHA-256 khớp tuyệt đối với dữ liệu phát thải gốc.",
-          suggestion: "Đạt chuẩn niêm phong số",
-        },
-        {
-          code: "ACTUAL_DATA_SHARE",
-          title: "Tỷ lệ dữ liệu đo thực tế",
-          status: "PASSED",
-          message: "Tỷ lệ dữ liệu thực tế đạt 72.0% (vượt mức tối thiểu 50% yêu cầu chuyển tiếp CBAM).",
-          suggestion: "Duy trì số liệu từ hóa đơn đo lường trực tiếp",
-        },
-        {
-          code: "CBAM_PRECURSORS",
-          title: "Hạch toán tiền chất thép/nhôm",
-          status: "PASSED",
-          message: "Tiền chất nguyên liệu Scope 3 Cat 1 đã được tính theo hệ số vòng đời sản phẩm.",
-          suggestion: "Yêu cầu nhà cung ứng cung cấp số liệu thực tế để giảm hệ số mặc định",
-        },
-      ],
-    };
-  }
+  if (path.startsWith("/ai/passports/")) return DEMO_READINESS;
   if (path === "/ai/health") {
     return { status: "ok", model: "gemini-2.5-flash", mock_mode: false };
   }
@@ -114,6 +98,7 @@ function resolveDemoResponse(path: string, init: RequestInit): unknown | undefin
     return undefined;
   }
   if (method === "GET") {
+    if (path.includes("/passports/readiness")) return DEMO_READINESS;
     if (path === "/organizations/me") return sampleOrganization;
     if (path === "/facilities") return sampleFacilities;
     if (path.startsWith("/periods") && path.endsWith("/summary")) return sampleSummary;

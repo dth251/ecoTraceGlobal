@@ -105,6 +105,9 @@ export interface DocumentItem {
   activityCount: number;
   uploadedAt: string;
   enteredBy: string | null;
+  rejectReason?: string | null;
+  /** Có bản nháp AI bóc tách đang chờ người dùng xác nhận */
+  aiDraft?: boolean;
 }
 
 export interface ValidationIssue {
@@ -117,6 +120,9 @@ export interface ValidationIssue {
 export interface DocumentEntry {
   documentId: string;
   docType: DocType;
+  fileName?: string;
+  status?: DocumentStatus;
+  aiDraft?: boolean;
   data: Record<string, unknown>;
   issues: ValidationIssue[];
 }

@@ -93,19 +93,35 @@ export interface EstimateResponse {
   disclaimer: string;
 }
 
-export interface PassportAuditCheck {
+export interface ReadinessCheck {
   code: string;
   title: string;
-  status: "PASSED" | "WARNING" | "FAILED";
+  status: "PASSED" | "FAILED";
   message: string;
-  suggestion: string;
+  action: string;
+  weight: number;
+  earned: number;
 }
 
-export interface PassportAuditResponse {
-  publicCode: string;
-  readinessScore: number;
-  overallAssessment: string;
-  checks: PassportAuditCheck[];
+export interface ReadinessReason {
+  code: string;
+  title: string;
+  message: string;
+  action: string;
+}
+
+/** Kết quả xét điều kiện cấp hộ chiếu xanh. `source` cho biết lời nhận xét do AI hay do quy tắc viết; DEMO là dữ liệu mẫu khi chưa có backend. */
+export interface PassportReadiness {
+  decision: "ISSUED" | "PROVISIONAL" | "NOT_ISSUED";
+  can_issue: boolean;
+  score: number;
+  min_score: number;
+  checks: ReadinessCheck[];
+  blockers: string[];
+  reasons: ReadinessReason[];
+  overall_assessment: string;
+  source: "AI" | "RULES" | "DEMO";
+  mock: boolean;
 }
 
 export const aiApi = {
@@ -139,6 +155,7 @@ export const aiApi = {
       body: JSON.stringify({ items, language, max_suggestions: maxSuggestions }),
     }),
 
-  auditPassport: (code: string) => api<PassportAuditResponse>(`/ai/passports/${code}/audit`),
+  auditPassport: (code: string, language = "vi") =>
+    api<PassportReadiness>(`/ai/passports/${encodeURIComponent(code)}/audit?language=${language}`),
 };
 

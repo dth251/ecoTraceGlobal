@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { DatePicker } from "@/components/ui/DatePicker";
 import { Input } from "@/components/ui/Input";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { Select } from "@/components/ui/Select";
@@ -18,8 +19,14 @@ export function BillOfLadingForm({ initialData, disabled, onChange }: BillOfLadi
     typeof initialData?.weightKg === "number" ? initialData.weightKg : null,
   );
 
+  const [distanceKm, setDistanceKm] = useState<number | null>(
+    typeof initialData?.distanceKm === "number" ? initialData.distanceKm : null,
+  );
+  const [date, setDate] = useState(String(initialData?.date ?? ""));
+
+  // Phát thải vận chuyển = tấn × km × hệ số, nên cần cả quãng đường và ngày vận chuyển
   const emit = (patch: Record<string, unknown>) => {
-    onChange({ bolNumber, mode, origin, destination, weightKg, ...patch });
+    onChange({ bolNumber, mode, origin, destination, weightKg, distanceKm, date, ...patch });
   };
 
   return (
@@ -45,6 +52,7 @@ export function BillOfLadingForm({ initialData, disabled, onChange }: BillOfLadi
           { value: "ROAD", label: "Đường bộ" },
           { value: "SEA", label: "Đường biển" },
           { value: "RAIL", label: "Đường sắt" },
+          { value: "AIR", label: "Đường hàng không" },
         ]}
       />
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -67,13 +75,33 @@ export function BillOfLadingForm({ initialData, disabled, onChange }: BillOfLadi
           }}
         />
       </div>
-      <NumberInput
-        label="Khối lượng (kg)"
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <NumberInput
+          label="Khối lượng (kg)"
+          disabled={disabled}
+          value={weightKg}
+          onChange={(val) => {
+            setWeightKg(val);
+            emit({ weightKg: val });
+          }}
+        />
+        <NumberInput
+          label="Quãng đường (km)"
+          disabled={disabled}
+          value={distanceKm}
+          onChange={(val) => {
+            setDistanceKm(val);
+            emit({ distanceKm: val });
+          }}
+        />
+      </div>
+      <DatePicker
+        label="Ngày vận chuyển"
         disabled={disabled}
-        value={weightKg}
-        onChange={(val) => {
-          setWeightKg(val);
-          emit({ weightKg: val });
+        value={date}
+        onChange={(e) => {
+          setDate(e.target.value);
+          emit({ date: e.target.value });
         }}
       />
     </div>
