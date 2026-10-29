@@ -1,0 +1,107 @@
+name: E2E
+
+# Chạy toàn hệ thống trên runner của GitHub (không Docker build, không VPS):
+# PostgreSQL (service của runner) + backend Spring Boot + AI service (FastAPI) + frontend (Vite dev), rồi chạy
+# ai-service/scripts/e2e_full_stack.py.
+#   - Có secret GEMINI_API_KEY -> AI gọi Gemini thật, kiểm tra đúng giá trị của 4 chứng từ mẫu.
+#   - Không có secret          -> AI chạy mock, chỉ kiểm tra cấu trúc/hợp đồng dữ liệu.
+# Chức năng backend chưa cài đặt được ghi là GAP (không làm job đỏ).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "backend/**"
+      - "frontend/**"
+      - "ai-service/**"
+      - ".github/workflows/e2e.yml"
+  pull_request:
+    paths:
+      - "backend/**"
+      - "frontend/**"
+      - "ai-service/**"
+      - ".github/workflows/e2e.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: ecotrace
+          POSTGRES_USER: ecotrace
+          POSTGRES_PASSWORD: change-me
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U ecotrace -d ecotrace"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      MOCK_MODE: ${{ secrets.GEMINI_API_KEY == '' && 'true' || 'false' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: ai-service/requirements.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Khởi động AI service
+        working-directory: ai-service
+        run: |
+          pip install -r requirements.txt
+          nohup python -m uvicorn app.main:app --host 127.0.0.1 --port 8001 > "$RUNNER_TEMP/ai.log" 2>&1 &
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:8001/health && break; sleep 2; done
+          curl -sf http://127.0.0.1:8001/health
+
+      - name: Khởi động backend (Spring Boot + Flyway)
+        working-directory: backend
+        env:
+          DB_URL: jdbc:postgresql://127.0.0.1:5432/ecotrace
+          DB_USER: ecotrace
+          DB_PASSWORD: change-me
+          AI_SERVICE_URL: http://127.0.0.1:8001
+        run: |
+          nohup ./mvnw -B -q -DskipTests spring-boot:run > "$RUNNER_TEMP/backend.log" 2>&1 &
+          for i in $(seq 1 90); do
+            code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/api/v1/ai/health || true)
+            [ "$code" = "401" ] && echo "backend sẵn sàng" && exit 0
+            sleep 4
+          done
+          echo "backend không khởi động được"; tail -n 60 "$RUNNER_TEMP/backend.log"; exit 1
+
+      - name: Khởi động frontend (Vite dev, proxy /api)
+        working-directory: frontend
+        run: |
+          npm ci
+          nohup npm run dev -- --host 127.0.0.1 > "$RUNNER_TEMP/web.log" 2>&1 &
+          for i in $(seq 1 30); do curl -sf -o /dev/null http://127.0.0.1:5173/ && echo "frontend sẵn sàng" && exit 0; sleep 2; done
+          echo "frontend không khởi động được"; tail -n 40 "$RUNNER_TEMP/web.log"; exit 1
+
+      - name: Chạy e2e toàn hệ thống
+        working-directory: ai-service
+        run: python scripts/e2e_full_stack.py
+
+      - name: Log dịch vụ (khi lỗi)
+        if: failure()
+        run: |
+          for f in ai backend web; do echo "===== $f.log ====="; tail -n 80 "$RUNNER_TEMP/$f.log" || true; done
