@@ -16,6 +16,10 @@ class Settings(BaseSettings):
     max_file_mb: int = 10
     review_threshold: float = 0.7
     cache_enabled: bool = True
+    # Ngưỡng cấp hộ chiếu xanh (đề xuất cho demo, chưa phải quy định chính thức, chỉnh qua biến môi trường)
+    passport_min_actual_share: float = 0.8
+    passport_min_score: int = 85
+    passport_allocation_tolerance_pct: float = 1.0
     database_url: str = f"sqlite:///{DEFAULT_DATA_DIR.as_posix()}/ai_service.db"
 
 

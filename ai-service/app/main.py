@@ -32,8 +32,10 @@ from app.schemas import (
     HistoryStatsResponse,
     OptimizeRequest,
     OptimizeResponse,
+    PassportReadiness,
+    ReadinessSnapshot,
 )
-from app.services import classification, optimization
+from app.services import classification, optimization, passport
 from app.services.extraction import ExtractionInputError, extract_invoice
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -109,6 +111,12 @@ def classify(req: ClassifyRequest):
 @app.post("/ai/optimize", response_model=OptimizeResponse)
 def optimize(req: OptimizeRequest):
     return optimization.optimize(req)
+
+
+@app.post("/ai/passport-readiness", response_model=PassportReadiness)
+def passport_readiness(snapshot: ReadinessSnapshot):
+    """Kiểm tra điều kiện cấp hộ chiếu xanh: quy tắc quyết định, AI chỉ viết nhận xét."""
+    return passport.assess(snapshot)
 
 
 ESTIMATE_DISCLAIMER = ("Ước tính theo hệ số phát thải và bảng quãng đường THAM KHẢO của bản demo, chưa phải số chính thức. "

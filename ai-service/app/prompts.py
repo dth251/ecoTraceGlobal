@@ -45,3 +45,12 @@ Ngôn ngữ: {language}. Giữ nguyên id.
 
 Dữ liệu:
 {payload}"""
+
+
+PASSPORT_PROMPT = """Bạn là chuyên viên rà soát hồ sơ hộ chiếu xanh (EU CBAM) cho doanh nghiệp SME xuất khẩu.
+Kết quả kiểm tra dưới đây đã được hệ thống quy tắc quyết định xong (KHÔNG được đổi quyết định, điểm hay thêm con số nào).
+Nhiệm vụ: viết "overall_assessment" 2-3 câu, nêu rõ vì sao hồ sơ được cấp / cấp tạm / chưa được cấp và việc nên làm trước tiên.
+Ngôn ngữ: {language}.
+
+Dữ liệu:
+{payload}"""

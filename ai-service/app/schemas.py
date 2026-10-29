@@ -283,3 +283,61 @@ class EstimateResponse(BaseModel):
     calculated: int
     optimization: OptimizeResponse
     disclaimer: str
+
+
+# ---------- Điều kiện cấp hộ chiếu xanh ----------
+
+class ReadinessSnapshot(BaseModel):
+    """Ảnh chụp dữ liệu của kỳ + sản phẩm do backend dựng. Trường None nghĩa là backend chưa có dữ liệu, tính là chưa đạt."""
+    period_locked: Optional[bool] = None
+    documents_pending: Optional[int] = None
+    documents_rejected: Optional[int] = None
+    activities_total: Optional[int] = None
+    activities_without_factor: Optional[int] = None
+    months_expected: Optional[int] = None
+    months_covered: Optional[int] = None  # số tháng có đủ dữ liệu Scope 1 và 2
+    precursors_required: Optional[bool] = None
+    precursors_covered: Optional[bool] = None
+    actual_data_share: Optional[float] = None  # 0..1
+    unconfirmed_ai_records: Optional[int] = None
+    records_without_source: Optional[int] = None
+    production_output_present: Optional[bool] = None
+    allocation_method: Optional[str] = None
+    allocation_error_pct: Optional[float] = None
+    unresolved_anomalies: Optional[int] = None
+    stage: str = "ISSUED"  # PRE_ISSUE: chưa cấp nên chưa có chữ ký; ISSUED: hộ chiếu đã cấp, phải có chữ ký hợp lệ
+    signature_valid: Optional[bool] = None
+    revoked: bool = False
+    verification: Optional[str] = None  # SELF_DECLARED | VERIFIED
+    verifier_name: Optional[str] = None
+    language: str = "vi"
+
+
+class ReadinessCheck(BaseModel):
+    code: str
+    title: str
+    status: str  # PASSED | FAILED
+    message: str
+    action: str = ""
+    weight: int
+    earned: float
+
+
+class ReadinessReason(BaseModel):
+    code: str
+    title: str
+    message: str
+    action: str
+
+
+class PassportReadiness(BaseModel):
+    decision: str  # ISSUED | PROVISIONAL | NOT_ISSUED
+    can_issue: bool
+    score: int
+    min_score: int
+    checks: list[ReadinessCheck]
+    blockers: list[str]
+    reasons: list[ReadinessReason]
+    overall_assessment: str
+    source: str  # AI | RULES
+    mock: bool = False

@@ -71,6 +71,7 @@ Xác nhận & chỉnh sửa (sửa dữ liệu rồi tính lại), Inventory, G�
 | POST | `/ai/extract-invoice` | multipart: `file` (PDF/PNG/JPG/WEBP), `doc_type` tùy chọn (tự động lưu vào CSDL) |
 | POST | `/ai/classify-activity` | `{description, unit?, activity_type?}` -> scope, factor_code (lưu CSDL) |
 | POST | `/ai/optimize` | tổng hợp inventory theo factor_code -> gợi ý |
+| POST | `/ai/passport-readiness` | Ảnh chụp dữ liệu kỳ + sản phẩm (backend dựng; trường null = chưa có dữ liệu = chưa đạt) -> 8 điều kiện bắt buộc, điểm so với ngưỡng, quyết định ISSUED / PROVISIONAL / NOT_ISSUED, lý do và việc cần làm. Quy tắc quyết định, Gemini chỉ viết lời nhận xét. Ngưỡng chỉnh qua `PASSPORT_MIN_ACTUAL_SHARE` (0.8), `PASSPORT_MIN_SCORE` (85), `PASSPORT_ALLOCATION_TOLERANCE_PCT` (1) |
 | POST | `/ai/estimate` | `{items:[{name, data}]}` (khối `data` của extract) -> tổng CO2e theo Scope 1/2/3, từng chứng từ, gợi ý tối ưu; hệ số tham khảo của bản demo (giao diện Trợ lý AI dùng khi chọn nhiều chứng từ) |
 | POST | `/ai/pipeline/run` | multipart nhiều `files` -> toàn bộ luồng (chỉ để demo) |
 | GET | `/ai/history/extractions` | Danh sách lịch sử bóc tách chứng từ trong CSDL |
