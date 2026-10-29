@@ -179,3 +179,13 @@ def test_generic_material_and_other_need_review():
     assert d.factor_code == "MAT_GENERIC" and "factor_code" in d.review_fields
     o = build_result(RawExtraction(activity_type=ActivityType.OTHER, description="Hóa đơn tiền nước"))
     assert o.needs_review and "activity_type" in o.review_fields
+
+
+def test_classify_description_only_diesel_for_generator_is_not_grid_electricity():
+    # Lỗi bắt được bởi e2e: không có activity_type, "máy phát điện" làm ELEC_GRID thắng "diesel"
+    for text, code in [("Dầu diesel DO 0,05S cho máy phát điện", "FUEL_DIESEL"),
+                       ("Xăng cho xe và máy phát điện", "FUEL_PETROL"),
+                       ("Tiền điện tháng 5, 12.000 kWh", "ELEC_GRID"),
+                       ("Hóa đơn điện EVN", "ELEC_GRID")]:
+        r = client.post("/ai/classify-activity", json={"description": text}).json()
+        assert r["factor_code"] == code, (text, r)

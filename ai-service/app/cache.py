@@ -11,7 +11,7 @@ log = logging.getLogger("ai.cache")
 
 CACHE_DIR = Path(__file__).resolve().parent.parent / ".cache"
 # Tăng khi đổi prompt, schema hoặc hậu xử lý để bỏ qua cache cũ
-PROMPT_VERSION = "v6"
+PROMPT_VERSION = "v7"
 
 
 def file_key(file_bytes: bytes, doc_type_hint: Optional[str]) -> str:

@@ -2,7 +2,9 @@
 from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
+
+from app.factors import FACTOR_SCOPE, activity_value_of_code, resolve_inventory_key
 
 
 class ActivityType(str, Enum):
@@ -31,6 +33,7 @@ class RawExtraction(BaseModel):
     supplier: Optional[str] = None
     invoice_date: Optional[str] = Field(None, description="YYYY-MM-DD")
     invoice_series: Optional[str] = Field(None, description="Ký hiệu hóa đơn, ví dụ 1C25TAA")
+    invoice_no: Optional[str] = Field(None, description="Số hóa đơn / số vận đơn, ví dụ 0004521")
     description: Optional[str] = None
     quantity: Optional[float] = None
     unit: Optional[str] = None
@@ -57,6 +60,7 @@ class ExtractedInvoice(BaseModel):
     supplier: Optional[str] = None
     invoice_date: Optional[str] = None
     invoice_series: Optional[str] = None
+    invoice_no: Optional[str] = None
     description: Optional[str] = None
     quantity: Optional[float] = None
     unit: Optional[str] = None
@@ -75,10 +79,28 @@ class ExtractedInvoice(BaseModel):
     review_fields: list[str] = []
 
 
+class LineItem(BaseModel):
+    """Dòng hàng theo hợp đồng của backend/frontend (AiDtos.LineItem)."""
+    description: Optional[str] = None
+    quantity: Optional[float] = None
+    unit: Optional[str] = None
+    factor_code: Optional[str] = None
+    confidence: Optional[float] = None
+
+
 class ExtractionResponse(BaseModel):
     status: str = "OK"  # OK | NEEDS_REVIEW
     mock: bool = False
     data: ExtractedInvoice
+    # --- Trường tương thích với backend/frontend (AiDtos.ExtractionResponse), được điền từ `data` ---
+    doc_type: Optional[str] = None  # ELECTRICITY_BILL | FUEL_INVOICE | MATERIAL_INVOICE | BILL_OF_LADING | OTHER
+    supplier_name: Optional[str] = None
+    invoice_no: Optional[str] = None
+    invoice_date: Optional[str] = None
+    total_amount: Optional[float] = None
+    currency: Optional[str] = None
+    lines: list[LineItem] = []
+    overall_confidence: Optional[float] = None  # 0..1; không vượt 0.79 khi còn trường cần xem lại
 
 
 # ---------- /ai/classify-activity ----------
@@ -93,6 +115,9 @@ class ClassifyResponse(BaseModel):
     scope: Optional[int]
     factor_code: Optional[str]
     method: str  # RULE | LLM | NONE
+    # Tương thích backend/frontend (AiDtos.ClassifyResponse)
+    confidence: Optional[float] = None
+    reasoning: Optional[str] = None
 
 
 # ---------- /ai/optimize ----------
@@ -114,8 +139,24 @@ class OptimizeRequest(BaseModel):
     period: Optional[str] = None
     language: str = "vi"  # vi | en
     max_suggestions: int = Field(5, ge=1, le=10)
-    sources: list[EmissionSource]
+    sources: list[EmissionSource] = []
     monthly_trend: list[MonthlyPoint] = []
+    # Dạng đầu vào của backend (AiDtos.OptimizeRequest): {mã hoặc nhóm: kg CO2e}; dùng khi không có `sources`
+    inventory_summary: Optional[dict[str, float]] = None
+
+    @model_validator(mode="after")
+    def _sources_from_inventory(self):
+        if not self.sources and self.inventory_summary:
+            merged: dict[str, float] = {}
+            for key, kg in self.inventory_summary.items():
+                code = resolve_inventory_key(key) or key.strip().upper()
+                merged[code] = merged.get(code, 0.0) + float(kg)
+            self.sources = [
+                EmissionSource(factor_code=code, activity_type=ActivityType(activity_value_of_code(code)),
+                               scope=FACTOR_SCOPE.get(code, 3), co2e_kg=kg)
+                for code, kg in merged.items() if kg > 0
+            ]
+        return self
 
 
 class Suggestion(BaseModel):
@@ -129,12 +170,18 @@ class Suggestion(BaseModel):
     rationale: str
     evidence: str
     steps: list[str]
+    # Tương thích backend/frontend (AiDtos.SuggestionItem)
+    description: Optional[str] = None
+    target_factor_code: Optional[str] = None
+    reduction_potential_pct: Optional[float] = None
+    difficulty: Optional[str] = None  # thấp | trung bình | cao (vi) / low | medium | high (en)
 
 
 class OptimizeResponse(BaseModel):
     mock: bool = False
     total_co2e_kg: float
     suggestions: list[Suggestion]
+    summary: str = ""
 
 
 # ---------- Đầu ra thô của Gemini cho phần tối ưu ----------

@@ -78,6 +78,17 @@ Xác nhận & chỉnh sửa (sửa dữ liệu rồi tính lại), Inventory, G�
 | POST | `/ai/feedback` | Tiếp nhận phản hồi & chỉnh sửa của kiểm toán viên |
 | GET | `/health` | Trạng thái server & kết nối CSDL |
 
+## Hợp đồng với backend/frontend
+Phản hồi giữ nguyên khối `data` gốc và **thêm** các trường mà backend (`AiDtos.java`) và frontend (`api/ai.ts`) đang chờ:
+- `/ai/extract-invoice`: thêm `doc_type`, `supplier_name`, `invoice_no`, `invoice_date`, `total_amount`, `currency`, `lines[]`, `overall_confidence`
+  (0..1, không vượt 0,79 khi còn trường cần xem lại).
+- `/ai/optimize`: nhận cả `sources[]` và `inventory_summary` (map mã/nhóm -> kg CO2e); mỗi gợi ý thêm `description`,
+  `target_factor_code`, `reduction_potential_pct`, `difficulty`; phản hồi thêm `summary`.
+- `/ai/classify-activity`: thêm `confidence`, `reasoning`.
+
+`tests/test_contract.py` đọc thẳng `AiDtos.java` và `ai.ts` để phát hiện lệch tên trường (nếu thiếu, backend sẽ trả `{}` âm thầm).
+E2E toàn hệ thống: `scripts/e2e_full_stack.py` (cần frontend, backend, PostgreSQL và AI service đang chạy).
+
 ## Phạm vi và mã hệ số
 - Scope 1: `FUEL_*`; Scope 2: `ELEC_GRID`; Scope 3: `MAT_*` (nguyên liệu), `FREIGHT_*` (cước vận chuyển).
 - AI chỉ trả **mã** `factor_code`; giá trị hệ số và phép tính CO2e chính thức do backend làm.

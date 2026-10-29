@@ -40,6 +40,14 @@ RULES = [
 ]
 
 
+# Độ khó triển khai theo từng gợi ý (vi, en)
+DIFFICULTY = {
+    "solar_rooftop": ("trung bình", "medium"), "energy_efficiency": ("thấp", "low"), "fuel_switch": ("cao", "high"),
+    "consolidate_road": ("thấp", "low"), "air_to_sea": ("cao", "high"), "optimise_sea": ("thấp", "low"),
+    "recycled_material": ("trung bình", "medium"),
+}
+
+
 def _priority(share: float) -> str:
     return "HIGH" if share >= 0.3 else "MEDIUM" if share >= 0.1 else "LOW"
 
@@ -65,8 +73,10 @@ def build_candidates(req: OptimizeRequest) -> tuple[float, list[Suggestion]]:
             if en else
             f"Nhóm {prefix.rstrip('_')} phát thải {src:,.0f} kg CO2e ({share:.0%} tổng)"
         )
+        target = max((k for k in by_code if k.startswith(prefix)), key=by_code.get)
         out.append(Suggestion(
             id=sid, title=title_en if en else title_vi, category=cat, priority=_priority(share),
+            target_factor_code=target, difficulty=DIFFICULTY[sid][1 if en else 0],
             estimated_reduction_kg=round(reduction, 1),
             estimated_reduction_pct=round(reduction / total * 100, 1),
             estimated_cost_usd=round(reduction / 1000 * usd_per_t, 0),
@@ -95,6 +105,17 @@ def _enrich_with_llm(req: OptimizeRequest, items: list[Suggestion]) -> list[Sugg
     return items
 
 
+def _summary(total: float, items: list[Suggestion], language: str) -> str:
+    if not items:
+        return "No emission data to analyse." if language == "en" else "Chưa có dữ liệu phát thải để phân tích."
+    top = items[0]
+    if language == "en":
+        return (f"Total {total:,.0f} kg CO2e. Highest-impact action: {top.title} "
+                f"(about -{top.estimated_reduction_pct}% of total).")
+    return (f"Tổng phát thải {total:,.0f} kg CO2e. Ưu tiên: {top.title} "
+            f"(giảm khoảng {top.estimated_reduction_pct}% tổng phát thải).")
+
+
 def optimize(req: OptimizeRequest) -> OptimizeResponse:
     total, items = build_candidates(req)
     mock = settings.mock_mode or not settings.gemini_api_key
@@ -103,4 +124,8 @@ def optimize(req: OptimizeRequest) -> OptimizeResponse:
             items = _enrich_with_llm(req, items)
         except GeminiError as e:
             log.warning("LLM diễn giải lỗi, dùng văn bản quy tắc: %s", e)
-    return OptimizeResponse(mock=mock, total_co2e_kg=round(total, 1), suggestions=items)
+    for s in items:  # trường tương thích backend/frontend, điền SAU khi LLM viết lại để description khớp rationale
+        s.description = s.rationale
+        s.reduction_potential_pct = s.estimated_reduction_pct
+    return OptimizeResponse(mock=mock, total_co2e_kg=round(total, 1), suggestions=items,
+                            summary=_summary(total, items, req.language))

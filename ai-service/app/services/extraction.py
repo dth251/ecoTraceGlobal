@@ -20,6 +20,7 @@ from app.schemas import (
     ActivityType,
     ExtractedInvoice,
     ExtractionResponse,
+    LineItem,
     RawExtraction,
 )
 from app.services.classification import classify_by_rule
@@ -131,7 +132,7 @@ def build_result(raw: RawExtraction) -> ExtractedInvoice:
     data = ExtractedInvoice(
         activity_type=raw.activity_type, scope=scope, factor_code=code,
         supplier=raw.supplier, invoice_date=normalize_date(raw.invoice_date),
-        invoice_series=raw.invoice_series,
+        invoice_series=raw.invoice_series, invoice_no=raw.invoice_no,
         description=raw.description, quantity=qty, unit=unit,
         unit_price=raw.unit_price, line_amount=raw.line_amount,
         amount=raw.amount, currency=normalize_currency(raw.currency),
@@ -158,6 +159,45 @@ def build_result(raw: RawExtraction) -> ExtractedInvoice:
     return data
 
 
+DOC_TYPE_COMPAT = {
+    ActivityType.ELECTRICITY: "ELECTRICITY_BILL", ActivityType.FUEL: "FUEL_INVOICE",
+    ActivityType.MATERIAL: "MATERIAL_INVOICE", ActivityType.FREIGHT: "BILL_OF_LADING", ActivityType.OTHER: "OTHER",
+}
+REVIEW_CONFIDENCE_CAP = 0.79  # trần độ tin cậy tổng thể khi còn trường cần xem lại (giao diện coi >0.8 là "tốt")
+
+
+def overall_confidence(d: ExtractedInvoice) -> float:
+    """Mức thấp nhất trong các trường quan trọng (không lấy trung bình để không báo cao giả).
+    Đánh giá cho thấy confidence do LLM tự báo không đáng tin, nên bị chặn trần khi các kiểm tra xác định gắn cờ."""
+    values = [d.confidence[f] for f in REQUIRED[d.activity_type] if f in d.confidence] or list(d.confidence.values())
+    overall = min(values) if values else 0.0
+    if d.needs_review:
+        overall = min(overall, REVIEW_CONFIDENCE_CAP)
+    return round(overall, 2)
+
+
+def add_compat_fields(resp: ExtractionResponse) -> ExtractionResponse:
+    """Điền các trường cấp ngoài mà backend/frontend đang chờ (AiDtos.ExtractionResponse) từ `data`."""
+    d = resp.data
+    overall = overall_confidence(d)
+    freight = d.activity_type == ActivityType.FREIGHT
+    resp.doc_type = DOC_TYPE_COMPAT[d.activity_type]
+    resp.supplier_name = d.supplier
+    resp.invoice_no = d.invoice_no
+    resp.invoice_date = d.invoice_date
+    resp.total_amount = d.amount
+    resp.currency = d.currency
+    resp.overall_confidence = overall
+    if d.activity_type == ActivityType.OTHER:
+        resp.lines = []
+    else:
+        resp.lines = [LineItem(
+            description=d.description or (f"{d.origin} -> {d.destination}" if freight and d.origin else None),
+            quantity=d.weight_kg if freight else d.quantity, unit="kg" if freight else d.unit,
+            factor_code=d.factor_code, confidence=overall)]
+    return resp
+
+
 def extract_invoice(
     file_bytes: bytes, mime_type: str, doc_type_hint: Optional[str] = None
 ) -> ExtractionResponse:
@@ -168,13 +208,13 @@ def extract_invoice(
 
     if settings.mock_mode or not settings.gemini_api_key:
         act = ActivityType(doc_type_hint) if doc_type_hint in ActivityType._value2member_map_ else ActivityType.ELECTRICITY
-        return ExtractionResponse(status="OK", mock=True, data=mock_extraction(act))
+        return add_compat_fields(ExtractionResponse(status="OK", mock=True, data=mock_extraction(act)))
 
     key = cache.file_key(file_bytes, doc_type_hint)
     cached = cache.get(key)
     if cached:
         log.info("Cache hit %s", key[-12:])
-        return ExtractionResponse.model_validate(cached)
+        return add_compat_fields(ExtractionResponse.model_validate(cached))
 
     hint = f"\nGợi ý từ người dùng: loại tài liệu có thể là {doc_type_hint}." if doc_type_hint else ""
     raw = generate_structured(
@@ -182,8 +222,8 @@ def extract_invoice(
         file_bytes=file_bytes, mime_type=mime_type,
     )
     data = build_result(raw)
-    result = ExtractionResponse(
+    result = add_compat_fields(ExtractionResponse(
         status="NEEDS_REVIEW" if data.needs_review else "OK", mock=False, data=data
-    )
+    ))
     cache.put(key, result.model_dump(mode="json"))
     return result

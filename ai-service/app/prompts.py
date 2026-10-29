@@ -16,6 +16,7 @@ Quy tắc:
   nhãn song ngữ Việt-Anh: "45.170" kWh = 45170, "1.968" đồng/kWh = 1968. Chỉ chứng từ hoàn toàn tiếng Anh mới dùng quy ước Anh.
 - invoice_date dạng YYYY-MM-DD: ngày lập/phát hành chứng từ (không phải ngày đầu/cuối kỳ).
 - invoice_series: "Ký hiệu" của hóa đơn điện tử (ví dụ 1C25TAA), nếu có.
+- invoice_no: "Số" của hóa đơn (ví dụ 0004521) hoặc số vận đơn B/L, AWB; không phải mã số thuế, mã tra cứu hay mã CQT.
 - description, quantity, unit, unit_price, line_amount: của DÒNG HÀNG CHÍNH (điện/nhiên liệu/nguyên liệu).
   Bỏ qua các dòng thuế, phí, cước phụ đi kèm. Giữ đơn vị như trên tài liệu.
   Điện: quantity là TỔNG điện năng tiêu thụ, KHÔNG phải chỉ số công tơ cũ/mới.

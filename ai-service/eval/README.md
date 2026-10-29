@@ -59,6 +59,8 @@ Tạo thư mục (vd. `eval/dataset_real/`) gồm các file và `labels.json` c�
 xuyên từ trang sau, nhiều tờ chồng lên nhau); nội dung vẫn là 3 mẫu hư cấu đã dùng khi chỉnh prompt, nên không đo được
 khả năng đọc mẫu hóa đơn mới.
 
+| Prompt v7 (thêm `invoice_no`), 3 bộ | 36 / 54 / 6 | 100% / 98,1% / 100% | 0% | 100% (1/1 ở held-out) | 0% / 1,1% / 0% |
+
 Tổng hợp prompt v6: 180 lượt chấm, 98,9% đúng (khoảng tin cậy 95%: 96,0–99,7%), 0 lỗi lọt.
 
 ## Độ tin cậy của kết quả này
