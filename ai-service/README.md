@@ -71,6 +71,7 @@ Xác nhận & chỉnh sửa (sửa dữ liệu rồi tính lại), Inventory, G�
 | POST | `/ai/extract-invoice` | multipart: `file` (PDF/PNG/JPG/WEBP), `doc_type` tùy chọn (tự động lưu vào CSDL) |
 | POST | `/ai/classify-activity` | `{description, unit?, activity_type?}` -> scope, factor_code (lưu CSDL) |
 | POST | `/ai/optimize` | tổng hợp inventory theo factor_code -> gợi ý |
+| POST | `/ai/estimate` | `{items:[{name, data}]}` (khối `data` của extract) -> tổng CO2e theo Scope 1/2/3, từng chứng từ, gợi ý tối ưu; hệ số tham khảo của bản demo (giao diện Trợ lý AI dùng khi chọn nhiều chứng từ) |
 | POST | `/ai/pipeline/run` | multipart nhiều `files` -> toàn bộ luồng (chỉ để demo) |
 | GET | `/ai/history/extractions` | Danh sách lịch sử bóc tách chứng từ trong CSDL |
 | GET | `/ai/history/extractions/{id}`| Chi tiết 1 bản ghi bóc tách và phản hồi audit |

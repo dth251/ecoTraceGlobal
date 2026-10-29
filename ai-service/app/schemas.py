@@ -244,3 +244,42 @@ class HistoryStatsResponse(BaseModel):
     average_latency_ms: float
     total_feedbacks: int
     positive_feedback_rate_pct: float
+
+
+# ---------- /ai/estimate: ước tính CO2e cho cả lô chứng từ đã bóc tách ----------
+class EstimateItem(BaseModel):
+    name: str  # định danh do client đặt (vd. id chứng từ), được trả lại nguyên vẹn để đối chiếu
+    data: ExtractedInvoice  # chính là khối `data` của /ai/extract-invoice
+
+
+class EstimateRequest(BaseModel):
+    items: list[EstimateItem]
+    language: str = "vi"  # vi | en
+    max_suggestions: int = Field(5, ge=1, le=10)
+
+
+class EstimateDocument(BaseModel):
+    name: str
+    activity_type: ActivityType
+    scope: Optional[int] = None
+    factor_code: Optional[str] = None
+    co2e_kg: Optional[float] = None
+    status: str  # CALCULATED | MISSING_DATA | UNIT_MISMATCH | NO_FACTOR
+    formula: Optional[str] = None
+    note: Optional[str] = None
+    factor_value: Optional[float] = None
+    factor_unit: Optional[str] = None
+    factor_source: Optional[str] = None
+    distance_km_used: Optional[float] = None
+    needs_review: bool = False
+    review_fields: list[str] = []
+
+
+class EstimateResponse(BaseModel):
+    total_co2e_kg: float
+    by_scope: dict[str, float]  # "1" | "2" | "3" -> kg CO2e
+    by_factor: dict[str, float]
+    documents: list[EstimateDocument]
+    calculated: int
+    optimization: OptimizeResponse
+    disclaimer: str

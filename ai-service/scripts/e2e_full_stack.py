@@ -102,11 +102,25 @@ def main():
                                                    f"tin cậy={j.get('overall_confidence')}")
 
     print("C. AI service gọi TRỰC TIẾP (đối chứng)")
+    extracted: dict[str, dict] = {}
     for act, code, qty, amount, fname in CASES:
         r = extract(ai + "/ai/extract-invoice", SAMPLES / fname, act)
         j = body(r)
+        extracted[act] = j.get("data") or {}
         ok, detail = good(j, act, code, qty, amount)
         check(f"AI trả đúng {act}", r.status_code == 200 and ok, f"HTTP {r.status_code}; {detail}")
+    # Tổng hợp cả lô 4 chứng từ (điều giao diện làm khi người dùng chọn nhiều file): tổng CO2e theo Scope 1/2/3
+    r = c.post(ai + "/ai/estimate", json={"items": [{"name": act, "data": d} for act, d in extracted.items()]})
+    est = body(r)
+    by = est.get("by_scope") or {}
+    ok = (r.status_code == 200 and est.get("calculated") == len(CASES) and all((by.get(k) or 0) > 0 for k in "123")
+          and abs(sum(by.values()) - est.get("total_co2e_kg", 0)) < 1 and bool(est.get("optimization", {}).get("suggestions")))
+    if not mock:  # 2.355,72 + 49.684,8 + 88.500 + 295 (hệ số tham khảo của bản demo)
+        ok = ok and abs(est.get("total_co2e_kg", 0) - 140835.52) < 5
+    check("AI tổng hợp 4 chứng từ thành tổng CO2e theo Scope 1/2/3 kèm gợi ý", ok, f"HTTP {r.status_code}; tổng={est.get('total_co2e_kg')}; theo scope={by}")
+    r = c.post(ai + "/ai/estimate", json={"items": [{"name": act, "data": d} for act, d in extracted.items() if act in ("ELECTRICITY", "FUEL")]})
+    by = body(r).get("by_scope") or {}
+    check("Thiếu một Scope vẫn tính được (Scope 3 = 0)", r.status_code == 200 and by.get("3") == 0 and (by.get("1") or 0) > 0 and (by.get("2") or 0) > 0, f"theo scope={by}")
     r = c.post(ai + "/ai/optimize", json={"inventory_summary": {"ELECTRICITY": 8000, "STATIONARY_FUEL": 2000, "UPSTREAM_TRANSPORT": 1000},
                                           "language": "vi", "max_suggestions": 3})
     j = body(r)
