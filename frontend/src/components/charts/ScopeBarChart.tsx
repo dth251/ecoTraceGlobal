@@ -12,7 +12,7 @@ export function ScopeBarChart({ scope1Kg, scope2Kg, scope3Kg }: ScopeBarChartPro
   const data = [
     { name: "Scope 1", tco2e: scope1Kg / 1000, fill: "#e8590c" },
     { name: "Scope 2", tco2e: scope2Kg / 1000, fill: "#1c7ed6" },
-    { name: "Scope 3", tco2e: scope3Kg / 1000, fill: "#7048e8" },
+    { name: "Scope 3", tco2e: scope3Kg / 1000, fill: "#0e7490" },
   ];
 
   return (

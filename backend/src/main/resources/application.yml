@@ -67,6 +67,7 @@ app:
     secret-key: ${S3_SECRET_KEY:change-me}
     path-style-access: true
     presigned-url-ttl: PT5M       # URL ký tạm thời 5 phút (mục 12)
+    local-dir: ${STORAGE_LOCAL_DIR:}  # Đặt giá trị để lưu file trên đĩa thay vì S3/MinIO
   passport:
     signing-key-path: ${PASSPORT_SIGNING_KEY_PATH:}
     public-verify-base-url: ${PUBLIC_VERIFY_BASE_URL:http://localhost:5173/verify}

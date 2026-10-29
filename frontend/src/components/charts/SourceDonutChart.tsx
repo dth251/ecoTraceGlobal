@@ -1,6 +1,6 @@
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
-const COLORS = ["#027a48", "#1c7ed6", "#e8590c", "#7048e8", "#d97706", "#64748b"];
+const COLORS = ["#027a48", "#1c7ed6", "#e8590c", "#0e7490", "#d97706", "#64748b"];
 
 export interface SourceDonutItem {
   category: string;

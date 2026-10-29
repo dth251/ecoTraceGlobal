@@ -45,6 +45,18 @@ public class ProductFootprint extends BaseEntity {
     protected ProductFootprint() {
     }
 
+    public ProductFootprint(UUID periodId, UUID productId, BigDecimal directCo2ePerUnit,
+                            BigDecimal indirectCo2ePerUnit, BigDecimal precursorCo2ePerUnit,
+                            BigDecimal actualDataShare) {
+        this.periodId = periodId;
+        this.productId = productId;
+        this.directCo2ePerUnit = directCo2ePerUnit;
+        this.indirectCo2ePerUnit = indirectCo2ePerUnit;
+        this.precursorCo2ePerUnit = precursorCo2ePerUnit;
+        this.totalCo2ePerUnit = directCo2ePerUnit.add(indirectCo2ePerUnit).add(precursorCo2ePerUnit);
+        this.actualDataShare = actualDataShare;
+    }
+
     @PrePersist
     void onCalc() {
         if (calculatedAt == null) calculatedAt = Instant.now();

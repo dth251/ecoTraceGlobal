@@ -24,7 +24,8 @@ public class StorageConfig {
             String accessKey,
             String secretKey,
             boolean pathStyleAccess,
-            Duration presignedUrlTtl) {
+            Duration presignedUrlTtl,
+            String localDir) {
     }
 
     @Bean

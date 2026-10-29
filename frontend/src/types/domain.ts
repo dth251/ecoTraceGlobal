@@ -117,8 +117,11 @@ export interface ValidationIssue {
 export interface DocumentEntry {
   documentId: string;
   docType: DocType;
+  fileName?: string;
+  status?: DocumentStatus;
   data: Record<string, unknown>;
   issues: ValidationIssue[];
+  activities?: Activity[];
 }
 
 export type ImportTemplateType = "ELECTRICITY" | "FUEL" | "MATERIAL" | "TRANSPORT" | "PRODUCTION";
@@ -155,6 +158,7 @@ export interface Activity {
   co2eKg: number | null;
   documentId: string | null;
   note: string | null;
+  entryMethod?: "MANUAL" | "DOCUMENT" | "IMPORT";
 }
 
 export interface ActivityFilters {

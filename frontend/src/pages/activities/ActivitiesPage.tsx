@@ -2,13 +2,15 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { activitiesApi } from "@/api/activities";
+import { Co2eValue } from "@/components/emissions/Co2eValue";
 import { ScopeTag } from "@/components/emissions/ScopeTag";
-import { TraceabilityPopover } from "@/components/emissions/TraceabilityPopover";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { ErrorState } from "@/components/ui/ErrorState";
 import { useCurrentContext } from "@/hooks/useCurrentContext";
 import { usePermission } from "@/hooks/usePermission";
 import { formatDate, formatNumber } from "@/lib/format";
+import { unitLabel } from "@/lib/units";
 import { ActivityFormDialog } from "@/pages/activities/ActivityFormDialog";
 import { keys } from "@/queries/keys";
 
@@ -25,56 +27,66 @@ export function ActivitiesPage() {
     queryFn: () => activitiesApi.list(periodId!),
     enabled: !!periodId,
   });
+  const rows = activities.data ?? [];
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-lg font-bold text-slate-900">{t("activities.title")}</h1>
-        {canEdit && !isLocked && periodId && (
-          <Button size="sm" onClick={() => setDialogOpen(true)}>
-            + {t("activities.addManual")}
-          </Button>
-        )}
+    <div className="space-y-6">
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="text-2xl font-bold text-ink">{t("activities.title")}</h1>
+        {canEdit && !isLocked && periodId && <Button onClick={() => setDialogOpen(true)}>{t("activities.addManual")}</Button>}
       </div>
 
-      <Card>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-200 text-xs">
-            <thead className="bg-slate-50 text-left font-semibold uppercase text-slate-600">
-              <tr>
-                <th className="px-3 py-2">Date</th>
-                <th className="px-3 py-2">Category</th>
-                <th className="px-3 py-2">Scope</th>
-                <th className="px-3 py-2">Quantity</th>
-                <th className="px-3 py-2">Emissions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {(activities.data ?? []).map((act) => (
-                <tr key={act.id}>
-                  <td className="px-3 py-2">{formatDate(act.activityDate, lang)}</td>
-                  <td className="px-3 py-2 font-medium">{act.category}</td>
-                  <td className="px-3 py-2">
-                    <ScopeTag scope={act.scope} />
-                  </td>
-                  <td className="px-3 py-2 tabular-nums">
-                    {formatNumber(act.quantity, lang)} {act.unit}
-                  </td>
-                  <td className="px-3 py-2">
-                    <TraceabilityPopover co2eKg={act.co2eKg} />
-                  </td>
-                </tr>
-              ))}
-              {(activities.data ?? []).length === 0 && (
+      <Card className="p-0">
+        {activities.isError ? (
+          <ErrorState onRetry={() => void activities.refetch()} />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm">
+              <thead className="text-left text-xs font-semibold text-slate-600">
                 <tr>
-                  <td colSpan={5} className="px-3 py-6 text-center text-slate-500">
-                    {t("common.empty")}
-                  </td>
+                  <th className="px-5 py-3">{t("activities.date")}</th>
+                  <th className="px-5 py-3">{t("activities.category")}</th>
+                  <th className="px-5 py-3">{t("activities.scope")}</th>
+                  <th className="px-5 py-3 text-right">{t("activities.quantity")}</th>
+                  <th className="px-5 py-3 text-right">{t("activities.emissions")}</th>
+                  <th className="px-5 py-3">{t("activities.source")}</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {rows.map((act) => (
+                  <tr key={act.id} className="odd:bg-surface/60">
+                    <td className="px-5 py-3 whitespace-nowrap">{formatDate(act.activityDate, lang)}</td>
+                    <td className="px-5 py-3">
+                      <span className="font-medium text-ink">{t(`activities.categories.${act.category}`)}</span>
+                      {act.subType && (
+                        <span className="text-slate-600"> · {t(`activities.subTypes.${act.subType}`, act.subType)}</span>
+                      )}
+                    </td>
+                    <td className="px-5 py-3">
+                      <ScopeTag scope={act.scope} />
+                    </td>
+                    <td className="px-5 py-3 text-right tabular-nums whitespace-nowrap">
+                      {formatNumber(act.quantity, lang)} {unitLabel(act.unit, lang)}
+                    </td>
+                    <td className="px-5 py-3 text-right whitespace-nowrap">
+                      <Co2eValue kg={act.co2eKg} />
+                    </td>
+                    <td className="px-5 py-3 text-slate-600">
+                      {act.entryMethod ? t(`activities.entryMethods.${act.entryMethod}`) : ""}
+                    </td>
+                  </tr>
+                ))}
+                {rows.length === 0 && !activities.isLoading && (
+                  <tr>
+                    <td colSpan={6} className="px-5 py-10 text-center text-slate-600">
+                      {t("common.empty")}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Card>
 
       {periodId && (
@@ -84,6 +96,7 @@ export function ActivitiesPage() {
           periodId={periodId}
           onSaved={() => {
             void queryClient.invalidateQueries({ queryKey: keys.activities(periodId, {}) });
+            void queryClient.invalidateQueries({ queryKey: keys.summary(periodId) });
           }}
         />
       )}

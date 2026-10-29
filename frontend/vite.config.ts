@@ -11,12 +11,8 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    // Mọi API (kể cả /api/v1/ai) đi qua backend để có xác thực JWT; backend tự gọi AI service
     proxy: {
-      "/api/v1/ai": {
-        target: "http://127.0.0.1:8001",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/v1/, ""),
-      },
       "/api": {
         target: "http://127.0.0.1:8080",
         changeOrigin: true,

@@ -1,6 +1,5 @@
 package com.ecotrace.passport;
 
-import com.ecotrace.passport.domain.Passport;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -30,14 +29,14 @@ public class PassportController {
     }
 
     @GetMapping("/periods/{id}/passports")
-    public List<Passport> list(@PathVariable UUID id) {
+    public List<PassportService.PassportView> list(@PathVariable UUID id) {
         return service.listByPeriod(id);
     }
 
     @PostMapping("/periods/{id}/passports")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('OWNER')")
-    public Passport issue(@PathVariable UUID id, @Valid @RequestBody IssuePassportRequest req) {
+    public PassportService.PassportView issue(@PathVariable UUID id, @Valid @RequestBody IssuePassportRequest req) {
         return service.issue(id, req.productId());
     }
 

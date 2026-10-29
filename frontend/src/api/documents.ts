@@ -1,7 +1,6 @@
 import { api, json, qs } from "@/api/client";
 import type { DocType, DocumentEntry, DocumentItem, DocumentStatus, ValidationIssue } from "@/types/domain";
 
-// TODO Sprint 2–3: chứng từ và nhập liệu
 export const documentsApi = {
   list: (periodId: string, status?: DocumentStatus) =>
     api<DocumentItem[]>(`/documents${qs({ periodId, status })}`),
@@ -12,7 +11,9 @@ export const documentsApi = {
     form.append("file", file);
     return api<DocumentItem>("/documents", { method: "POST", body: form });
   },
-  fileUrl: (id: string) => api<{ url: string; contentType: string }>(`/documents/${id}/file`),
+  /** URL ký tạm (S3) hoặc đường dẫn API cần token (lưu cục bộ) */
+  fileUrl: (id: string) =>
+    api<{ url?: string; contentPath?: string; contentType: string }>(`/documents/${id}/file`),
   getEntry: (id: string) => api<DocumentEntry>(`/documents/${id}/entry`),
   saveEntry: (id: string, data: Record<string, unknown>, acknowledgeWarnings = false) =>
     api<DocumentEntry>(`/documents/${id}/entry`, { method: "PUT", ...json({ data, acknowledgeWarnings }) }),

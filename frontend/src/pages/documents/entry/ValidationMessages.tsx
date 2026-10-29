@@ -14,7 +14,7 @@ export function ValidationMessages({ issues }: ValidationMessagesProps) {
           key={`${issue.field}-${idx}`}
           className={issue.severity === "ERROR" ? "text-danger-dark" : "text-warning-dark"}
         >
-          {issue.severity === "ERROR" ? "⛔ " : "⚠ "}
+          
           <span className="font-medium">{issue.field}:</span> {issue.message}
         </li>
       ))}

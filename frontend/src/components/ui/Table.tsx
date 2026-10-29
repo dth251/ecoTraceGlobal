@@ -30,7 +30,7 @@ export function Table<TData>({ data, columns, emptyMessage = "Chưa có dữ li�
                 <th
                   key={header.id}
                   scope="col"
-                  className="px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-slate-600"
+                  className="px-3 py-2.5 text-left text-xs font-semibold text-slate-600"
                 >
                   {header.isPlaceholder
                     ? null

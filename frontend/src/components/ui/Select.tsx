@@ -32,7 +32,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
         id={selectId}
         aria-invalid={!!error}
         className={clsx(
-          "w-full rounded-md border bg-white px-3 py-1.5 text-sm text-slate-900 shadow-sm",
+          "w-full rounded-md border bg-white px-3 py-1.5 text-sm text-slate-900",
           "focus:outline-none focus:ring-2",
           error
             ? "border-danger focus:border-danger focus:ring-danger/30"

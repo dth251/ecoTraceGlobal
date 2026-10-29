@@ -56,7 +56,7 @@ export function ContextSwitcher() {
           next.delete("period");
           setSearchParams(next, { replace: true });
         }}
-        className="rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-800"
+        className="h-10 max-w-[48%] rounded-2xl border-0 bg-white px-3 text-xs font-semibold text-ink transition-shadow duration-300 sm:max-w-none"
       >
         <option value="" disabled>
           {t("common.selectFacility")}
@@ -82,7 +82,7 @@ export function ContextSwitcher() {
           next.set("period", nextId);
           setSearchParams(next, { replace: true });
         }}
-        className="rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-800"
+        className="h-10 max-w-[48%] rounded-2xl border-0 bg-white px-3 text-xs font-semibold text-ink transition-shadow duration-300 sm:max-w-none"
       >
         <option value="" disabled>
           {t("common.selectPeriod")}
