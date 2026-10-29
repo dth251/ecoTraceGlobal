@@ -1,0 +1,35 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ["./index.html", "./src/**/*.{ts,tsx}"],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ["Inter", "system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
+      },
+      colors: {
+        // Màu thương hiệu: xanh lá đậm
+        brand: {
+          50: "#ecfdf3",
+          100: "#d1fadf",
+          200: "#a6f4c5",
+          300: "#6ce9a6",
+          400: "#32d583",
+          500: "#12b76a",
+          600: "#039855",
+          700: "#027a48",
+          800: "#05603a",
+          900: "#054f31",
+          DEFAULT: "#027a48",
+        },
+        // Ba màu scope cố định trên mọi biểu đồ
+        scope1: { light: "#fde4cf", DEFAULT: "#e8590c", dark: "#a63f08" },
+        scope2: { light: "#d0ebff", DEFAULT: "#1c7ed6", dark: "#1864ab" },
+        scope3: { light: "#e5dbff", DEFAULT: "#7048e8", dark: "#5f3dc4" },
+        warning: { light: "#fef3c7", DEFAULT: "#d97706", dark: "#92400e" },
+        danger: { light: "#fee2e2", DEFAULT: "#dc2626", dark: "#991b1b" },
+        success: { light: "#dcfce7", DEFAULT: "#16a34a", dark: "#166534" },
+      },
+    },
+  },
+  plugins: [],
+};

@@ -1,0 +1,10 @@
+# Cấu hình môi trường phát triển (docker-compose: PostgreSQL + MinIO trên localhost)
+logging:
+  level:
+    com.ecotrace: DEBUG
+    org.hibernate.SQL: INFO
+
+spring:
+  jpa:
+    show-sql: false
+

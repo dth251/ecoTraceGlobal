@@ -1,0 +1,202 @@
+{
+  "nav": {
+    "dashboard": "Tổng quan",
+    "documents": "Chứng từ",
+    "imports": "Nhập Excel",
+    "activities": "Dữ liệu hoạt động",
+    "products": "Sản phẩm",
+    "optimizer": "Tối ưu",
+    "reports": "Báo cáo",
+    "passports": "Hộ chiếu xanh",
+    "aiAssistant": "Trợ lý AI",
+    "settings": "Cài đặt",
+    "logout": "Đăng xuất"
+  },
+  "common": {
+    "appName": "EcoTrace",
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "confirm": "Xác nhận",
+    "delete": "Xóa",
+    "edit": "Sửa",
+    "add": "Thêm",
+    "back": "Quay lại",
+    "next": "Tiếp tục",
+    "retry": "Thử lại",
+    "loading": "Đang tải...",
+    "empty": "Chưa có dữ liệu",
+    "lockedPeriod": "Kỳ này đã khóa, chỉ xem",
+    "openPeriod": "Đang mở",
+    "locked": "Đã khóa",
+    "lockPeriod": "Khóa kỳ",
+    "unlockPeriod": "Mở khóa kỳ",
+    "facility": "Nhà máy",
+    "period": "Kỳ báo cáo",
+    "selectFacility": "Chọn nhà máy",
+    "selectPeriod": "Chọn kỳ báo cáo",
+    "viewAsTable": "Xem dạng bảng",
+    "viewAsChart": "Xem biểu đồ",
+    "scope1": "Scope 1 (Trực tiếp)",
+    "scope2": "Scope 2 (Điện mua vào)",
+    "scope3": "Scope 3 (Chuỗi cung ứng)"
+  },
+  "auth": {
+    "loginTitle": "Đăng nhập EcoTrace",
+    "loginSubtitle": "Kiểm kê khí nhà kính và hộ chiếu xanh cho nhà máy xuất khẩu",
+    "registerTitle": "Đăng ký doanh nghiệp",
+    "registerSubtitle": "Tạo tài khoản quản trị cho doanh nghiệp của bạn",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "fullName": "Họ và tên",
+    "organizationName": "Tên doanh nghiệp",
+    "taxCode": "Mã số thuế (tùy chọn)",
+    "acceptTerms": "Tôi đồng ý với điều khoản sử dụng và chính sách bảo mật",
+    "loginButton": "Đăng nhập",
+    "registerButton": "Đăng ký",
+    "noAccount": "Chưa có tài khoản?",
+    "hasAccount": "Đã có tài khoản?",
+    "invalidCredentials": "Email hoặc mật khẩu không đúng"
+  },
+  "onboarding": {
+    "title": "Thiết lập ban đầu",
+    "step1Title": "1. Nhà máy đầu tiên",
+    "step2Title": "2. Sản phẩm chính",
+    "step3Title": "3. Kỳ báo cáo",
+    "facilityName": "Tên nhà máy",
+    "facilityAddress": "Địa chỉ",
+    "country": "Quốc gia",
+    "productName": "Tên sản phẩm",
+    "hsCode": "Mã HS",
+    "cnCode": "Mã CN (CBAM)",
+    "unit": "Đơn vị",
+    "addProduct": "Thêm dòng sản phẩm",
+    "periodName": "Tên kỳ báo cáo",
+    "startDate": "Từ ngày",
+    "endDate": "Đến ngày",
+    "presetThisQuarter": "Quý này",
+    "presetLastQuarter": "Quý trước",
+    "presetThisYear": "Năm nay",
+    "finish": "Hoàn tất & tải hóa đơn đầu tiên"
+  },
+  "dashboard": {
+    "title": "Tổng quan phát thải",
+    "recalculate": "Tính lại",
+    "totalEmissions": "Tổng phát thải",
+    "monthlyTrend": "Phát thải theo tháng",
+    "bySource": "Theo nguồn phát thải",
+    "topSources": "Top 5 nguồn phát thải",
+    "dataProgress": "Tiến độ dữ liệu",
+    "productIntensity": "Cường độ phát thải theo sản phẩm",
+    "emptyTitle": "Kỳ báo cáo này chưa có dữ liệu phát thải",
+    "emptyDescription": "Tải lên hóa đơn điện/nhiên liệu hoặc nhập từ file Excel mẫu để bắt đầu tính phát thải.",
+    "uploadFirstDoc": "Tải chứng từ đầu tiên"
+  },
+  "documents": {
+    "title": "Chứng từ",
+    "dropzoneTitle": "Kéo thả file PDF, JPG, PNG vào đây hoặc bấm để chọn (tối đa 20MB)",
+    "docType": "Loại chứng từ",
+    "enterSequentially": "Nhập lần lượt",
+    "status": {
+      "PENDING_ENTRY": "Chưa nhập",
+      "ENTERED": "Đã nhập",
+      "REJECTED": "Không dùng"
+    },
+    "types": {
+      "ELECTRICITY_BILL": "Hóa đơn điện",
+      "FUEL_INVOICE": "Hóa đơn nhiên liệu",
+      "MATERIAL_INVOICE": "Hóa đơn nguyên liệu",
+      "BILL_OF_LADING": "Vận đơn",
+      "OTHER": "Khác"
+    }
+  },
+  "entry": {
+    "title": "Nhập liệu chứng từ",
+    "saveAndNext": "Lưu & tiếp →",
+    "rejectDoc": "Không dùng",
+    "acknowledgeWarnings": "Tôi đã kiểm tra, vẫn lưu",
+    "supplierName": "Đơn vị cung cấp",
+    "customerCode": "Mã khách hàng",
+    "startDate": "Từ ngày",
+    "endDate": "Đến ngày",
+    "totalKwh": "Tổng điện năng (kWh)"
+  },
+  "imports": {
+    "title": "Nhập file Excel",
+    "downloadTemplate": "Tải file mẫu",
+    "previewTitle": "Kết quả kiểm tra",
+    "commitValid": "Ghi các dòng hợp lệ",
+    "downloadErrors": "Tải file lỗi",
+    "historyTitle": "Lịch sử nhập"
+  },
+  "activities": {
+    "title": "Dữ liệu hoạt động",
+    "addManual": "Thêm thủ công",
+    "exportCsv": "Xuất CSV"
+  },
+  "products": {
+    "title": "Sản phẩm và phát thải sản phẩm",
+    "productionTitle": "Sản lượng kỳ này",
+    "footprintTitle": "Phát thải nhúng trên mỗi đơn vị sản phẩm"
+  },
+  "optimizer": {
+    "title": "Đề xuất giảm phát thải",
+    "generate": "Tạo đề xuất",
+    "simulate": "Tự điều chỉnh tham số",
+    "disclaimer": "Số liệu ước tính, cần khảo sát thực tế trước khi đầu tư"
+  },
+  "reports": {
+    "title": "Xuất báo cáo",
+    "ghgPdf": "Báo cáo kiểm kê khí nhà kính (PDF)",
+    "cbamXlsx": "Dữ liệu phát thải nhúng CBAM (Excel)",
+    "incompleteWarning": "Kỳ báo cáo chưa khóa hoặc còn chứng từ chưa nhập liệu. Báo cáo có thể chưa đầy đủ."
+  },
+  "passports": {
+    "title": "Hộ chiếu xanh số",
+    "issueNew": "Cấp hộ chiếu mới",
+    "revoke": "Thu hồi"
+  },
+  "verify": {
+    "title": "EcoTrace · Green Passport",
+    "valid": "Signature valid",
+    "revoked": "Revoked",
+    "notFound": "Passport not found",
+    "company": "Company",
+    "product": "Product",
+    "cnCode": "CN code",
+    "period": "Period",
+    "embeddedEmissions": "Embedded emissions",
+    "direct": "Direct",
+    "indirect": "Indirect",
+    "precursors": "Precursors",
+    "total": "Total",
+    "actualDataShare": "Actual data share",
+    "verification": "Verification",
+    "hash": "SHA-256 Hash"
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "organizationTab": "Doanh nghiệp",
+    "usersTab": "Người dùng",
+    "preferencesTab": "Tùy chọn"
+  },
+  "errors": {
+    "notFoundTitle": "Không tìm thấy trang",
+    "notFoundMessage": "Đường dẫn bạn truy cập không tồn tại.",
+    "forbiddenTitle": "Không có quyền truy cập",
+    "forbiddenMessage": "Tài khoản của bạn không đủ quyền để thực hiện thao tác này.",
+    "PERIOD_LOCKED": "Kỳ báo cáo đã khóa, không thể chỉnh sửa dữ liệu.",
+    "UNKNOWN": "Đã xảy ra lỗi, vui lòng thử lại."
+  },
+  "validation": {
+    "required": "Trường này là bắt buộc",
+    "email": "Email không hợp lệ",
+    "passwordMin": "Mật khẩu tối thiểu 8 ký tự",
+    "passwordLetterDigit": "Mật khẩu phải gồm cả chữ và số",
+    "nonNegative": "Giá trị không được âm",
+    "number": "Vui lòng nhập số hợp lệ",
+    "date": "Ngày không hợp lệ (YYYY-MM-DD)",
+    "endBeforeStart": "Ngày kết thúc phải sau hoặc bằng ngày bắt đầu",
+    "taxCode": "Mã số thuế gồm 10 hoặc 13 chữ số",
+    "acceptTerms": "Bạn cần đồng ý điều khoản để đăng ký"
+  }
+}

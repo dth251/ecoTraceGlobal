@@ -1,0 +1,103 @@
+# EcoTrace Global – Docker Compose cho môi trường phát triển (mục 4, 31, 34)
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ecotrace-postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-ecotrace}
+      POSTGRES_USER: ${DB_USER:-ecotrace}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change-me}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-ecotrace} -d ${DB_NAME:-ecotrace}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    container_name: ecotrace-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:-change-me}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 $${S3_ACCESS_KEY:-minioadmin} $${S3_SECRET_KEY:-change-me} &&
+      mc mb --ignore-existing local/$${S3_BUCKET:-ecotrace-documents}
+      "
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ecotrace-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-ecotrace}
+      DB_USER: ${DB_USER:-ecotrace}
+      DB_PASSWORD: ${DB_PASSWORD:-change-me}
+      S3_ENDPOINT: http://minio:9000
+      S3_BUCKET: ${S3_BUCKET:-ecotrace-documents}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY:-minioadmin}
+      S3_SECRET_KEY: ${S3_SECRET_KEY:-change-me}
+      JWT_SECRET: ${JWT_SECRET:-change-me-at-least-32-characters-long!!}
+      PUBLIC_VERIFY_BASE_URL: ${PUBLIC_VERIFY_BASE_URL:-http://localhost:5173/verify}
+      AI_SERVICE_URL: http://ai-service:8001
+    ports:
+      - "8080:8080"
+
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    container_name: ecotrace-ai-service
+    environment:
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+      MOCK_MODE: ${MOCK_MODE:-false}
+      DATABASE_URL: ${AI_DATABASE_URL:-sqlite:////app/data/ai_service.db}
+    volumes:
+      - ai_data:/app/data
+    ports:
+      - "8001:8001"
+      - "8501:8501"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ecotrace-frontend
+    depends_on:
+      backend:
+        condition: service_started
+    ports:
+      - "5173:80"
+
+volumes:
+  pg_data:
+  minio_data:
+  ai_data:

@@ -1,0 +1,26 @@
+# Cấu hình production: mọi bí mật lấy từ biến môi trường / secret manager, không có giá trị mặc định
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+  storage:
+    endpoint: ${S3_ENDPOINT}
+    access-key: ${S3_ACCESS_KEY}
+    secret-key: ${S3_SECRET_KEY}
+  passport:
+    signing-key-path: ${PASSPORT_SIGNING_KEY_PATH}
+    public-verify-base-url: ${PUBLIC_VERIFY_BASE_URL}
+
+springdoc:
+  swagger-ui:
+    enabled: false
+
+logging:
+  level:
+    root: INFO
+
