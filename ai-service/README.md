@@ -8,10 +8,14 @@ Phân tích luồng chi tiết: [docs/AI_FLOW.md](docs/AI_FLOW.md).
 ai-service/
 ├── app.py                   # giao diện Streamlit (streamlit run app.py)
 ├── .streamlit/config.toml   # giới hạn upload 10MB, màu chủ đạo
+├── data/                    # thư mục chứa CSDL SQLite mặc định (ai_service.db)
 ├── app/
 │   ├── main.py              # FastAPI: các endpoint
-│   ├── config.py            # đọc .env
-│   ├── schemas.py           # hợp đồng dữ liệu với backend
+│   ├── config.py            # đọc .env (DATABASE_URL, GEMINI_API_KEY,...)
+│   ├── database.py          # SQLAlchemy engine, session maker, init_db
+│   ├── models.py            # bảng CSDL: ExtractionLog, ClassificationLog, PassportAuditLog, AuditFeedback
+│   ├── db_service.py        # logic nghiệp vụ lưu vết, truy vấn lịch sử & thống kê
+│   ├── schemas.py           # hợp đồng dữ liệu với backend & DTO CSDL
 │   ├── prompts.py           # prompt Gemini
 │   ├── gemini_client.py     # gọi Gemini + JSON Schema + retry
 │   ├── factors.py           # mã hệ số, quy tắc từ khóa
@@ -28,10 +32,17 @@ ai-service/
 ├── samples/                 # chứng từ mẫu
 ├── output/                  # kết quả JSON
 ├── eval/                    # đánh giá độ chính xác: dữ liệu có đáp án, chấm điểm, báo cáo
-├── tests/                   # unit test (mock, không gọi Gemini)
+├── tests/                   # unit test (mock, không gọi Gemini, test DB)
 ├── run.bat                  # chạy server :8001
 └── run_pipeline.bat         # chạy luồng AI trên samples/
 ```
+
+## Cơ sở dữ liệu riêng (AI Database)
+AI Service trang bị CSDL riêng biệt (mặc định **SQLite** tại `data/ai_service.db` hoặc cấu hình **PostgreSQL** qua `DATABASE_URL` trong `.env`):
+* `ai_extraction_logs`: Lưu vết lịch sử bóc tách mọi hóa đơn/chứng từ, mã SHA-256, độ tin cậy, thời gian xử lý (latency), JSON trích xuất.
+* `ai_classification_logs`: Lưu vết phân loại Scope 1/2/3 và gán mã hệ số phát thải.
+* `ai_audit_feedbacks`: Lưu phản hồi, đánh giá 1-5 sao và dữ liệu chỉnh sửa thực tế của kiểm toán viên phục vụ re-training / prompt tuning.
+* `ai_passport_audit_logs`: Lưu kết quả phân tích & đánh giá rủi ro Hộ chiếu số xanh (Digital Green Passport).
 
 ## Chạy giao diện demo (Streamlit)
 Cài một lần:
@@ -54,14 +65,18 @@ Xác nhận & chỉnh sửa (sửa dữ liệu rồi tính lại), Inventory, G�
 `MOCK_MODE=true` (hoặc thiếu key): trả dữ liệu mẫu, không gọi Gemini.
 `CACHE_ENABLED=false`: luôn gọi Gemini (mặc định có cache theo nội dung file).
 
-## Endpoint
+## Endpoint API
 | Method | Path | Mô tả |
 |---|---|---|
-| POST | `/ai/extract-invoice` | multipart: `file` (PDF/PNG/JPG/WEBP), `doc_type` tùy chọn |
-| POST | `/ai/classify-activity` | `{description, unit?, activity_type?}` -> scope, factor_code |
+| POST | `/ai/extract-invoice` | multipart: `file` (PDF/PNG/JPG/WEBP), `doc_type` tùy chọn (tự động lưu vào CSDL) |
+| POST | `/ai/classify-activity` | `{description, unit?, activity_type?}` -> scope, factor_code (lưu CSDL) |
 | POST | `/ai/optimize` | tổng hợp inventory theo factor_code -> gợi ý |
 | POST | `/ai/pipeline/run` | multipart nhiều `files` -> toàn bộ luồng (chỉ để demo) |
-| GET | `/health` | trạng thái |
+| GET | `/ai/history/extractions` | Danh sách lịch sử bóc tách chứng từ trong CSDL |
+| GET | `/ai/history/extractions/{id}`| Chi tiết 1 bản ghi bóc tách và phản hồi audit |
+| GET | `/ai/history/stats` | Thống kê số lượng, tỉ lệ cache hit, thời gian xử lý trung bình |
+| POST | `/ai/feedback` | Tiếp nhận phản hồi & chỉnh sửa của kiểm toán viên |
+| GET | `/health` | Trạng thái server & kết nối CSDL |
 
 ## Phạm vi và mã hệ số
 - Scope 1: `FUEL_*`; Scope 2: `ELEC_GRID`; Scope 3: `MAT_*` (nguyên liệu), `FREIGHT_*` (cước vận chuyển).
@@ -70,7 +85,7 @@ Xác nhận & chỉnh sửa (sửa dữ liệu rồi tính lại), Inventory, G�
 
 ## Test
 ```
-.venv\Scripts\python -m pytest                 # unit test, chế độ mock
+.venv\Scripts\python -m pytest tests           # unit test & test DB (30/30 passed)
 .venv\Scripts\python scripts\e2e_http.py       # e2e, cần server đang chạy và có key
 .venv\Scripts\python eval\run_eval.py --no-cache # đánh giá độ chính xác (xem eval/README.md)
 ```

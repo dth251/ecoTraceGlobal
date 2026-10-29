@@ -1,0 +1,202 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "documents": "Documents",
+    "imports": "Excel Import",
+    "activities": "Activity Data",
+    "products": "Products",
+    "optimizer": "Optimizer",
+    "reports": "Reports",
+    "passports": "Green Passports",
+    "aiAssistant": "AI Assistant",
+    "settings": "Settings",
+    "logout": "Log out"
+  },
+  "common": {
+    "appName": "EcoTrace",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "back": "Back",
+    "next": "Next",
+    "retry": "Retry",
+    "loading": "Loading...",
+    "empty": "No data yet",
+    "lockedPeriod": "This period is locked (view only)",
+    "openPeriod": "Open",
+    "locked": "Locked",
+    "lockPeriod": "Lock period",
+    "unlockPeriod": "Unlock period",
+    "facility": "Facility",
+    "period": "Reporting period",
+    "selectFacility": "Select facility",
+    "selectPeriod": "Select period",
+    "viewAsTable": "View as table",
+    "viewAsChart": "View as chart",
+    "scope1": "Scope 1 (Direct)",
+    "scope2": "Scope 2 (Purchased electricity)",
+    "scope3": "Scope 3 (Value chain)"
+  },
+  "auth": {
+    "loginTitle": "Sign in to EcoTrace",
+    "loginSubtitle": "GHG accounting and green passports for export manufacturers",
+    "registerTitle": "Register Organization",
+    "registerSubtitle": "Create an administrator account for your company",
+    "email": "Email",
+    "password": "Password",
+    "fullName": "Full name",
+    "organizationName": "Organization name",
+    "taxCode": "Tax ID (optional)",
+    "acceptTerms": "I agree to the terms of service and privacy policy",
+    "loginButton": "Sign in",
+    "registerButton": "Register",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "invalidCredentials": "Invalid email or password"
+  },
+  "onboarding": {
+    "title": "Initial Setup",
+    "step1Title": "1. First Facility",
+    "step2Title": "2. Main Products",
+    "step3Title": "3. Reporting Period",
+    "facilityName": "Facility name",
+    "facilityAddress": "Address",
+    "country": "Country",
+    "productName": "Product name",
+    "hsCode": "HS code",
+    "cnCode": "CN code (CBAM)",
+    "unit": "Unit",
+    "addProduct": "Add product row",
+    "periodName": "Period name",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "presetThisQuarter": "This quarter",
+    "presetLastQuarter": "Last quarter",
+    "presetThisYear": "This year",
+    "finish": "Finish & upload first bill"
+  },
+  "dashboard": {
+    "title": "Emissions Overview",
+    "recalculate": "Recalculate",
+    "totalEmissions": "Total emissions",
+    "monthlyTrend": "Monthly emissions",
+    "bySource": "By emission source",
+    "topSources": "Top 5 emission sources",
+    "dataProgress": "Data entry progress",
+    "productIntensity": "Product emission intensity",
+    "emptyTitle": "No emission data for this period yet",
+    "emptyDescription": "Upload utility/fuel invoices or import from an Excel template to calculate emissions.",
+    "uploadFirstDoc": "Upload first document"
+  },
+  "documents": {
+    "title": "Documents",
+    "dropzoneTitle": "Drag and drop PDF, JPG, PNG files here or click to browse (max 20MB)",
+    "docType": "Document type",
+    "enterSequentially": "Enter sequentially",
+    "status": {
+      "PENDING_ENTRY": "Pending entry",
+      "ENTERED": "Entered",
+      "REJECTED": "Rejected"
+    },
+    "types": {
+      "ELECTRICITY_BILL": "Electricity bill",
+      "FUEL_INVOICE": "Fuel invoice",
+      "MATERIAL_INVOICE": "Material invoice",
+      "BILL_OF_LADING": "Bill of lading",
+      "OTHER": "Other"
+    }
+  },
+  "entry": {
+    "title": "Document Data Entry",
+    "saveAndNext": "Save & next →",
+    "rejectDoc": "Reject",
+    "acknowledgeWarnings": "I have reviewed and still want to save",
+    "supplierName": "Supplier name",
+    "customerCode": "Customer code",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "totalKwh": "Total electricity (kWh)"
+  },
+  "imports": {
+    "title": "Excel Import",
+    "downloadTemplate": "Download template",
+    "previewTitle": "Validation preview",
+    "commitValid": "Commit valid rows",
+    "downloadErrors": "Download error file",
+    "historyTitle": "Import history"
+  },
+  "activities": {
+    "title": "Activity Data",
+    "addManual": "Add manual entry",
+    "exportCsv": "Export CSV"
+  },
+  "products": {
+    "title": "Products & Product Footprint",
+    "productionTitle": "Production output this period",
+    "footprintTitle": "Embedded emissions per product unit"
+  },
+  "optimizer": {
+    "title": "Decarbonization Recommendations",
+    "generate": "Generate recommendations",
+    "simulate": "Customize parameters",
+    "disclaimer": "Estimated figures; on-site engineering assessment required before investment"
+  },
+  "reports": {
+    "title": "Reports",
+    "ghgPdf": "GHG Inventory Report (PDF)",
+    "cbamXlsx": "CBAM Embedded Emissions Data (Excel)",
+    "incompleteWarning": "Reporting period is not locked or has pending documents. Report may be incomplete."
+  },
+  "passports": {
+    "title": "Digital Green Passports",
+    "issueNew": "Issue passport",
+    "revoke": "Revoke"
+  },
+  "verify": {
+    "title": "EcoTrace · Green Passport",
+    "valid": "Signature valid",
+    "revoked": "Revoked",
+    "notFound": "Passport not found",
+    "company": "Company",
+    "product": "Product",
+    "cnCode": "CN code",
+    "period": "Period",
+    "embeddedEmissions": "Embedded emissions",
+    "direct": "Direct",
+    "indirect": "Indirect",
+    "precursors": "Precursors",
+    "total": "Total",
+    "actualDataShare": "Actual data share",
+    "verification": "Verification",
+    "hash": "SHA-256 Hash"
+  },
+  "settings": {
+    "title": "Settings",
+    "organizationTab": "Organization",
+    "usersTab": "Users",
+    "preferencesTab": "Preferences"
+  },
+  "errors": {
+    "notFoundTitle": "Page not found",
+    "notFoundMessage": "The page you requested does not exist.",
+    "forbiddenTitle": "Access denied",
+    "forbiddenMessage": "You do not have sufficient permissions for this action.",
+    "PERIOD_LOCKED": "Reporting period is locked; data cannot be modified.",
+    "UNKNOWN": "An unexpected error occurred. Please try again."
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Invalid email address",
+    "passwordMin": "Password must be at least 8 characters",
+    "passwordLetterDigit": "Password must contain both letters and numbers",
+    "nonNegative": "Value must be non-negative",
+    "number": "Please enter a valid number",
+    "date": "Invalid date (YYYY-MM-DD)",
+    "endBeforeStart": "End date must be on or after start date",
+    "taxCode": "Tax ID must be 10 or 13 digits",
+    "acceptTerms": "You must accept the terms to register"
+  }
+}

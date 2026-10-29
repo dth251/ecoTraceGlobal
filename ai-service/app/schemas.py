@@ -152,3 +152,48 @@ class LlmOptimizeOutput(BaseModel):
 class LlmClassify(BaseModel):
     activity_type: ActivityType
     factor_code: Optional[str] = None
+
+
+# ---------- Schemas cho CSDL Lịch sử & Phản hồi AI ----------
+class AuditFeedbackRequest(BaseModel):
+    extraction_id: Optional[str] = None
+    is_correct: bool = True
+    rating: Optional[int] = Field(None, ge=1, le=5)
+    corrections: Optional[dict] = None
+    notes: Optional[str] = None
+
+
+class AuditFeedbackResponse(BaseModel):
+    status: str = "SAVED"
+    feedback_id: str
+    message: str
+
+
+class ExtractionLogItem(BaseModel):
+    id: str
+    file_hash: str
+    file_name: Optional[str] = None
+    mime_type: str
+    file_size: int
+    activity_type: Optional[str] = None
+    vendor: Optional[str] = None
+    quantity: Optional[float] = None
+    unit: Optional[str] = None
+    total_amount: Optional[float] = None
+    currency: Optional[str] = None
+    status: str
+    is_mock: bool
+    is_cached: bool
+    execution_time_ms: float
+    confidence_score: Optional[float] = None
+    created_at: str
+
+
+class HistoryStatsResponse(BaseModel):
+    total_extractions: int
+    total_cached: int
+    cache_hit_rate_pct: float
+    needs_review_count: int
+    average_latency_ms: float
+    total_feedbacks: int
+    positive_feedback_rate_pct: float

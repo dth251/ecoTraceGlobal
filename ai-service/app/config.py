@@ -2,8 +2,9 @@ from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# Đọc .env theo đường dẫn tuyệt đối để chạy được từ thư mục bất kỳ (uvicorn, streamlit, scripts)
-ENV_FILE = Path(__file__).resolve().parent.parent / ".env"
+BASE_DIR = Path(__file__).resolve().parent.parent
+ENV_FILE = BASE_DIR / ".env"
+DEFAULT_DATA_DIR = BASE_DIR / "data"
 
 
 class Settings(BaseSettings):
@@ -15,6 +16,7 @@ class Settings(BaseSettings):
     max_file_mb: int = 10
     review_threshold: float = 0.7
     cache_enabled: bool = True
+    database_url: str = f"sqlite:///{DEFAULT_DATA_DIR.as_posix()}/ai_service.db"
 
 
 settings = Settings()

@@ -1,0 +1,15 @@
+package com.ecotrace.optimizer.rules;
+
+import com.ecotrace.calculation.SummaryService.PeriodSummary;
+import com.ecotrace.optimizer.domain.Recommendation;
+import com.ecotrace.optimizer.simulation.ScenarioSimulator;
+import org.springframework.stereotype.Component;
+
+/** Quy tắc R_EFFICIENCY: cường độ điện/tấn SP tăng ≥ 10% so với kỳ trước — mục 9.2 (Sprint 6). */
+@Component
+public class EfficiencyRule implements RecommendationRule {
+    @Override public String code() { return "R_EFFICIENCY"; }
+    @Override public boolean applies(PeriodSummary s) { return false; }
+    @Override public Recommendation build(PeriodSummary s, ScenarioSimulator sim) { return null; }
+}
+
