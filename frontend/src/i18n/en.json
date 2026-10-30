@@ -145,7 +145,10 @@
       "MATERIAL_INVOICE": "Material invoice",
       "BILL_OF_LADING": "Bill of lading",
       "OTHER": "Other"
-    }
+    },
+    "fileName": "File",
+    "uploadedAt": "Uploaded",
+    "statusColumn": "Status"
   },
   "entry": {
     "title": "Document Data Entry",

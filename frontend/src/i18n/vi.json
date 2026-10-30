@@ -145,7 +145,10 @@
       "MATERIAL_INVOICE": "Hóa đơn nguyên liệu",
       "BILL_OF_LADING": "Vận đơn",
       "OTHER": "Khác"
-    }
+    },
+    "fileName": "Tệp",
+    "uploadedAt": "Ngày tải lên",
+    "statusColumn": "Trạng thái"
   },
   "entry": {
     "title": "Nhập liệu chứng từ",

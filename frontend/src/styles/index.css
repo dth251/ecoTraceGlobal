@@ -19,6 +19,30 @@
     @apply tracking-tight;
   }
 
+  /* Ngắt dòng: tiêu đề chia dòng cân đối; đoạn văn không để dòng cuối chỉ còn một từ */
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p,
+  li,
+  dt,
+  dd,
+  label,
+  td,
+  figcaption,
+  blockquote {
+    text-wrap: pretty;
+  }
+
+  /* Tiêu đề cột không ngắt giữa chừng; bảng hẹp thì cuộn ngang (khung overflow-x-auto) */
+  th {
+    white-space: nowrap;
+  }
+
   :focus-visible {
     @apply outline-none ring-2 ring-brand-500 ring-offset-2;
   }
@@ -27,7 +51,8 @@
 @layer components {
   /* Bề mặt trắng trên nền xám: tách nhau bằng sắc độ, không viền, không bóng */
   .card-surface {
-    @apply rounded-3xl bg-white;
+    /* min-w-0: thẻ nằm trong lưới/flex được co theo màn hình, không bị nội dung đẩy tràn */
+    @apply min-w-0 rounded-3xl bg-white;
   }
 }
 

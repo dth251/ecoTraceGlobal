@@ -33,7 +33,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       type={type}
       disabled={disabled || loading}
       className={clsx(
-        "inline-flex items-center justify-center gap-1.5 font-semibold",
+        "inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-semibold",
         "transition-all duration-300 ease-smooth hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]",
         "disabled:hover:translate-y-0",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1",

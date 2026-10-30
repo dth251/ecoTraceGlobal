@@ -64,7 +64,7 @@ export const reviewFieldLabel = (field: string) => REVIEW_FIELD_LABELS[field] ??
 /** Hiển thị lượng phát thải: dưới 1.000 kg thì kg, còn lại thì tấn. */
 export function formatEmission(kg: number): string {
   if (Math.abs(kg) >= 1000) {
-    return `${(kg / 1000).toLocaleString("vi-VN", { maximumFractionDigits: 2 })} tCO₂e`;
+    return `${(kg / 1000).toLocaleString("vi-VN", { maximumFractionDigits: 2 })}\u00a0tCO₂e`;
   }
-  return `${kg.toLocaleString("vi-VN", { maximumFractionDigits: 1 })} kgCO₂e`;
+  return `${kg.toLocaleString("vi-VN", { maximumFractionDigits: 1 })}\u00a0kgCO₂e`;
 }

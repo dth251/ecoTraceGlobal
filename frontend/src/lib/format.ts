@@ -5,10 +5,10 @@ export function formatNumber(value: number, lang = "vi", digits = 2): string {
   return new Intl.NumberFormat(locale(lang), { maximumFractionDigits: digits }).format(value);
 }
 
-/** Dưới 1 tấn hiển thị kgCO₂e, từ 1 tấn trở lên hiển thị tCO₂e */
+/** Dưới 1 tấn hiển thị kgCO₂e, từ 1 tấn trở lên hiển thị tCO₂e. Số và đơn vị nối bằng khoảng trắng không ngắt dòng. */
 export function formatCo2e(kg: number, lang = "vi"): string {
-  if (Math.abs(kg) < 1000) return `${formatNumber(kg, lang, 1)} kgCO₂e`;
-  return `${formatNumber(kg / 1000, lang, 1)} tCO₂e`;
+  if (Math.abs(kg) < 1000) return `${formatNumber(kg, lang, 1)}\u00a0kgCO₂e`;
+  return `${formatNumber(kg / 1000, lang, 1)}\u00a0tCO₂e`;
 }
 
 /** Tỷ lệ 0..1 → phần trăm */

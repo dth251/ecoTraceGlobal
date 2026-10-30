@@ -174,9 +174,9 @@ export function BatchExtractPanel() {
           />
           <label htmlFor="ai-invoice-upload" className="cursor-pointer space-y-1.5 block">
             <div className="text-sm font-medium text-slate-700">Nhấp để chọn hoặc kéo thả nhiều chứng từ vào đây</div>
-            <div className="text-xs text-slate-400">
+            <span className="block text-xs text-slate-400 [text-wrap:pretty]">
               PDF, PNG, JPG · tối đa {MAX_FILES} chứng từ, mỗi file {MAX_FILE_MB}MB
-            </div>
+            </span>
           </label>
         </div>
 
@@ -219,13 +219,13 @@ export function BatchExtractPanel() {
           </ul>
         )}
 
-        <div className={`p-2.5 rounded-md text-xs ${canSave ? "bg-brand/5 text-slate-700" : "bg-warning-light text-warning-dark"}`}>
+        <p className={`p-2.5 rounded-md text-xs ${canSave ? "bg-brand/5 text-slate-700" : "bg-warning-light text-warning-dark"}`}>
           {canSave
             ? `Chứng từ sẽ được lưu vào kỳ ${period?.name ?? ""} dưới dạng bản nháp AI. Bạn cần xác nhận từng chứng từ ở mục Chứng từ thì số liệu mới được tính vào kiểm kê và hộ chiếu xanh.`
             : isLocked
               ? "Kỳ đang chọn đã khóa: chứng từ chỉ được AI đọc và ước tính, không lưu vào kỳ."
               : "Chưa chọn kỳ báo cáo (ô trên cùng): chứng từ chỉ được AI đọc và ước tính, không lưu vào hệ thống."}
-        </div>
+        </p>
 
         {error && <div className="p-2.5 bg-danger-light text-danger-dark rounded-md text-xs">{error}</div>}
 
@@ -275,12 +275,12 @@ export function BatchExtractPanel() {
                   className="block rounded-md border border-slate-200 p-2.5 transition-colors hover:border-brand/50 hover:bg-brand/5"
                 >
                   <div className="text-sm font-semibold text-slate-800">{d.title} →</div>
-                  <div className="text-xs text-slate-500">{d.desc}</div>
+                  <p className="text-xs text-slate-500">{d.desc}</p>
                 </Link>
               ) : (
                 <div className="rounded-md border border-slate-100 p-2.5">
                   <div className="text-sm font-semibold text-slate-700">{d.title}</div>
-                  <div className="text-xs text-slate-400">{d.desc}</div>
+                  <p className="text-xs text-slate-400">{d.desc}</p>
                 </div>
               )}
             </li>

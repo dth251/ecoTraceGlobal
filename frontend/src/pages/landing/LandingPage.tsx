@@ -37,7 +37,7 @@ export function LandingPage() {
     <div className="min-h-screen overflow-x-hidden bg-surface text-ink">
       {/* Phần mở đầu trên nền tối */}
       <section className="bg-ink text-white">
-        <header className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-6 sm:px-8">
+        <header className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-6 sm:gap-6 sm:px-8">
           <Logo dark />
           <nav aria-label="Landing" className="hidden items-center gap-8 text-sm font-medium text-ink-muted md:flex">
             <a href="#how" className="transition-colors duration-hover hover:text-white">
@@ -50,7 +50,7 @@ export function LandingPage() {
               {t("landing.nav.periods")}
             </a>
           </nav>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <LanguageSwitch dark />
             {!isAuthed && (
               <Link to="/login" className="hidden text-sm font-semibold text-white hover:text-brand-300 sm:inline">
@@ -59,7 +59,7 @@ export function LandingPage() {
             )}
             <Link
               to={primary.to}
-              className="whitespace-nowrap rounded-2xl bg-white px-4 py-2.5 text-sm font-bold text-ink transition-transform duration-hover ease-smooth hover:-translate-y-0.5"
+              className="whitespace-nowrap rounded-2xl bg-white px-3 py-2.5 text-sm font-bold text-ink transition-transform sm:px-4 duration-hover ease-smooth hover:-translate-y-0.5"
             >
               {isAuthed ? primary.label : t("landing.nav.start")}
             </Link>

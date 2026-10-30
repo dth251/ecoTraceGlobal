@@ -6,8 +6,8 @@ import { loginSchema, registerSchema } from "@/lib/validation";
 
 describe("format utilities", () => {
   it("formats numbers and CO2e according to threshold", () => {
-    expect(formatCo2e(500, "en")).toBe("500 kgCO₂e");
-    expect(formatCo2e(12500, "en")).toBe("12.5 tCO₂e");
+    expect(formatCo2e(500, "en")).toBe("500\u00a0kgCO₂e");
+    expect(formatCo2e(12500, "en")).toBe("12.5\u00a0tCO₂e");
     expect(formatNumber(120000.5, "en")).toBe("120,000.5");
   });
 

@@ -44,34 +44,38 @@ export function ActivitiesPage() {
             <table className="min-w-full text-sm">
               <thead className="text-left text-xs font-semibold text-slate-600">
                 <tr>
-                  <th className="px-5 py-3">{t("activities.date")}</th>
-                  <th className="px-5 py-3">{t("activities.category")}</th>
-                  <th className="px-5 py-3">{t("activities.scope")}</th>
-                  <th className="px-5 py-3 text-right">{t("activities.quantity")}</th>
-                  <th className="px-5 py-3 text-right">{t("activities.emissions")}</th>
-                  <th className="px-5 py-3">{t("activities.source")}</th>
+                  <th className="px-3 py-3">{t("activities.date")}</th>
+                  <th className="px-3 py-3">{t("activities.category")}</th>
+                  <th className="px-3 py-3">{t("activities.scope")}</th>
+                  <th className="px-3 py-3 text-right">{t("activities.quantity")}</th>
+                  <th className="px-3 py-3 text-right">{t("activities.emissions")}</th>
+                  <th className="px-3 py-3">{t("activities.source")}</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((act) => (
                   <tr key={act.id} className="odd:bg-surface/60">
-                    <td className="px-5 py-3 whitespace-nowrap">{formatDate(act.activityDate, lang)}</td>
-                    <td className="px-5 py-3">
-                      <span className="font-medium text-ink">{t(`activities.categories.${act.category}`)}</span>
+                    <td className="px-3 py-3 whitespace-nowrap">{formatDate(act.activityDate, lang)}</td>
+                    <td className="min-w-[8.5rem] px-3 py-3">
+                      <span className="block font-medium text-ink [text-wrap:balance]">
+                        {t(`activities.categories.${act.category}`)}
+                      </span>
                       {act.subType && (
-                        <span className="text-slate-600"> · {t(`activities.subTypes.${act.subType}`, act.subType)}</span>
+                        <span className="block whitespace-nowrap text-slate-600">
+                          {t(`activities.subTypes.${act.subType}`, act.subType)}
+                        </span>
                       )}
                     </td>
-                    <td className="px-5 py-3">
-                      <ScopeTag scope={act.scope} />
+                    <td className="px-3 py-3">
+                      <ScopeTag scope={act.scope} short />
                     </td>
-                    <td className="px-5 py-3 text-right tabular-nums whitespace-nowrap">
+                    <td className="px-3 py-3 text-right tabular-nums whitespace-nowrap">
                       {formatNumber(act.quantity, lang)} {unitLabel(act.unit, lang)}
                     </td>
-                    <td className="px-5 py-3 text-right whitespace-nowrap">
+                    <td className="px-3 py-3 text-right whitespace-nowrap">
                       <Co2eValue kg={act.co2eKg} />
                     </td>
-                    <td className="px-5 py-3 text-slate-600">
+                    <td className="whitespace-nowrap px-3 py-3 text-slate-600">
                       {act.entryMethod ? t(`activities.entryMethods.${act.entryMethod}`) : ""}
                     </td>
                   </tr>

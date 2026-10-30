@@ -19,7 +19,7 @@ export function Badge({ variant = "neutral", className, children, ...rest }: Bad
   return (
     <span
       className={clsx(
-        "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium",
+        "inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-medium",
         variantClasses[variant],
         className,
       )}
