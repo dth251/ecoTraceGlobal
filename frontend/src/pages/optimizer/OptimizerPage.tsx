@@ -58,7 +58,7 @@ export function OptimizerPage() {
         <h1 className="text-lg font-bold text-slate-900">{t("optimizer.title")}</h1>
         {aiBatch && (
           <Button size="sm" variant="secondary" onClick={handleRegenerate} loading={regenerating}>
-            🤖 Tạo lại gợi ý bằng AI
+            Tạo lại gợi ý bằng AI
           </Button>
         )}
         {canEdit && periodId && (

@@ -2,6 +2,9 @@ package com.ecotrace.activity;
 
 import com.ecotrace.activity.domain.ActivityCategory;
 import com.ecotrace.activity.domain.ActivityData;
+import com.ecotrace.calculation.CalculationService;
+import com.ecotrace.calculation.EmissionRecordRepository;
+import com.ecotrace.calculation.domain.EmissionRecord;
 import com.ecotrace.common.audit.AuditService;
 import com.ecotrace.common.exception.ApiException;
 import com.ecotrace.common.util.UnitConverter;
@@ -15,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,21 +30,47 @@ public class ActivityService {
     private final OrganizationService organizationService;
     private final UnitConverter units;
     private final AuditService audit;
+    private final EmissionRecordRepository records;
+    private final CalculationService calculation;
 
     public ActivityService(ActivityRepository repository, OrganizationService organizationService, UnitConverter units,
-                           AuditService audit) {
+                           AuditService audit, EmissionRecordRepository records, CalculationService calculation) {
+        this.records = records;
+        this.calculation = calculation;
         this.repository = repository;
         this.organizationService = organizationService;
         this.units = units;
         this.audit = audit;
     }
 
+    /** Hoạt động kèm kết quả phát thải, đúng dạng Activity ở frontend. co2eKg null = chưa tính được. */
+    public record ActivityView(UUID id, UUID periodId, LocalDate activityDate, String category, String subType,
+                               BigDecimal quantity, String unit, short scope, BigDecimal co2eKg,
+                               UUID documentId, String note, String entryMethod) {
+    }
+
     @Transactional(readOnly = true)
-    public List<ActivityData> list(UUID periodId, ActivityCategory category) {
+    public List<ActivityView> list(UUID periodId, ActivityCategory category) {
+        organizationService.requirePeriod(periodId);
         UUID orgId = TenantContext.organizationId();
-        return category == null
+        List<ActivityData> list = category == null
                 ? repository.findAllByOrganizationIdAndPeriodIdOrderByActivityDateDesc(orgId, periodId)
                 : repository.findAllByOrganizationIdAndPeriodIdAndCategoryOrderByActivityDateDesc(orgId, periodId, category);
+        return toViews(list);
+    }
+
+    private List<ActivityView> toViews(List<ActivityData> list) {
+        Map<UUID, EmissionRecord> byActivity = list.isEmpty() ? Map.of()
+                : records.findAllByActivityDataIdIn(list.stream().map(ActivityData::getId).toList()).stream()
+                        .collect(Collectors.toMap(EmissionRecord::getActivityDataId, Function.identity(), (x, y) -> x));
+        return list.stream().map(a -> {
+            EmissionRecord r = byActivity.get(a.getId());
+            Object note = a.getMetadata() != null ? a.getMetadata().get("note") : null;
+            return new ActivityView(a.getId(), a.getPeriodId(), a.getActivityDate(), a.getCategory().name(),
+                    a.getSubCategory(), a.getQuantity(), a.getUnit(), r != null ? r.getScope() : a.getCategory().getScope(),
+                    r != null ? r.getCo2eKg() : null, a.getSourceDocumentId(), note == null ? null : note.toString(),
+                    a.getEntryMethod().name());
+        }).toList();
     }
 
     /**
@@ -47,7 +78,7 @@ public class ActivityService {
      * "không truy được về chứng từ" cho tới khi có bằng chứng.
      */
     @Transactional
-    public ActivityData createManual(Map<String, Object> body) {
+    public ActivityView createManual(Map<String, Object> body) {
         UUID periodId = UUID.fromString(String.valueOf(body.get("periodId")));
         ReportingPeriod period = organizationService.requireOpenPeriod(periodId);
         ActivityCategory category;
@@ -82,7 +113,8 @@ public class ActivityService {
                 ActivityData.EntryMethod.MANUAL, category, subCategory, quantity, unit, date)
                 .withEvidence(null, TenantContext.userId(), note == null ? Map.of() : Map.of("note", String.valueOf(note))));
         audit.record(AuditService.CREATE, "activity_data", a.getId(), null, Map.of("category", category.name()));
-        return a;
+        calculation.recalculate(period, List.of(a));
+        return toViews(List.of(a)).get(0);
     }
 
     public ActivityData update(UUID id, Map<String, Object> body) {

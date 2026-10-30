@@ -37,7 +37,7 @@ export function PassportDetailDrawer({ passport, onClose, onRevoke }: PassportDe
           </div>
           <div>
             <p className="text-slate-500">SHA-256</p>
-            <p className="mt-0.5 break-all font-mono text-[11px]">{passport.hash}</p>
+            <p className="mt-0.5 break-all font-mono text-xs">{passport.hash}</p>
           </div>
           {onRevoke && passport.status === "VALID" && (
             <div className="pt-3">

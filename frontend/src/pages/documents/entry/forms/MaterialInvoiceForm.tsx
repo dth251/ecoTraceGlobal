@@ -2,6 +2,7 @@ import { useState } from "react";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { Input } from "@/components/ui/Input";
 import { NumberInput } from "@/components/ui/NumberInput";
+import { Select } from "@/components/ui/Select";
 
 export interface MaterialInvoiceFormProps {
   initialData?: Record<string, unknown>;
@@ -12,7 +13,7 @@ export interface MaterialInvoiceFormProps {
 export function MaterialInvoiceForm({ initialData, disabled, onChange }: MaterialInvoiceFormProps) {
   const [supplier, setSupplier] = useState(String(initialData?.supplier ?? ""));
   const [materialGroup, setMaterialGroup] = useState(String(initialData?.materialGroup ?? "STEEL"));
-  const [date, setDate] = useState(String(initialData?.date ?? "2026-07-15"));
+  const [date, setDate] = useState(String(initialData?.date ?? ""));
   const [quantityKg, setQuantityKg] = useState<number | null>(
     typeof initialData?.quantityKg === "number" ? initialData.quantityKg : null,
   );
@@ -32,7 +33,7 @@ export function MaterialInvoiceForm({ initialData, disabled, onChange }: Materia
           emit({ supplier: e.target.value });
         }}
       />
-      <Input
+      <Select
         label="Nhóm vật liệu"
         disabled={disabled}
         value={materialGroup}
@@ -40,6 +41,13 @@ export function MaterialInvoiceForm({ initialData, disabled, onChange }: Materia
           setMaterialGroup(e.target.value);
           emit({ materialGroup: e.target.value });
         }}
+        options={[
+          { value: "STEEL", label: "Thép" },
+          { value: "PLASTIC", label: "Nhựa" },
+          { value: "PAPER", label: "Giấy, carton" },
+          { value: "COTTON", label: "Bông, sợi" },
+          { value: "GENERIC", label: "Khác (hệ số mặc định)" },
+        ]}
       />
       <DatePicker
         label="Ngày hóa đơn"

@@ -10,7 +10,8 @@
     "passports": "Green Passports",
     "aiAssistant": "AI Assistant",
     "settings": "Settings",
-    "logout": "Log out"
+    "logout": "Log out",
+    "menu": "Menu"
   },
   "common": {
     "appName": "EcoTrace",
@@ -89,7 +90,44 @@
     "productIntensity": "Product emission intensity",
     "emptyTitle": "No emission data for this period yet",
     "emptyDescription": "Upload utility/fuel invoices or import from an Excel template to calculate emissions.",
-    "uploadFirstDoc": "Upload first document"
+    "uploadFirstDoc": "Upload first document",
+    "recalculated": "Recalculated {{count}} activity rows",
+    "noPeriodTitle": "No reporting period yet",
+    "noPeriodDescription": "Create a facility and a reporting period in onboarding to start recording data.",
+    "calculatedAt": "Updated",
+    "noFootprints": "No product figures yet. Enter production output for the period to allocate emissions to each product.",
+    "evidenced": "evidenced",
+    "unit": "unit",
+    "documentsEntered": "documents entered",
+    "statTotal": "Period total emissions",
+    "statEvidenced": "Emissions backed by documents",
+    "statEvidencedHint": "weighted by CO₂e, not by row count",
+    "statActivities": "Activity rows recorded",
+    "scopeTitle": "Breakdown by emission scope",
+    "scopeDesc": "Period emissions split by the three GHG Protocol scopes: on-site fuel, purchased energy, and the supply chain.",
+    "scopeMeaning": {
+      "scope1": "Fuel burned on site and in company vehicles",
+      "scope2": "Electricity bought from the grid",
+      "scope3": "Purchased materials and freight"
+    },
+    "monthlyDesc": "Each column is one month total, split by scope, so you can see which month rose and why.",
+    "sourcesDesc": "The largest emission sources of the period; colour shows the scope. Start reducing from the longest bar.",
+    "evidenceTitle": "Where the data comes from",
+    "evidenceDesc": "Share of emissions proven by invoices or imported files versus typed in by hand. EU buyers and CBAM prefer documented data.",
+    "productDesc": "Emissions allocated to each unit of product by output, split by origin. This is the figure printed on the green passport.",
+    "parts": {
+      "direct": "Direct (Scope 1)",
+      "indirect": "Purchased energy (Scope 2)",
+      "precursor": "Precursors (Scope 3)"
+    },
+    "col": {
+      "item": "Item",
+      "value": "Emissions",
+      "share": "Share",
+      "month": "Month",
+      "total": "Total",
+      "product": "Product"
+    }
   },
   "documents": {
     "title": "Documents",
@@ -118,7 +156,12 @@
     "customerCode": "Customer code",
     "startDate": "Start date",
     "endDate": "End date",
-    "totalKwh": "Total electricity (kWh)"
+    "totalKwh": "Total electricity (kWh)",
+    "date": "Document date",
+    "distanceKm": "Distance (km)",
+    "saved": "Saved, emissions calculated",
+    "fixErrors": "Fix the errors below before saving",
+    "noFile": "Could not load the document file"
   },
   "imports": {
     "title": "Excel Import",
@@ -131,7 +174,48 @@
   "activities": {
     "title": "Activity Data",
     "addManual": "Add manual entry",
-    "exportCsv": "Export CSV"
+    "exportCsv": "Export CSV",
+    "category": "Category",
+    "subType": "Type",
+    "date": "Activity date",
+    "quantity": "Quantity",
+    "unit": "Unit",
+    "note": "Note",
+    "scope": "Scope",
+    "emissions": "Emissions",
+    "source": "Source",
+    "categories": {
+      "ELECTRICITY": "Purchased electricity",
+      "STATIONARY_FUEL": "Stationary fuel",
+      "MOBILE_FUEL": "Mobile fuel",
+      "PROCESS": "Process emissions",
+      "PURCHASED_MATERIAL": "Purchased materials",
+      "UPSTREAM_TRANSPORT": "Inbound transport",
+      "DOWNSTREAM_TRANSPORT": "Export transport",
+      "WASTE": "Waste"
+    },
+    "subTypes": {
+      "GRID": "Grid electricity",
+      "DIESEL": "Diesel",
+      "LPG": "LPG",
+      "STEEL": "Steel",
+      "ROAD": "Road",
+      "SEA": "Sea",
+      "PETROL": "Petrol",
+      "NATGAS": "Natural gas",
+      "COAL": "Coal",
+      "PLASTIC": "Plastic",
+      "PAPER": "Paper, cardboard",
+      "COTTON": "Cotton, fibre",
+      "GENERIC": "Other material (default factor)",
+      "AIR": "Air",
+      "RAIL": "Rail"
+    },
+    "entryMethods": {
+      "MANUAL": "Manual",
+      "DOCUMENT": "Document",
+      "IMPORT": "Excel file"
+    }
   },
   "products": {
     "title": "Products & Product Footprint",
@@ -185,7 +269,8 @@
     "forbiddenTitle": "Access denied",
     "forbiddenMessage": "You do not have sufficient permissions for this action.",
     "PERIOD_LOCKED": "Reporting period is locked; data cannot be modified.",
-    "UNKNOWN": "An unexpected error occurred. Please try again."
+    "UNKNOWN": "An unexpected error occurred. Please try again.",
+    "SERVER_UNAVAILABLE": "Cannot reach the server. Check that the backend is running and try again."
   },
   "validation": {
     "required": "This field is required",
@@ -198,5 +283,66 @@
     "endBeforeStart": "End date must be on or after start date",
     "taxCode": "Tax ID must be 10 or 13 digits",
     "acceptTerms": "You must accept the terms to register"
+  },
+  "landing": {
+    "nav": {
+      "how": "How it works",
+      "passport": "Green passport",
+      "periods": "Periods",
+      "login": "Sign in",
+      "start": "Create account",
+      "dashboard": "Open dashboard"
+    },
+    "hero": {
+      "title": "Carbon reporting for export factories",
+      "subtitle": "Enter electricity, fuel and material invoices and bills of lading. EcoTrace calculates Scope 1, 2 and 3 emissions with sourced factors and keeps the original document behind every figure.",
+      "primary": "Create account",
+      "secondary": "Sign in"
+    },
+    "docs": {
+      "title": "Every figure traces back to a document",
+      "body": "Upload an invoice and key in a few fields next to the original. Units, dates and emission factors are checked before saving, then emissions are calculated straight away.",
+      "electricity": "Electricity bill",
+      "electricityScope": "Scope 2, purchased electricity",
+      "fuel": "Fuel invoice",
+      "fuelScope": "Scope 1, fuel combustion",
+      "material": "Material invoice",
+      "materialScope": "Scope 3, purchased materials",
+      "bol": "Bill of lading",
+      "bolScope": "Scope 3, freight"
+    },
+    "passport": {
+      "title": "A green passport for each product",
+      "body": "Period emissions are allocated to each product by output. Once the period is locked, every passport gets a public verification code, hashed with SHA-256 and signed with ECDSA P-256, so buyers can check the figures were not changed."
+    },
+    "periods": {
+      "title": "Work by period, with the right people",
+      "p1t": "Several factories",
+      "p1d": "Each factory has its own periods and grid emission factor.",
+      "p2t": "Period lock",
+      "p2d": "Locked figures stop changing and can be issued as passports.",
+      "p3t": "Roles",
+      "p3d": "Owners, editors and viewers get different permissions."
+    },
+    "cta": {
+      "title": "Start with your first reporting period",
+      "subtitle": "Create an account, add your factory and enter the first invoice today.",
+      "primary": "Create account"
+    },
+    "art": {
+      "factory": "3D model of a factory loading yard with a moving overhead crane; drag to rotate",
+      "containers": "3D model of three stacked export containers",
+      "documents": "3D model of a document stack with a green passport on top",
+      "loading": "Loading 3D model",
+      "credit": "3D models and HDRI lighting:"
+    },
+    "footer": {
+      "rights": "Emissions accounting for Vietnamese exporters."
+    }
+  },
+  "authLayout": {
+    "panelTitle": "Transparent carbon data for every export shipment.",
+    "panelSubtitle": "Factories use EcoTrace to answer European buyers about emissions.",
+    "backHome": "Back to home"
   }
 }

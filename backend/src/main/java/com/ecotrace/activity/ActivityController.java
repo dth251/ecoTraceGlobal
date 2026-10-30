@@ -31,7 +31,7 @@ public class ActivityController {
     }
 
     @GetMapping
-    public List<ActivityData> list(@RequestParam UUID periodId,
+    public List<ActivityService.ActivityView> list(@RequestParam UUID periodId,
                                    @RequestParam(required = false) ActivityCategory category) {
         return service.list(periodId, category);
     }
@@ -39,7 +39,7 @@ public class ActivityController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('OWNER','EDITOR')")
-    public ActivityData create(@RequestBody Map<String, Object> body) {
+    public ActivityService.ActivityView create(@RequestBody Map<String, Object> body) {
         return service.createManual(body);
     }
 

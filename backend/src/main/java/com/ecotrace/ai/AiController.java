@@ -43,6 +43,12 @@ public class AiController {
         return client.classifyActivity(request);
     }
 
+    @PostMapping("/estimate")
+    @PreAuthorize("hasAnyRole('OWNER','EDITOR')")
+    public Map<String, Object> estimate(@RequestBody Map<String, Object> body) {
+        return client.estimate(body);
+    }
+
     @PostMapping("/optimize/{periodId}")
     @PreAuthorize("hasAnyRole('OWNER','EDITOR')")
     public OptimizeResponse optimize(

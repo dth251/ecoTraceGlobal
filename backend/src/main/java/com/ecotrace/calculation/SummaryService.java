@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -49,12 +48,6 @@ public class SummaryService {
     public record SourceItem(String category, String subCategory, short scope, BigDecimal co2eKg) {
     }
 
-    /** Dạng frontend dùng (EmissionSummary ở frontend/src/types/domain.ts). */
-    public record SummaryView(UUID periodId, BigDecimal totalKg, Map<String, BigDecimal> byScope,
-                              List<Map<String, Object>> byMonth, List<Map<String, Object>> topSources,
-                              BigDecimal previousTotalKg, Instant calculatedAt) {
-    }
-
     @Transactional(readOnly = true)
     public PeriodSummary getSummary(UUID periodId) {
         organizationService.requirePeriod(periodId);
@@ -87,18 +80,5 @@ public class SummaryService {
         return new PeriodSummary(periodId, byScope[0].add(byScope[1]).add(byScope[2]), byScope[0], byScope[1], byScope[2],
                 months.entrySet().stream().map(e -> new MonthlyPoint(e.getKey(), e.getValue()[0], e.getValue()[1], e.getValue()[2])).toList(),
                 sources.values().stream().sorted(Comparator.comparing(SourceItem::co2eKg).reversed()).toList());
-    }
-
-    @Transactional(readOnly = true)
-    public SummaryView view(UUID periodId) {
-        PeriodSummary s = getSummary(periodId);
-        return new SummaryView(periodId, s.totalCo2eKg(),
-                Map.of("scope1", s.scope1Co2eKg(), "scope2", s.scope2Co2eKg(), "scope3", s.scope3Co2eKg()),
-                s.byMonth().stream().map(m -> Map.<String, Object>of("month", "T" + m.month().substring(5) + "/" + m.month().substring(2, 4),
-                        "scope1", m.scope1Kg(), "scope2", m.scope2Kg(), "scope3", m.scope3Kg())).toList(),
-                s.topSources().stream().map(src -> Map.<String, Object>of("category", src.category(),
-                        "label", src.subCategory() != null ? src.category() + " · " + src.subCategory() : src.category(),
-                        "co2eKg", src.co2eKg())).toList(),
-                null, s.totalCo2eKg().signum() > 0 ? Instant.now() : null);
     }
 }

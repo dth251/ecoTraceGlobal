@@ -75,3 +75,5 @@ ai-service/eval/dataset_holdout/
 
 # Backend chạy local: chứng từ tải lên và khóa ký hộ chiếu (không được commit)
 backend/data/
+# File chứng từ lưu cục bộ khi chạy dev
+backend/storage/

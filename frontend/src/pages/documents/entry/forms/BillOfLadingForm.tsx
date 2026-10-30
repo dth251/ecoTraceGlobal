@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { Input } from "@/components/ui/Input";
 import { NumberInput } from "@/components/ui/NumberInput";
@@ -10,36 +11,44 @@ export interface BillOfLadingFormProps {
   onChange: (data: Record<string, unknown>) => void;
 }
 
+const num = (v: unknown) => (typeof v === "number" ? v : null);
+
 export function BillOfLadingForm({ initialData, disabled, onChange }: BillOfLadingFormProps) {
+  const { t } = useTranslation();
   const [bolNumber, setBolNumber] = useState(String(initialData?.bolNumber ?? ""));
-  const [mode, setMode] = useState(String(initialData?.mode ?? "ROAD"));
+  const [date, setDate] = useState(String(initialData?.date ?? ""));
+  const [mode, setMode] = useState(String(initialData?.mode ?? "SEA"));
   const [origin, setOrigin] = useState(String(initialData?.origin ?? ""));
   const [destination, setDestination] = useState(String(initialData?.destination ?? ""));
-  const [weightKg, setWeightKg] = useState<number | null>(
-    typeof initialData?.weightKg === "number" ? initialData.weightKg : null,
-  );
+  const [weightKg, setWeightKg] = useState<number | null>(num(initialData?.weightKg));
+  const [distanceKm, setDistanceKm] = useState<number | null>(num(initialData?.distanceKm));
 
-  const [distanceKm, setDistanceKm] = useState<number | null>(
-    typeof initialData?.distanceKm === "number" ? initialData.distanceKm : null,
-  );
-  const [date, setDate] = useState(String(initialData?.date ?? ""));
-
-  // Phát thải vận chuyển = tấn × km × hệ số, nên cần cả quãng đường và ngày vận chuyển
   const emit = (patch: Record<string, unknown>) => {
-    onChange({ bolNumber, mode, origin, destination, weightKg, distanceKm, date, ...patch });
+    onChange({ bolNumber, date, mode, origin, destination, weightKg, distanceKm, ...patch });
   };
 
   return (
-    <div className="space-y-3">
-      <Input
-        label="Số vận đơn"
-        disabled={disabled}
-        value={bolNumber}
-        onChange={(e) => {
-          setBolNumber(e.target.value);
-          emit({ bolNumber: e.target.value });
-        }}
-      />
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <Input
+          label="Số vận đơn"
+          disabled={disabled}
+          value={bolNumber}
+          onChange={(e) => {
+            setBolNumber(e.target.value);
+            emit({ bolNumber: e.target.value });
+          }}
+        />
+        <DatePicker
+          label={t("entry.date")}
+          disabled={disabled}
+          value={date}
+          onChange={(e) => {
+            setDate(e.target.value);
+            emit({ date: e.target.value });
+          }}
+        />
+      </div>
       <Select
         label="Phương thức vận tải"
         disabled={disabled}
@@ -49,13 +58,11 @@ export function BillOfLadingForm({ initialData, disabled, onChange }: BillOfLadi
           emit({ mode: e.target.value });
         }}
         options={[
-          { value: "ROAD", label: "Đường bộ" },
-          { value: "SEA", label: "Đường biển" },
-          { value: "RAIL", label: "Đường sắt" },
-          { value: "AIR", label: "Đường hàng không" },
+          { value: "SEA", label: t("activities.subTypes.SEA") },
+          { value: "ROAD", label: t("activities.subTypes.ROAD") },
         ]}
       />
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Input
           label="Nơi đi"
           disabled={disabled}
@@ -75,7 +82,7 @@ export function BillOfLadingForm({ initialData, disabled, onChange }: BillOfLadi
           }}
         />
       </div>
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <NumberInput
           label="Khối lượng (kg)"
           disabled={disabled}
@@ -86,7 +93,7 @@ export function BillOfLadingForm({ initialData, disabled, onChange }: BillOfLadi
           }}
         />
         <NumberInput
-          label="Quãng đường (km)"
+          label={t("entry.distanceKm")}
           disabled={disabled}
           value={distanceKm}
           onChange={(val) => {
@@ -95,15 +102,6 @@ export function BillOfLadingForm({ initialData, disabled, onChange }: BillOfLadi
           }}
         />
       </div>
-      <DatePicker
-        label="Ngày vận chuyển"
-        disabled={disabled}
-        value={date}
-        onChange={(e) => {
-          setDate(e.target.value);
-          emit({ date: e.target.value });
-        }}
-      />
     </div>
   );
 }

@@ -71,12 +71,16 @@ public class EntryMapper {
                 f.put("date", date);
                 f.put("fuelType", fuelTypeOf(str(d.get("factor_code"))));
                 f.put("quantity", num(d.get("quantity")));
-                f.put("unit", "L");
+                String fuel = fuelTypeOf(str(d.get("factor_code")));
+                f.put("unit", "LPG".equals(fuel) || "COAL".equals(fuel) ? "kg" : "NATGAS".equals(fuel) ? "m3" : "L");
             }
             case MATERIAL_INVOICE -> {
                 f.put("supplier", str(d.get("supplier")));
+                // Đổi về mã nhóm vật liệu của form (STEEL, PLASTIC...), không nhận ra thì GENERIC
                 String material = str(d.get("material_type"));
-                f.put("materialGroup", material != null ? material : str(d.get("description")));
+                String code = str(d.get("factor_code"));
+                f.put("materialGroup", materialOf((material != null ? material : "") + " "
+                        + (code != null ? code : "") + " " + (str(d.get("description")) != null ? str(d.get("description")) : "")));
                 f.put("date", date);
                 BigDecimal q = num(d.get("quantity"));
                 String unit = str(d.get("unit"));
@@ -173,13 +177,17 @@ public class EntryMapper {
         };
     }
 
-    /** Loại nguyên liệu theo từ khóa; không nhận ra thì GENERIC (hệ số mặc định). */
+    private static final List<String> MATERIAL_CODES = List.of("STEEL", "PLASTIC", "PAPER", "COTTON", "GENERIC");
+
+    /** Loại nguyên liệu: mã có sẵn (STEEL...) hoặc theo từ khóa; không nhận ra thì GENERIC (hệ số mặc định). */
     public static String materialOf(String text) {
-        String t = text == null ? "" : text.toLowerCase(Locale.ROOT);
-        if (t.matches(".*(thép|thep|steel|sắt|iron|mat_steel).*")) return "STEEL";
-        if (t.matches(".*(nhựa|nhua|plastic|pp|pe|pet|hạt nhựa|mat_plastic).*")) return "PLASTIC";
-        if (t.matches(".*(giấy|giay|carton|paper|bìa|mat_paper).*")) return "PAPER";
-        if (t.matches(".*(bông|bong|cotton|sợi|mat_cotton).*")) return "COTTON";
+        String raw = text == null ? "" : text.trim();
+        if (MATERIAL_CODES.contains(raw.toUpperCase(Locale.ROOT))) return raw.toUpperCase(Locale.ROOT);
+        String t = raw.toLowerCase(Locale.ROOT);
+        if (t.matches("(?s).*(thép|thep|steel|sắt|iron|mat_steel).*")) return "STEEL";
+        if (t.matches("(?s).*(giấy|giay|carton|paper|bìa|mat_paper).*")) return "PAPER";
+        if (t.matches("(?s).*(bông|bong|cotton|sợi|mat_cotton).*")) return "COTTON";
+        if (t.matches("(?s).*(nhựa|nhua|plastic|hạt nhựa|mat_plastic|\\b(pp|pe|pet|hdpe|ldpe)\\b).*")) return "PLASTIC";
         return "GENERIC";
     }
 

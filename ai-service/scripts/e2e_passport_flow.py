@@ -112,8 +112,11 @@ def main() -> int:
     check(calc["recordsCalculated"] == calc["activities"] == 8 and not calc["failures"],
           "tính phát thải đủ 8 hoạt động", f"{calc['recordsCalculated']}/{calc['activities']}, lỗi={calc['failures']}")
     summ = c.get(f"/periods/{pid}/summary").json()
-    check(summ["totalKg"] > 0 and summ["byScope"]["scope1"] > 0 and summ["byScope"]["scope2"] > 0 and summ["byScope"]["scope3"] > 0,
-          "tổng hợp có đủ Scope 1/2/3", f"total={summ['totalKg']}")
+    check(summ["totalCo2eKg"] > 0 and summ["scope1Co2eKg"] > 0 and summ["scope2Co2eKg"] > 0 and summ["scope3Co2eKg"] > 0,
+          "tổng hợp có đủ Scope 1/2/3", f"total={summ['totalCo2eKg']}")
+    acts = c.get("/activities", params={"periodId": pid}).json()
+    check(len(acts) == 8 and all(a["co2eKg"] is not None for a in acts),
+          "danh sách hoạt động kèm phát thải (dạng giao diện mới)", f"{len(acts)} hoạt động")
 
     # 6. Chưa có sản lượng, chưa khóa kỳ -> chưa được cấp, lý do rõ ràng
     rd = c.get(f"/periods/{pid}/passports/readiness", params={"productId": product["id"]}).json()

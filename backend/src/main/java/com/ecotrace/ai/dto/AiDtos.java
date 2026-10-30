@@ -55,7 +55,9 @@ public final class AiDtos {
             @JsonProperty("total_amount") Double totalAmount,
             String currency,
             List<LineItem> lines,
-            @JsonProperty("overall_confidence") Double overallConfidence
+            @JsonProperty("overall_confidence") Double overallConfidence,
+            // Khối dữ liệu đầy đủ của AI (scope, factor_code, review_fields...) cho bản nháp và ước tính CO2e
+            Map<String, Object> data
     ) {}
 
     /** Ảnh chụp dữ liệu của kỳ và sản phẩm gửi sang AI service để xét điều kiện cấp hộ chiếu. Trường null nghĩa là chưa có dữ liệu. */

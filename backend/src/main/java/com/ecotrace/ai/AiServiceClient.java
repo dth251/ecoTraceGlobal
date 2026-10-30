@@ -86,25 +86,26 @@ public class AiServiceClient {
         }
     }
 
+    /**
+     * Gửi cơ cấu phát thải thật của kỳ sang AI service. Khóa theo mã AI service nhận diện
+     * (ELEC_GRID, FUEL_*, MAT_*, FREIGHT_*). Không có dữ liệu hoặc AI không phản hồi thì báo lỗi, không trả gợi ý giả.
+     */
     public OptimizeResponse optimizePeriod(UUID periodId, String language, Integer maxSuggestions) {
         organizationService.requirePeriod(periodId);
         var summary = summaryService.getSummary(periodId);
 
         Map<String, Double> inventory = new HashMap<>();
-        if (summary.topSources() != null) {
-            for (var src : summary.topSources()) {
-                String key = (src.subCategory() != null && !src.subCategory().isBlank()) 
-                        ? src.subCategory() : src.category();
-                inventory.put(key, src.co2eKg().doubleValue());
-            }
+        for (var src : summary.topSources()) {
+            inventory.merge(aiCode(src.category(), src.subCategory()), src.co2eKg().doubleValue(), Double::sum);
         }
         if (inventory.isEmpty()) {
-            inventory.put("ELEC_GRID", summary.scope2Co2eKg() != null ? summary.scope2Co2eKg().doubleValue() : 50000.0);
-            inventory.put("FUEL_DIESEL", summary.scope1Co2eKg() != null ? summary.scope1Co2eKg().doubleValue() : 20000.0);
+            throw new ApiException(HttpStatus.CONFLICT, "NO_EMISSION_DATA",
+                    "This period has no calculated emissions to optimise yet");
         }
 
         try {
-            OptimizeRequest req = new OptimizeRequest(inventory, language != null ? language : "vi", maxSuggestions != null ? maxSuggestions : 5);
+            OptimizeRequest req = new OptimizeRequest(inventory, language != null ? language : "vi",
+                    maxSuggestions != null ? maxSuggestions : 5);
             return aiRestClient.post()
                     .uri("/ai/optimize")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -113,18 +114,39 @@ public class AiServiceClient {
                     .body(OptimizeResponse.class);
         } catch (Exception e) {
             log.error("AI optimize error: {}", e.getMessage());
-            // Fallback gợi ý nếu AI Service chưa mở hoặc lỗi mạng
-            return new OptimizeResponse(
-                    List.of(
-                            new SuggestionItem("Lắp điện mặt trời áp mái (Rooftop Solar)",
-                                    "Điện lưới Scope 2 chiếm tỷ trọng cao. Lắp đặt 300 kWp điện mặt trời giúp giảm phát thải ròng.",
-                                    "ELEC_GRID", 18.0, "trung bình"),
-                            new SuggestionItem("Chuyển đổi nhiên liệu lò sấy sang sinh khối/LPG",
-                                    "Nhiên liệu hóa thạch Scope 1 có thể thay thế một phần bằng biomass viên nén gỗ.",
-                                    "FUEL_DIESEL", 25.0, "cao")
-                    ),
-                    "Phân tích sơ bộ từ cơ cấu phát thải Scope 1 & 2 của kỳ báo cáo."
-            );
+            throw new ApiException(HttpStatus.BAD_GATEWAY, "AI_SERVICE_ERROR",
+                    "AI service is unavailable: " + e.getMessage());
+        }
+    }
+
+    /** Hạng mục backend → mã nguồn phát thải mà bộ quy tắc của AI service dùng */
+    static String aiCode(String category, String subCategory) {
+        String sub = subCategory != null && !subCategory.isBlank() ? subCategory.toUpperCase(Locale.ROOT) : "OTHER";
+        return switch (category) {
+            case "ELECTRICITY" -> "ELEC_GRID";
+            case "STATIONARY_FUEL", "MOBILE_FUEL" -> "FUEL_" + sub;
+            case "PURCHASED_MATERIAL" -> "MAT_" + sub;
+            case "UPSTREAM_TRANSPORT", "DOWNSTREAM_TRANSPORT" -> "FREIGHT_" + sub;
+            default -> category + "_" + sub;
+        };
+    }
+
+    /**
+     * Ước tính CO2e cho cả lô chứng từ AI vừa đọc (trang Trợ lý AI), chuyển tiếp nguyên văn sang AI service.
+     * Chỉ là ước tính theo hệ số tham khảo; số chính thức do backend tính sau khi người dùng xác nhận chứng từ.
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> estimate(Map<String, Object> body) {
+        try {
+            return aiRestClient.post()
+                    .uri("/ai/estimate")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(body)
+                    .retrieve()
+                    .body(Map.class);
+        } catch (Exception e) {
+            log.error("AI estimate error: {}", e.getMessage());
+            throw new ApiException(HttpStatus.BAD_GATEWAY, "AI_SERVICE_ERROR", "AI service is unavailable: " + e.getMessage());
         }
     }
 

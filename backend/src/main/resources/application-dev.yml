@@ -8,3 +8,6 @@ spring:
   jpa:
     show-sql: false
 
+  # Đọc DB_URL, DB_USER, DB_PASSWORD... từ backend/.env (không commit) khi chạy cục bộ
+  config:
+    import: optional:file:.env[.properties]

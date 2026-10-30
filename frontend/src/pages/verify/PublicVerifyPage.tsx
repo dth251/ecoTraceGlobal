@@ -66,7 +66,7 @@ export function PublicVerifyPage() {
           <p className="font-mono text-xs text-slate-500">{code}</p>
         </div>
         <Badge variant={isValid ? "success" : "danger"}>
-          {isValid ? `✅ ${t("verify.valid")}` : `⛔ ${t("verify.revoked")}`}
+          {isValid ? t("verify.valid") : t("verify.revoked")}
         </Badge>
       </div>
 
@@ -90,7 +90,7 @@ export function PublicVerifyPage() {
           <dd className="text-slate-900">{d.periodName}</dd>
         </div>
         <div className="border-t border-slate-100 pt-2">
-          <p className="mb-1 text-xs font-semibold uppercase text-slate-500">
+          <p className="mb-1 text-xs font-semibold text-slate-500">
             {t("verify.embeddedEmissions")}
           </p>
           <div className="flex justify-between text-xs">
@@ -116,7 +116,7 @@ export function PublicVerifyPage() {
         </div>
         <div className="border-t border-slate-100 pt-2 text-xs">
           <dt className="text-slate-500">{t("verify.hash")}</dt>
-          <dd className="mt-0.5 break-all font-mono text-[11px] text-slate-700">{d.hash}</dd>
+          <dd className="mt-0.5 break-all font-mono text-xs text-slate-700">{d.hash}</dd>
         </div>
       </dl>
 
@@ -128,7 +128,7 @@ export function PublicVerifyPage() {
           loading={loadingAudit}
           onClick={handleRunAiAudit}
         >
-          🤖 {loadingAudit ? "Reviewing compliance..." : "Check passport requirements (AI)"}
+          {loadingAudit ? "Reviewing compliance..." : "Check passport requirements (AI)"}
         </Button>
       </div>
 

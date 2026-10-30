@@ -72,11 +72,11 @@ export function PeriodActions() {
       {error && <div className="mt-3 rounded-md bg-danger-light p-2 text-xs text-danger-dark">{error}</div>}
       {result && (
         <div className="mt-3 space-y-1 text-xs">
-          <div className={result.failures.length ? "text-warning-dark" : "text-success-dark"}>
+          <div className={(result.failures ?? []).length ? "text-warning-dark" : "text-success-dark"}>
             Đã tính {result.recordsCalculated}/{result.activities} hoạt động.
-            {result.failures.length > 0 && " Các hoạt động dưới đây chưa tính được nên kỳ chưa đủ điều kiện cấp hộ chiếu:"}
+            {(result.failures ?? []).length > 0 && " Các hoạt động dưới đây chưa tính được nên kỳ chưa đủ điều kiện cấp hộ chiếu:"}
           </div>
-          {result.failures.map((f) => (
+          {(result.failures ?? []).map((f) => (
             <div key={f.activityId} className="rounded bg-warning-light p-1.5 text-warning-dark">
               {f.category}
               {f.subCategory ? ` · ${f.subCategory}` : ""}: {f.message}

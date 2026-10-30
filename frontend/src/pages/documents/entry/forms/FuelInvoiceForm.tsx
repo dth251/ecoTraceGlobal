@@ -12,14 +12,19 @@ export interface FuelInvoiceFormProps {
 
 export function FuelInvoiceForm({ initialData, disabled, onChange }: FuelInvoiceFormProps) {
   const [supplier, setSupplier] = useState(String(initialData?.supplier ?? ""));
-  const [date, setDate] = useState(String(initialData?.date ?? "2026-07-15"));
+  const [date, setDate] = useState(String(initialData?.date ?? ""));
   const [fuelType, setFuelType] = useState(String(initialData?.fuelType ?? "DIESEL"));
   const [quantity, setQuantity] = useState<number | null>(
     typeof initialData?.quantity === "number" ? initialData.quantity : null,
   );
 
+  // Đơn vị theo loại nhiên liệu, khớp đơn vị của hệ số phát thải (LPG, than theo kg; khí tự nhiên theo m³)
+  const unitOf = (fuel: string) => (fuel === "LPG" || fuel === "COAL" ? "kg" : fuel === "NATGAS" ? "m3" : "L");
+  const unitText = { L: "lít", kg: "kg", m3: "m³" }[unitOf(fuelType)];
+
   const emit = (patch: Record<string, unknown>) => {
-    onChange({ supplier, date, fuelType, quantity, unit: "L", ...patch });
+    const next = { supplier, date, fuelType, quantity, ...patch };
+    onChange({ ...next, unit: unitOf(String(next.fuelType)) });
   };
 
   return (
@@ -52,12 +57,14 @@ export function FuelInvoiceForm({ initialData, disabled, onChange }: FuelInvoice
         }}
         options={[
           { value: "DIESEL", label: "Dầu DO (Diesel)" },
-          { value: "LPG", label: "Khí hóa lỏng (LPG)" },
-          { value: "COAL", label: "Than đá" },
+          { value: "PETROL", label: "Xăng" },
+          { value: "LPG", label: "Khí hóa lỏng (LPG, kg)" },
+          { value: "NATGAS", label: "Khí tự nhiên (m³)" },
+          { value: "COAL", label: "Than (kg)" },
         ]}
       />
       <NumberInput
-        label="Số lượng (lít)"
+        label={`Số lượng (${unitText})`}
         disabled={disabled}
         value={quantity}
         onChange={(val) => {

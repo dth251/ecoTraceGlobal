@@ -14,7 +14,9 @@ export const documentsApi = {
   /** Lưu kết quả AI bóc tách làm bản nháp; chỉ vào kiểm kê khi người dùng xác nhận ở trang nhập liệu. */
   aiDraft: (id: string, extraction: unknown) =>
     api<DocumentItem>(`/documents/${id}/ai-draft`, { method: "PUT", ...json(extraction) }),
-  fileUrl: (id: string) => api<{ url: string; contentType: string }>(`/documents/${id}/file`),
+  /** URL ký tạm (S3) hoặc đường dẫn API cần token (lưu cục bộ) */
+  fileUrl: (id: string) =>
+    api<{ url?: string; contentPath?: string; contentType: string }>(`/documents/${id}/file`),
   getEntry: (id: string) => api<DocumentEntry>(`/documents/${id}/entry`),
   saveEntry: (id: string, data: Record<string, unknown>, acknowledgeWarnings = false, docType?: DocType) =>
     api<DocumentEntry>(`/documents/${id}/entry`, { method: "PUT", ...json({ data, acknowledgeWarnings, docType }) }),

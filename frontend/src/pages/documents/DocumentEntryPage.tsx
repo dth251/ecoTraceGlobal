@@ -1,95 +1,150 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ApiError } from "@/api/client";
+import { Link, useParams } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { ApiError, authHeaders, BASE } from "@/api/client";
 import { documentsApi } from "@/api/documents";
+import { DocTypeSelect } from "@/components/documents/DocTypeSelect";
 import { Badge } from "@/components/ui/Badge";
+import { ErrorState } from "@/components/ui/ErrorState";
+import { Skeleton } from "@/components/ui/Skeleton";
 import { useCurrentContext } from "@/hooks/useCurrentContext";
 import { DocumentViewer } from "@/pages/documents/entry/DocumentViewer";
 import { EntryForm } from "@/pages/documents/entry/EntryForm";
-import { EntryToolbar } from "@/pages/documents/entry/EntryToolbar";
 import { keys } from "@/queries/keys";
 import { useDocumentEntry } from "@/queries/useDocumentEntry";
 import type { DocType, ValidationIssue } from "@/types/domain";
 
-/**
- * Nhập liệu / xác nhận một chứng từ. Nếu AI đã bóc tách, form được điền sẵn từ bản nháp kèm cảnh báo cho trường
- * AI chưa chắc; số liệu chỉ vào kiểm kê khi người dùng đối chiếu với file gốc và bấm lưu.
- */
+/** Lấy URL hiển thị file: URL ký tạm của S3, hoặc tải qua API có token rồi tạo object URL */
+function useDocumentFile(id: string | undefined) {
+  const [file, setFile] = useState<{ url: string; contentType: string } | null>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    if (!id) return;
+    let objectUrl: string | null = null;
+    let cancelled = false;
+    (async () => {
+      try {
+        const info = await documentsApi.fileUrl(id);
+        if (info.url) {
+          if (!cancelled) setFile({ url: info.url, contentType: info.contentType });
+          return;
+        }
+        const res = await fetch(BASE + info.contentPath, { headers: authHeaders() });
+        if (!res.ok) throw new Error(res.statusText);
+        objectUrl = URL.createObjectURL(await res.blob());
+        if (!cancelled) setFile({ url: objectUrl, contentType: info.contentType });
+      } catch {
+        if (!cancelled) setFailed(true);
+      }
+    })();
+    return () => {
+      cancelled = true;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [id]);
+
+  return { file, failed };
+}
+
+function issuesFrom(err: unknown): ValidationIssue[] | null {
+  if (!(err instanceof ApiError) || !err.details) return null;
+  // Backend trả danh sách lỗi trực tiếp trong details (VALIDATION_FAILED, WARNINGS_NOT_ACKNOWLEDGED)
+  if (Array.isArray(err.details)) return err.details as ValidationIssue[];
+  if (typeof err.details === "object" && "issues" in err.details) {
+    return (err.details as { issues: ValidationIssue[] }).issues;
+  }
+  return null;
+}
+
 export function DocumentEntryPage() {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { periodId, isLocked } = useCurrentContext();
   const entryQuery = useDocumentEntry(id);
-  const fileQuery = useQuery({
-    queryKey: ["document-file", id],
-    queryFn: () => documentsApi.fileUrl(id!),
-    enabled: !!id,
-    staleTime: 60_000,
-  });
+  const { file, failed } = useDocumentFile(id);
+  const [issues, setIssues] = useState<ValidationIssue[]>([]);
+  const [saving, setSaving] = useState(false);
   const [docType, setDocType] = useState<DocType | null>(null);
-  const [saveIssues, setSaveIssues] = useState<ValidationIssue[] | null>(null);
-  const [saveError, setSaveError] = useState<string | null>(null);
 
   const entry = entryQuery.data;
-  const activeDocType = docType ?? entry?.docType ?? "ELECTRICITY_BILL";
-  const issues = saveIssues ?? entry?.issues ?? [];
+  const activeDocType = docType ?? entry?.docType ?? "OTHER";
+  const draftPending = !!entry?.aiDraft && entry.status !== "ENTERED";
 
-  const handleSave = async (data: Record<string, unknown>, ack: boolean) => {
+  // Bản nháp AI: hiện ngay các cảnh báo (trường AI chưa chắc, kỳ tính tiền...) để người dùng đối chiếu trước khi lưu
+  useEffect(() => {
+    if (entry) setIssues(entry.issues ?? []);
+  }, [entry]);
+
+  const handleSave = async (data: Record<string, unknown>, acknowledgeWarnings: boolean) => {
     if (!id) return;
-    setSaveError(null);
+    setSaving(true);
     try {
-      await documentsApi.saveEntry(id, { ...data }, ack, activeDocType);
-      if (periodId) await queryClient.invalidateQueries({ queryKey: keys.documents(periodId) });
-      await queryClient.invalidateQueries({ queryKey: keys.entry(id) });
-      navigate("/documents");
-    } catch (err: unknown) {
-      if (err instanceof ApiError && Array.isArray(err.details)) {
-        setSaveIssues(err.details as ValidationIssue[]);
-      } else {
-        setSaveError(err instanceof Error ? err.message : "Không lưu được");
+      const res = await documentsApi.saveEntry(id, data, acknowledgeWarnings, activeDocType);
+      setIssues(res.issues ?? []);
+      toast.success(t("entry.saved"));
+      void queryClient.invalidateQueries({ queryKey: keys.entry(id) });
+      if (periodId) {
+        void queryClient.invalidateQueries({ queryKey: keys.summary(periodId) });
+        void queryClient.invalidateQueries({ queryKey: ["documents"] });
+        void queryClient.invalidateQueries({ queryKey: ["activities"] });
       }
+    } catch (err) {
+      const found = issuesFrom(err);
+      if (found) {
+        setIssues(found);
+        toast.error(t("entry.fixErrors"));
+      } else {
+        toast.error(err instanceof ApiError ? err.message : t("errors.UNKNOWN"));
+      }
+    } finally {
+      setSaving(false);
     }
   };
 
+  if (entryQuery.isError) return <ErrorState onRetry={() => void entryQuery.refetch()} />;
+
   return (
-    <div className="flex h-[calc(100vh-7rem)] flex-col gap-3">
-      <div className="flex items-center justify-between gap-2">
-        <Link to="/documents" className="text-xs font-semibold text-brand hover:underline">
-          ← Chứng từ
-        </Link>
-        <div className="flex items-center gap-2">
-          {entry?.aiDraft && entry.status !== "ENTERED" && (
-            <Badge variant="info">Bản nháp AI · cần bạn đối chiếu rồi lưu</Badge>
-          )}
-          {entry?.status === "ENTERED" && <Badge variant="success">Đã xác nhận</Badge>}
+    <div className="flex min-h-[calc(100vh-9rem)] flex-col gap-4">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <div className="flex items-baseline gap-4">
+          <Link to="/documents" className="text-sm font-semibold text-brand-700 hover:underline">
+            {t("common.back")}
+          </Link>
+          <h1 className="text-xl font-bold text-ink">{entry?.fileName ?? t("entry.title")}</h1>
         </div>
+        {entry && (
+          <div className="flex items-center gap-3">
+            {draftPending && <Badge variant="info">Bản nháp AI · đối chiếu với file gốc rồi lưu để xác nhận</Badge>}
+            {entry.status === "ENTERED" && <Badge variant="success">Đã xác nhận</Badge>}
+            <div className="w-56">
+              <DocTypeSelect value={activeDocType} onChange={setDocType} disabled={isLocked || saving} label="" />
+            </div>
+          </div>
+        )}
       </div>
-      <EntryToolbar
-        fileName={entry?.fileName ?? (id ? `Document #${id}` : t("entry.title"))}
-        docType={activeDocType}
-        onDocTypeChange={(v) => {
-          setDocType(v);
-          setSaveIssues(null);
-        }}
-        disabled={isLocked}
-      />
-      {saveError && <div className="rounded-md bg-danger-light p-2 text-xs text-danger-dark">{saveError}</div>}
 
       <div className="grid flex-1 grid-cols-1 gap-4 lg:grid-cols-2">
-        <DocumentViewer fileUrl={fileQuery.data?.url} contentType={fileQuery.data?.contentType} fileName={entry?.fileName} />
-        {/* key: dựng lại form khi dữ liệu (bản nháp AI hoặc số đã lưu) tải xong hoặc đổi loại chứng từ */}
-        <EntryForm
-          key={`${entryQuery.dataUpdatedAt}-${activeDocType}`}
-          docType={activeDocType}
-          initialData={activeDocType === entry?.docType ? entry?.data : undefined}
-          issues={issues}
-          disabled={isLocked}
-          onSave={(data, ack) => void handleSave(data, ack)}
-        />
+        {failed ? (
+          <div className="card-surface flex items-center justify-center p-8 text-sm text-slate-600">{t("entry.noFile")}</div>
+        ) : (
+          <DocumentViewer fileUrl={file?.url} contentType={file?.contentType} fileName={entry?.fileName} />
+        )}
+        {entry ? (
+          <EntryForm
+            key={`${entry.documentId}-${activeDocType}`}
+            docType={activeDocType}
+            initialData={activeDocType === entry.docType ? entry.data : undefined}
+            issues={issues}
+            disabled={isLocked || saving}
+            onSave={(data, ack) => void handleSave(data, ack)}
+          />
+        ) : (
+          <Skeleton className="h-96 rounded-3xl" />
+        )}
       </div>
     </div>
   );

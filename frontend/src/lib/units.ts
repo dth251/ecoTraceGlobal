@@ -1,28 +1,33 @@
-// BẢN DỰNG LẠI TẠM THỜI (không phải bản gốc của tác giả frontend).
-// Thư mục src/lib/ từng bị .gitignore ("lib/") loại khỏi repo nên CI không build được. Dựng lại từ cách các trang dùng
-// và src/test/format.test.ts để CI chạy được. Tác giả frontend: hãy thay bằng bản gốc của bạn.
-export const UNITS_BY_CATEGORY: Record<string, string[]> = {
-  ELECTRICITY: ["kWh", "MWh"],
-  STATIONARY_FUEL: ["litre", "kg", "m3"],
-  MOBILE_FUEL: ["litre"],
-  PROCESS: ["kg", "t"],
-  PURCHASED_MATERIAL: ["kg", "t"],
-  UPSTREAM_TRANSPORT: ["tkm"],
-  DOWNSTREAM_TRANSPORT: ["tkm"],
-  WASTE: ["kg", "t"],
+// Hạng mục hoạt động khớp enum ActivityCategory của backend, kèm loại con có hệ số phát thải
+export const ACTIVITY_CATEGORIES: Record<string, { units: string[]; subTypes: string[] }> = {
+  ELECTRICITY: { units: ["kWh", "MWh"], subTypes: ["GRID"] },
+  STATIONARY_FUEL: { units: ["litre", "kg", "m3"], subTypes: ["DIESEL", "PETROL", "LPG", "NATGAS", "COAL"] },
+  MOBILE_FUEL: { units: ["litre"], subTypes: ["DIESEL", "PETROL"] },
+  PURCHASED_MATERIAL: { units: ["kg", "t"], subTypes: ["STEEL", "PLASTIC", "PAPER", "COTTON", "GENERIC"] },
+  UPSTREAM_TRANSPORT: { units: ["tkm"], subTypes: ["ROAD", "SEA", "RAIL", "AIR"] },
+  DOWNSTREAM_TRANSPORT: { units: ["tkm"], subTypes: ["SEA", "ROAD", "RAIL", "AIR"] },
 };
 
-export const PRODUCT_UNITS = ["t", "kg", "piece", "m", "m2"];
+export const UNITS_BY_CATEGORY: Record<string, string[]> = Object.fromEntries(
+  Object.entries(ACTIVITY_CATEGORIES).map(([k, v]) => [k, v.units]),
+);
+
+export const PRODUCT_UNITS = ["t", "kg", "pcs", "m2", "m3"] as const;
 
 const LABELS: Record<string, { vi: string; en: string }> = {
   t: { vi: "tấn", en: "tonne" },
   kg: { vi: "kg", en: "kg" },
-  piece: { vi: "cái", en: "piece" },
-  m: { vi: "mét", en: "metre" },
+  pcs: { vi: "chiếc", en: "piece" },
   m2: { vi: "m²", en: "m²" },
+  m3: { vi: "m³", en: "m³" },
+  litre: { vi: "lít", en: "litre" },
+  kWh: { vi: "kWh", en: "kWh" },
+  MWh: { vi: "MWh", en: "MWh" },
+  tkm: { vi: "tấn·km", en: "tonne·km" },
 };
 
-export function unitLabel(unit: string, lang: string = "vi"): string {
-  const l = LABELS[unit];
-  return l ? (lang === "en" ? l.en : l.vi) : unit;
+export function unitLabel(unit: string, lang = "vi"): string {
+  const entry = LABELS[unit];
+  if (!entry) return unit;
+  return lang.startsWith("en") ? entry.en : entry.vi;
 }

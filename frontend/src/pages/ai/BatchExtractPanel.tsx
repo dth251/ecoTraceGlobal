@@ -173,7 +173,6 @@ export function BatchExtractPanel() {
             id="ai-invoice-upload"
           />
           <label htmlFor="ai-invoice-upload" className="cursor-pointer space-y-1.5 block">
-            <div className="text-3xl">📥</div>
             <div className="text-sm font-medium text-slate-700">Nhấp để chọn hoặc kéo thả nhiều chứng từ vào đây</div>
             <div className="text-xs text-slate-400">
               PDF, PNG, JPG · tối đa {MAX_FILES} chứng từ, mỗi file {MAX_FILE_MB}MB

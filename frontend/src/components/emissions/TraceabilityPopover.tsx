@@ -13,7 +13,7 @@ export interface TraceabilityPopoverProps {
 export function TraceabilityPopover({ co2eKg, formula, factorSource, children }: TraceabilityPopoverProps) {
   const content = (
     <div className="space-y-1">
-      {formula && <div className="font-mono text-[11px]">{formula}</div>}
+      {formula && <div className="font-mono text-xs">{formula}</div>}
       {factorSource && <div className="text-slate-300">{factorSource}</div>}
     </div>
   );

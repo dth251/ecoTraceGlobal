@@ -79,6 +79,9 @@ class EntryMapperTest {
             assertThat(i.code()).isEqualTo("DEFAULT_FACTOR");
         });
         assertThat(EntryMapper.materialOf("Thép cuộn cán nóng")).isEqualTo("STEEL");
+        assertThat(EntryMapper.materialOf("PAPER")).isEqualTo("PAPER");
+        assertThat(EntryMapper.materialOf("MAT_PAPER Thùng carton")).isEqualTo("PAPER"); // "paper" chứa "pe" nhưng không phải nhựa
+        assertThat(EntryMapper.materialOf("Hạt PE tái sinh")).isEqualTo("PLASTIC");
         assertThat(mapper.toActivity(DocType.MATERIAL_INVOICE, form).subCategory()).isEqualTo("GENERIC");
     }
 

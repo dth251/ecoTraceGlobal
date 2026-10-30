@@ -50,17 +50,17 @@ export function RegisterPage() {
   };
 
   return (
-    <Card className="w-full max-w-md p-6">
-      <h1 className="text-lg font-bold text-slate-900">{t("auth.registerTitle")}</h1>
-      <p className="mt-1 text-xs text-slate-500">{t("auth.registerSubtitle")}</p>
+    <Card className="w-full rounded-[28px] p-6 sm:p-8">
+      <h1 className="text-2xl font-extrabold text-ink">{t("auth.registerTitle")}</h1>
+      <p className="mt-1.5 text-sm leading-relaxed text-slate-600">{t("auth.registerSubtitle")}</p>
 
       {serverError && (
-        <div role="alert" className="mt-3 rounded-md bg-danger-light p-2.5 text-xs text-danger-dark">
+        <div role="alert" className="mt-4 rounded-xl bg-danger-light p-3 text-sm text-danger-dark">
           {serverError}
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-3" noValidate>
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4" noValidate>
         <Input
           label={t("auth.organizationName")}
           error={
@@ -96,8 +96,8 @@ export function RegisterPage() {
         />
 
         <div className="flex flex-col gap-1">
-          <label className="flex items-center gap-2 text-xs text-slate-700">
-            <input type="checkbox" {...register("acceptTerms")} className="rounded border-slate-300" />
+          <label className="flex items-center gap-2 text-sm text-slate-700">
+            <input type="checkbox" {...register("acceptTerms")} className="h-4 w-4 rounded border-slate-300 accent-brand-700" />
             <span>{t("auth.acceptTerms")}</span>
           </label>
           {errors.acceptTerms?.message && (
@@ -112,9 +112,9 @@ export function RegisterPage() {
         </Button>
       </form>
 
-      <p className="mt-4 text-center text-xs text-slate-600">
+      <p className="mt-6 text-center text-sm text-slate-600">
         {t("auth.hasAccount")}{" "}
-        <Link to="/login" className="font-medium text-brand hover:underline">
+        <Link to="/login" className="font-bold text-brand-700 underline-offset-4 hover:underline">
           {t("auth.loginButton")}
         </Link>
       </p>

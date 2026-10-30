@@ -57,18 +57,34 @@ public class CalculationService {
     @Transactional
     public Map<String, Object> calculatePeriod(UUID periodId) {
         ReportingPeriod period = organizationService.requireOpenPeriod(periodId);
-        Facility facility = facilities.findById(period.getFacilityId()).orElse(null);
-        String region = facility == null ? "GLOBAL"
-                : facility.getGridRegion() != null ? facility.getGridRegion()
-                : facility.getCountry() != null ? facility.getCountry() : "GLOBAL";
-
         List<ActivityData> list = activities.findAllByOrganizationIdAndPeriodIdOrderByActivityDateDesc(
                 TenantContext.organizationId(), periodId);
+        List<Map<String, Object>> failures = recalculate(period, list);
+
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("periodId", periodId);
+        out.put("calculatedAt", Instant.now());
+        out.put("recordsCalculated", list.size() - failures.size());
+        out.put("activities", list.size());
+        out.put("failures", failures);
+        // Dạng rút gọn giao diện dùng: mô tả các hoạt động chưa tính được
+        out.put("skipped", failures.stream().map(f -> f.get("category") + (f.get("subCategory") != null
+                ? " · " + f.get("subCategory") : "") + ": " + f.get("message")).toList());
+        return out;
+    }
+
+    /**
+     * Tính lại các hoạt động cho trước (xóa bản ghi cũ của chúng trước), rồi phân bổ lại cho sản phẩm.
+     * Dùng cho cả kỳ (nút "Tính lại") và cho từng hoạt động vừa lưu (nhập chứng từ, nhập tay).
+     *
+     * @return các hoạt động không tính được kèm lý do
+     */
+    @Transactional
+    public List<Map<String, Object>> recalculate(ReportingPeriod period, List<ActivityData> list) {
+        String region = regionOf(period);
         if (!list.isEmpty()) {
             records.deleteAllForActivities(list.stream().map(ActivityData::getId).toList());
         }
-
-        int ok = 0;
         List<Map<String, Object>> failures = new ArrayList<>();
         for (ActivityData a : list) {
             EmissionCalculator calc = calculators.stream().filter(c -> c.supports(a.getCategory())).findFirst().orElse(null);
@@ -80,7 +96,6 @@ public class CalculationService {
                 EmissionCalculator.EmissionResult r = calc.calculate(a, region, factors);
                 records.save(new EmissionRecord(a.getId(), r.emissionFactorId(), r.scope(), r.scope3Category(),
                         r.co2eKg(), r.method(), calcVersion));
-                ok++;
             } catch (ApiException e) {
                 Map<String, Object> f = new LinkedHashMap<>();
                 f.put("activityId", a.getId());
@@ -92,13 +107,13 @@ public class CalculationService {
             }
         }
         allocation.recompute(period);
+        return failures;
+    }
 
-        Map<String, Object> out = new LinkedHashMap<>();
-        out.put("periodId", periodId);
-        out.put("calculatedAt", Instant.now());
-        out.put("recordsCalculated", ok);
-        out.put("activities", list.size());
-        out.put("failures", failures);
-        return out;
+    private String regionOf(ReportingPeriod period) {
+        Facility facility = facilities.findById(period.getFacilityId()).orElse(null);
+        if (facility == null) return "GLOBAL";
+        if (facility.getGridRegion() != null) return facility.getGridRegion();
+        return facility.getCountry() != null ? facility.getCountry() : "GLOBAL";
     }
 }

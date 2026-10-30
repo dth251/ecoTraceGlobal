@@ -2,6 +2,7 @@ package com.ecotrace.entry;
 
 import com.ecotrace.activity.ActivityRepository;
 import com.ecotrace.activity.domain.ActivityData;
+import com.ecotrace.calculation.CalculationService;
 import com.ecotrace.calculation.EmissionRecordRepository;
 import com.ecotrace.common.audit.AuditService;
 import com.ecotrace.common.exception.ApiException;
@@ -35,10 +36,12 @@ public class DocumentEntryService {
     private final OrganizationService organizationService;
     private final EntryMapper mapper;
     private final AuditService audit;
+    private final CalculationService calculation;
 
     public DocumentEntryService(DocumentService documentService, ActivityRepository activities,
                                 EmissionRecordRepository emissionRecords, OrganizationService organizationService,
-                                EntryMapper mapper, AuditService audit) {
+                                EntryMapper mapper, AuditService audit, CalculationService calculation) {
+        this.calculation = calculation;
         this.documentService = documentService;
         this.activities = activities;
         this.emissionRecords = emissionRecords;
@@ -101,9 +104,13 @@ public class DocumentEntryService {
                 draft.quantity(), draft.unit(), draft.activityDate())
                 .withEvidence(doc.getId(), TenantContext.userId(), metadata));
         doc.markEntered(TenantContext.userId());
+        List<Map<String, Object>> failures = calculation.recalculate(period, List.of(activity));
         audit.record(AuditService.UPDATE, "document_entry", doc.getId(), null,
                 Map.of("activityId", activity.getId().toString(), "category", draft.category().name()));
-        return response(doc, form, List.of());
+        Map<String, Object> out = response(doc, form, List.of());
+        // Chưa tính được (thiếu hệ số, sai đơn vị): vẫn lưu, báo lý do để người dùng sửa
+        out.put("calculationError", failures.isEmpty() ? null : failures.get(0).get("message"));
+        return out;
     }
 
     @Transactional(readOnly = true)

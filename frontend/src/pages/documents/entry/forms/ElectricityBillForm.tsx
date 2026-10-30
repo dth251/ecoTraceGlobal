@@ -14,8 +14,8 @@ export function ElectricityBillForm({ initialData, disabled, onChange }: Electri
   const { t } = useTranslation();
   const [supplierName, setSupplierName] = useState(String(initialData?.supplierName ?? ""));
   const [customerCode, setCustomerCode] = useState(String(initialData?.customerCode ?? ""));
-  const [startDate, setStartDate] = useState(String(initialData?.startDate ?? "2026-07-01"));
-  const [endDate, setEndDate] = useState(String(initialData?.endDate ?? "2026-07-31"));
+  const [startDate, setStartDate] = useState(String(initialData?.startDate ?? ""));
+  const [endDate, setEndDate] = useState(String(initialData?.endDate ?? ""));
   const [totalKwh, setTotalKwh] = useState<number | null>(
     typeof initialData?.totalKwh === "number" ? initialData.totalKwh : null,
   );

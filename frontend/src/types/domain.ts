@@ -125,6 +125,7 @@ export interface DocumentEntry {
   aiDraft?: boolean;
   data: Record<string, unknown>;
   issues: ValidationIssue[];
+  activities?: Activity[];
 }
 
 export type ImportTemplateType = "ELECTRICITY" | "FUEL" | "MATERIAL" | "TRANSPORT" | "PRODUCTION";
@@ -161,6 +162,7 @@ export interface Activity {
   co2eKg: number | null;
   documentId: string | null;
   note: string | null;
+  entryMethod?: "MANUAL" | "DOCUMENT" | "IMPORT";
 }
 
 export interface ActivityFilters {
@@ -174,7 +176,7 @@ export interface EmissionSummary {
   totalKg: number;
   byScope: Record<"scope1" | "scope2" | "scope3", number>;
   byMonth: { month: string; scope1: number; scope2: number; scope3: number }[];
-  topSources: { category: string; label: string; co2eKg: number }[];
+  topSources: { category: string; label: string; co2eKg: number; scope?: number; subCategory?: string | null }[];
   previousTotalKg: number | null;
   calculatedAt: string | null;
 }

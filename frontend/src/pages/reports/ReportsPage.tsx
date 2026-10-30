@@ -22,7 +22,7 @@ export function ReportsPage() {
 
       {!isLocked && (
         <div className="rounded-md border border-warning/30 bg-warning-light p-3 text-xs text-warning-dark">
-          ⚠ {t("reports.incompleteWarning")}
+          {t("reports.incompleteWarning")}
         </div>
       )}
 

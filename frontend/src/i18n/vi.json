@@ -10,7 +10,8 @@
     "passports": "Hộ chiếu xanh",
     "aiAssistant": "Trợ lý AI",
     "settings": "Cài đặt",
-    "logout": "Đăng xuất"
+    "logout": "Đăng xuất",
+    "menu": "Menu"
   },
   "common": {
     "appName": "EcoTrace",
@@ -89,7 +90,44 @@
     "productIntensity": "Cường độ phát thải theo sản phẩm",
     "emptyTitle": "Kỳ báo cáo này chưa có dữ liệu phát thải",
     "emptyDescription": "Tải lên hóa đơn điện/nhiên liệu hoặc nhập từ file Excel mẫu để bắt đầu tính phát thải.",
-    "uploadFirstDoc": "Tải chứng từ đầu tiên"
+    "uploadFirstDoc": "Tải chứng từ đầu tiên",
+    "recalculated": "Đã tính lại {{count}} dòng hoạt động",
+    "noPeriodTitle": "Chưa có kỳ báo cáo",
+    "noPeriodDescription": "Tạo nhà máy và kỳ báo cáo trong phần khởi tạo để bắt đầu ghi nhận dữ liệu.",
+    "calculatedAt": "Cập nhật",
+    "noFootprints": "Chưa có số liệu sản phẩm. Nhập sản lượng của kỳ để phân bổ phát thải cho từng sản phẩm.",
+    "evidenced": "có chứng từ",
+    "unit": "đơn vị",
+    "documentsEntered": "chứng từ đã nhập liệu",
+    "statTotal": "Tổng phát thải của kỳ",
+    "statEvidenced": "Phát thải có chứng từ",
+    "statEvidencedHint": "tính theo khối lượng CO₂e, không theo số dòng",
+    "statActivities": "Dòng hoạt động đã ghi",
+    "scopeTitle": "Cơ cấu theo phạm vi phát thải",
+    "scopeDesc": "Phát thải của kỳ chia theo ba phạm vi của GHG Protocol: đốt nhiên liệu tại nhà máy, năng lượng mua vào, và chuỗi cung ứng.",
+    "scopeMeaning": {
+      "scope1": "Đốt nhiên liệu, phương tiện của nhà máy",
+      "scope2": "Điện mua từ lưới",
+      "scope3": "Nguyên liệu mua vào, vận chuyển hàng hóa"
+    },
+    "monthlyDesc": "Mỗi cột là tổng phát thải của một tháng, chia theo phạm vi, để thấy tháng nào tăng và do nguồn nào.",
+    "sourcesDesc": "Các nguồn phát thải lớn nhất của kỳ; màu cho biết nguồn thuộc phạm vi nào. Nên ưu tiên giảm từ thanh dài nhất.",
+    "evidenceTitle": "Nguồn gốc số liệu",
+    "evidenceDesc": "Phần phát thải được chứng minh bằng hóa đơn hoặc file nhập so với phần nhập tay. Khách hàng EU và CBAM ưu tiên số liệu có chứng từ.",
+    "productDesc": "Phát thải phân bổ cho mỗi đơn vị sản phẩm theo sản lượng, chia theo nguồn gốc. Đây là con số in trên hộ chiếu xanh.",
+    "parts": {
+      "direct": "Trực tiếp (Scope 1)",
+      "indirect": "Năng lượng mua (Scope 2)",
+      "precursor": "Tiền chất (Scope 3)"
+    },
+    "col": {
+      "item": "Hạng mục",
+      "value": "Phát thải",
+      "share": "Tỷ trọng",
+      "month": "Tháng",
+      "total": "Tổng",
+      "product": "Sản phẩm"
+    }
   },
   "documents": {
     "title": "Chứng từ",
@@ -118,7 +156,12 @@
     "customerCode": "Mã khách hàng",
     "startDate": "Từ ngày",
     "endDate": "Đến ngày",
-    "totalKwh": "Tổng điện năng (kWh)"
+    "totalKwh": "Tổng điện năng (kWh)",
+    "date": "Ngày chứng từ",
+    "distanceKm": "Quãng đường (km)",
+    "saved": "Đã lưu, phát thải đã được tính",
+    "fixErrors": "Cần sửa các lỗi bên dưới trước khi lưu",
+    "noFile": "Không tải được file chứng từ"
   },
   "imports": {
     "title": "Nhập file Excel",
@@ -131,7 +174,48 @@
   "activities": {
     "title": "Dữ liệu hoạt động",
     "addManual": "Thêm thủ công",
-    "exportCsv": "Xuất CSV"
+    "exportCsv": "Xuất CSV",
+    "category": "Hạng mục",
+    "subType": "Loại",
+    "date": "Ngày phát sinh",
+    "quantity": "Số lượng",
+    "unit": "Đơn vị",
+    "note": "Ghi chú",
+    "scope": "Scope",
+    "emissions": "Phát thải",
+    "source": "Nguồn",
+    "categories": {
+      "ELECTRICITY": "Điện mua vào",
+      "STATIONARY_FUEL": "Nhiên liệu đốt cố định",
+      "MOBILE_FUEL": "Nhiên liệu phương tiện",
+      "PROCESS": "Phát thải quá trình",
+      "PURCHASED_MATERIAL": "Nguyên vật liệu mua vào",
+      "UPSTREAM_TRANSPORT": "Vận tải đầu vào",
+      "DOWNSTREAM_TRANSPORT": "Vận tải hàng xuất",
+      "WASTE": "Chất thải"
+    },
+    "subTypes": {
+      "GRID": "Điện lưới",
+      "DIESEL": "Dầu diesel",
+      "LPG": "Khí hóa lỏng (LPG)",
+      "STEEL": "Thép",
+      "ROAD": "Đường bộ",
+      "SEA": "Đường biển",
+      "PETROL": "Xăng",
+      "NATGAS": "Khí tự nhiên",
+      "COAL": "Than",
+      "PLASTIC": "Nhựa",
+      "PAPER": "Giấy, carton",
+      "COTTON": "Bông, sợi",
+      "GENERIC": "Nguyên liệu khác (hệ số mặc định)",
+      "AIR": "Đường hàng không",
+      "RAIL": "Đường sắt"
+    },
+    "entryMethods": {
+      "MANUAL": "Nhập tay",
+      "DOCUMENT": "Chứng từ",
+      "IMPORT": "File Excel"
+    }
   },
   "products": {
     "title": "Sản phẩm và phát thải sản phẩm",
@@ -185,7 +269,8 @@
     "forbiddenTitle": "Không có quyền truy cập",
     "forbiddenMessage": "Tài khoản của bạn không đủ quyền để thực hiện thao tác này.",
     "PERIOD_LOCKED": "Kỳ báo cáo đã khóa, không thể chỉnh sửa dữ liệu.",
-    "UNKNOWN": "Đã xảy ra lỗi, vui lòng thử lại."
+    "UNKNOWN": "Đã xảy ra lỗi, vui lòng thử lại.",
+    "SERVER_UNAVAILABLE": "Không kết nối được máy chủ. Kiểm tra backend đã chạy chưa rồi thử lại."
   },
   "validation": {
     "required": "Trường này là bắt buộc",
@@ -198,5 +283,66 @@
     "endBeforeStart": "Ngày kết thúc phải sau hoặc bằng ngày bắt đầu",
     "taxCode": "Mã số thuế gồm 10 hoặc 13 chữ số",
     "acceptTerms": "Bạn cần đồng ý điều khoản để đăng ký"
+  },
+  "landing": {
+    "nav": {
+      "how": "Cách hoạt động",
+      "passport": "Hộ chiếu xanh",
+      "periods": "Quản lý kỳ",
+      "login": "Đăng nhập",
+      "start": "Tạo tài khoản",
+      "dashboard": "Vào bảng điều khiển"
+    },
+    "hero": {
+      "title": "Báo cáo carbon cho nhà máy xuất khẩu",
+      "subtitle": "Nhập hóa đơn điện, nhiên liệu, nguyên liệu và vận đơn. EcoTrace tính phát thải Scope 1, 2, 3 theo hệ số có ghi nguồn và giữ chứng từ gốc phía sau từng con số.",
+      "primary": "Tạo tài khoản",
+      "secondary": "Đăng nhập"
+    },
+    "docs": {
+      "title": "Mỗi con số đều quay về một chứng từ",
+      "body": "Tải hóa đơn lên rồi nhập vài trường chính ngay cạnh bản gốc. Hệ thống kiểm tra đơn vị, ngày phát sinh và hệ số phát thải trước khi lưu, sau đó tính phát thải luôn.",
+      "electricity": "Hóa đơn điện",
+      "electricityScope": "Scope 2, điện mua vào",
+      "fuel": "Hóa đơn nhiên liệu",
+      "fuelScope": "Scope 1, đốt nhiên liệu",
+      "material": "Hóa đơn nguyên liệu",
+      "materialScope": "Scope 3, nguyên liệu mua vào",
+      "bol": "Vận đơn",
+      "bolScope": "Scope 3, vận chuyển hàng hóa"
+    },
+    "passport": {
+      "title": "Hộ chiếu xanh cho từng sản phẩm",
+      "body": "Phát thải của kỳ được phân bổ theo sản lượng cho từng sản phẩm. Khi kỳ đã khóa, mỗi hộ chiếu nhận một mã xác minh công khai, được băm SHA-256 và ký ECDSA P-256, nên khách hàng tự kiểm tra được số liệu chưa bị sửa."
+    },
+    "periods": {
+      "title": "Làm việc theo kỳ, đúng người đúng việc",
+      "p1t": "Nhiều nhà máy",
+      "p1d": "Mỗi nhà máy có kỳ báo cáo và hệ số lưới điện riêng.",
+      "p2t": "Khóa kỳ",
+      "p2d": "Sau khi khóa, số liệu không đổi nữa và có thể cấp hộ chiếu.",
+      "p3t": "Phân quyền",
+      "p3d": "Chủ sở hữu, biên tập viên và người xem có quyền khác nhau."
+    },
+    "cta": {
+      "title": "Bắt đầu với kỳ báo cáo đầu tiên",
+      "subtitle": "Tạo tài khoản, khai báo nhà máy và nhập hóa đơn đầu tiên ngay trong hôm nay.",
+      "primary": "Tạo tài khoản"
+    },
+    "art": {
+      "factory": "Mô hình 3D bãi xuất hàng của nhà máy với cầu trục đang chạy; kéo để xoay",
+      "containers": "Mô hình 3D ba container xuất khẩu xếp chồng",
+      "documents": "Mô hình 3D chồng chứng từ với hộ chiếu xanh ở trên cùng",
+      "loading": "Đang tải mô hình 3D",
+      "credit": "Mô hình 3D và ánh sáng HDRI:"
+    },
+    "footer": {
+      "rights": "Kiểm kê phát thải cho doanh nghiệp xuất khẩu Việt Nam."
+    }
+  },
+  "authLayout": {
+    "panelTitle": "Dữ liệu carbon minh bạch cho mọi lô hàng xuất khẩu.",
+    "panelSubtitle": "Các nhà máy dùng EcoTrace để trả lời khách hàng châu Âu về phát thải.",
+    "backHome": "Về trang giới thiệu"
   }
 }

@@ -19,7 +19,7 @@ export function ImportHistoryTable({ batches, onCancelBatch, disabled }: ImportH
     <Card title={t("imports.historyTitle")}>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-slate-200 text-xs">
-          <thead className="bg-slate-50 text-left font-semibold uppercase text-slate-600">
+          <thead className="bg-slate-50 text-left font-semibold text-slate-600">
             <tr>
               <th className="px-3 py-2">Template</th>
               <th className="px-3 py-2">Rows</th>
