@@ -27,7 +27,8 @@ def java_fields(record: str) -> set[str]:
     src = JAVA.read_text(encoding="utf-8")
     m = re.search(rf"public record {record}\((.*?)\)\s*\{{", src, re.S)
     assert m, f"không thấy record {record} trong AiDtos.java"
-    body = re.sub(r"<[^>]*>", "", m.group(1))  # bỏ generic để dấu phẩy trong Map<K, V> không làm hỏng việc tách
+    body = re.sub(r"//[^\n]*", "", m.group(1))  # bỏ chú thích cuối dòng (có thể chứa dấu phẩy)
+    body = re.sub(r"<[^>]*>", "", body)  # bỏ generic để dấu phẩy trong Map<K, V> không làm hỏng việc tách
     names = set()
     for part in body.split(","):
         part = part.strip()
