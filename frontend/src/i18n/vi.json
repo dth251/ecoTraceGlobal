@@ -98,7 +98,36 @@
     "noFootprints": "Chưa có số liệu sản phẩm. Nhập sản lượng của kỳ để phân bổ phát thải cho từng sản phẩm.",
     "evidenced": "có chứng từ",
     "unit": "đơn vị",
-    "documentsEntered": "chứng từ đã nhập liệu"
+    "documentsEntered": "chứng từ đã nhập liệu",
+    "statTotal": "Tổng phát thải của kỳ",
+    "statEvidenced": "Phát thải có chứng từ",
+    "statEvidencedHint": "tính theo khối lượng CO₂e, không theo số dòng",
+    "statActivities": "Dòng hoạt động đã ghi",
+    "scopeTitle": "Cơ cấu theo phạm vi phát thải",
+    "scopeDesc": "Phát thải của kỳ chia theo ba phạm vi của GHG Protocol: đốt nhiên liệu tại nhà máy, năng lượng mua vào, và chuỗi cung ứng.",
+    "scopeMeaning": {
+      "scope1": "Đốt nhiên liệu, phương tiện của nhà máy",
+      "scope2": "Điện mua từ lưới",
+      "scope3": "Nguyên liệu mua vào, vận chuyển hàng hóa"
+    },
+    "monthlyDesc": "Mỗi cột là tổng phát thải của một tháng, chia theo phạm vi, để thấy tháng nào tăng và do nguồn nào.",
+    "sourcesDesc": "Các nguồn phát thải lớn nhất của kỳ; màu cho biết nguồn thuộc phạm vi nào. Nên ưu tiên giảm từ thanh dài nhất.",
+    "evidenceTitle": "Nguồn gốc số liệu",
+    "evidenceDesc": "Phần phát thải được chứng minh bằng hóa đơn hoặc file nhập so với phần nhập tay. Khách hàng EU và CBAM ưu tiên số liệu có chứng từ.",
+    "productDesc": "Phát thải phân bổ cho mỗi đơn vị sản phẩm theo sản lượng, chia theo nguồn gốc. Đây là con số in trên hộ chiếu xanh.",
+    "parts": {
+      "direct": "Trực tiếp (Scope 1)",
+      "indirect": "Năng lượng mua (Scope 2)",
+      "precursor": "Tiền chất (Scope 3)"
+    },
+    "col": {
+      "item": "Hạng mục",
+      "value": "Phát thải",
+      "share": "Tỷ trọng",
+      "month": "Tháng",
+      "total": "Tổng",
+      "product": "Sản phẩm"
+    }
   },
   "documents": {
     "title": "Chứng từ",
@@ -292,9 +321,11 @@
       "primary": "Tạo tài khoản"
     },
     "art": {
-      "factory": "Mô hình 3D nhà máy với các khối phát thải bay lên từ ống khói",
+      "factory": "Mô hình 3D bãi xuất hàng của nhà máy với cầu trục đang chạy; kéo để xoay",
       "containers": "Mô hình 3D ba container xuất khẩu xếp chồng",
-      "documents": "Mô hình 3D chồng chứng từ với hộ chiếu xanh ở trên cùng"
+      "documents": "Mô hình 3D chồng chứng từ với hộ chiếu xanh ở trên cùng",
+      "loading": "Đang tải mô hình 3D",
+      "credit": "Mô hình 3D và ánh sáng HDRI:"
     },
     "footer": {
       "rights": "Kiểm kê phát thải cho doanh nghiệp xuất khẩu Việt Nam."

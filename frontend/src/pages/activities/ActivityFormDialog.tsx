@@ -17,7 +17,11 @@ export interface ActivityFormDialogProps {
   onSaved: () => void;
 }
 
-const today = () => new Date().toISOString().slice(0, 10);
+// Ngày theo giờ địa phương (toISOString dùng UTC nên lệch ngày ở múi giờ +7)
+const today = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+};
 
 export function ActivityFormDialog({ open, onOpenChange, periodId, onSaved }: ActivityFormDialogProps) {
   const { t, i18n } = useTranslation();

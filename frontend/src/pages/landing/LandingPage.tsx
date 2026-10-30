@@ -1,9 +1,9 @@
-import type { CSSProperties, ReactNode } from "react";
+import { lazy, Suspense, type CSSProperties, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
 import { Logo } from "@/components/layout/Logo";
-import { ContainerScene, DocumentStackScene, FactoryScene } from "@/components/three/Scenes";
+import { Photo, PHOTOS } from "@/components/media/Photo";
 import { useReveal } from "@/hooks/useReveal";
 import { useAuthStore } from "@/stores/authStore";
 
@@ -16,6 +16,9 @@ function Reveal({ children, delay = 0, className }: { children: ReactNode; delay
   );
 }
 
+// three.js và mô hình 3D tách chunk riêng, chỉ tải khi mở trang giới thiệu
+const FactoryYard = lazy(() => import("@/components/three/FactoryYard"));
+
 const DOC_ROWS = ["electricity", "fuel", "material", "bol"] as const;
 const PERIOD_POINTS = ["p1", "p2", "p3"] as const;
 
@@ -23,7 +26,8 @@ const primaryBtn =
   "inline-flex items-center rounded-2xl bg-brand-500 px-6 py-3.5 text-base font-bold text-ink transition-[transform,background-color] duration-hover ease-smooth hover:-translate-y-0.5 hover:bg-brand-400 active:translate-y-0 active:duration-press";
 
 export function LandingPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language;
   const isAuthed = useAuthStore((s) => !!s.accessToken);
   const primary = isAuthed
     ? { to: "/dashboard", label: t("landing.nav.dashboard") }
@@ -81,19 +85,33 @@ export function LandingPage() {
               )}
             </div>
           </div>
-          <FactoryScene className="h-[340px] animate-fade-up [animation-delay:240ms] sm:h-[440px]" />
+          <figure className="animate-fade-up [animation-delay:240ms]">
+            <div className="aspect-[4/3] overflow-hidden rounded-[28px] bg-ink-700">
+              <Suspense fallback={null}>
+                <FactoryYard className="h-full w-full" label={t("landing.art.factory")} loadingLabel={t("landing.art.loading")} />
+              </Suspense>
+            </div>
+            <figcaption className="mt-3 text-xs text-ink-muted">
+              {t("landing.art.credit")}{" "}
+              <a href="https://polyhaven.com" target="_blank" rel="noreferrer" className="underline-offset-2 hover:underline">
+                Poly Haven (CC0)
+              </a>
+            </figcaption>
+          </figure>
         </div>
       </section>
 
       {/* Chứng từ → scope */}
       <section id="how" className="scroll-mt-6 bg-white py-28 lg:py-40">
-        <div className="mx-auto grid max-w-7xl items-center gap-16 px-4 sm:px-8 lg:grid-cols-2">
-          <Reveal>
+        <div className="mx-auto max-w-7xl px-4 sm:px-8">
+          <Reveal className="grid gap-x-16 gap-y-10 lg:grid-cols-2">
+            <div>
             <h2 className="max-w-[16ch] text-4xl font-extrabold leading-[1.05] tracking-[-0.03em] [text-wrap:balance] sm:text-5xl">
               {t("landing.docs.title")}
             </h2>
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">{t("landing.docs.body")}</p>
-            <dl className="mt-10 max-w-xl">
+            </div>
+            <dl className="self-center">
               {DOC_ROWS.map((row, i) => (
                 <div
                   key={row}
@@ -105,9 +123,7 @@ export function LandingPage() {
               ))}
             </dl>
           </Reveal>
-          <Reveal delay={120}>
-            <DocumentStackScene className="h-[360px] sm:h-[440px]" />
-          </Reveal>
+
         </div>
       </section>
 
@@ -115,7 +131,7 @@ export function LandingPage() {
       <section id="passport" className="scroll-mt-6 bg-brand-900 py-28 text-white lg:py-40">
         <div className="mx-auto grid max-w-7xl items-center gap-16 px-4 sm:px-8 lg:grid-cols-[1fr_1.1fr]">
           <Reveal className="order-last lg:order-first">
-            <ContainerScene className="h-[320px] sm:h-[400px]" />
+            <Photo photo={PHOTOS.solarRoof} lang={lang} dark aspect="aspect-[3/2]" className="[&_figcaption]:text-brand-100" />
           </Reveal>
           <Reveal delay={120}>
             <h2 className="max-w-[14ch] text-4xl font-extrabold leading-[1.05] tracking-[-0.03em] [text-wrap:balance] sm:text-5xl">

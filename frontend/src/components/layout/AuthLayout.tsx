@@ -3,18 +3,19 @@ import { useTranslation } from "react-i18next";
 import { LanguageSwitch } from "@/components/layout/LanguageSwitch";
 import { Logo } from "@/components/layout/Logo";
 import { PageTransition } from "@/components/motion/PageTransition";
-import { DocumentStackScene } from "@/components/three/Scenes";
+import { Photo, PHOTOS } from "@/components/media/Photo";
 
 /** Bố cục chia đôi cho đăng nhập/đăng ký: panel tối bên trái, biểu mẫu bên phải */
 export function AuthLayout() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language;
 
   return (
     <div className="flex min-h-screen bg-ink">
       <aside className="hidden w-[44%] max-w-[620px] flex-col justify-between p-10 text-white lg:flex">
         <Logo dark />
         <div>
-          <DocumentStackScene className="h-[320px]" />
+          <Photo photo={PHOTOS.workshop} lang={lang} dark aspect="aspect-[16/10]" />
           <h2 className="mt-8 max-w-md text-3xl font-extrabold leading-tight tracking-[-0.02em]">
             {t("authLayout.panelTitle")}
           </h2>

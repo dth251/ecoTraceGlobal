@@ -98,7 +98,36 @@
     "noFootprints": "No product figures yet. Enter production output for the period to allocate emissions to each product.",
     "evidenced": "evidenced",
     "unit": "unit",
-    "documentsEntered": "documents entered"
+    "documentsEntered": "documents entered",
+    "statTotal": "Period total emissions",
+    "statEvidenced": "Emissions backed by documents",
+    "statEvidencedHint": "weighted by CO₂e, not by row count",
+    "statActivities": "Activity rows recorded",
+    "scopeTitle": "Breakdown by emission scope",
+    "scopeDesc": "Period emissions split by the three GHG Protocol scopes: on-site fuel, purchased energy, and the supply chain.",
+    "scopeMeaning": {
+      "scope1": "Fuel burned on site and in company vehicles",
+      "scope2": "Electricity bought from the grid",
+      "scope3": "Purchased materials and freight"
+    },
+    "monthlyDesc": "Each column is one month total, split by scope, so you can see which month rose and why.",
+    "sourcesDesc": "The largest emission sources of the period; colour shows the scope. Start reducing from the longest bar.",
+    "evidenceTitle": "Where the data comes from",
+    "evidenceDesc": "Share of emissions proven by invoices or imported files versus typed in by hand. EU buyers and CBAM prefer documented data.",
+    "productDesc": "Emissions allocated to each unit of product by output, split by origin. This is the figure printed on the green passport.",
+    "parts": {
+      "direct": "Direct (Scope 1)",
+      "indirect": "Purchased energy (Scope 2)",
+      "precursor": "Precursors (Scope 3)"
+    },
+    "col": {
+      "item": "Item",
+      "value": "Emissions",
+      "share": "Share",
+      "month": "Month",
+      "total": "Total",
+      "product": "Product"
+    }
   },
   "documents": {
     "title": "Documents",
@@ -292,9 +321,11 @@
       "primary": "Create account"
     },
     "art": {
-      "factory": "3D model of a factory with emission blocks rising from the chimney",
+      "factory": "3D model of a factory loading yard with a moving overhead crane; drag to rotate",
       "containers": "3D model of three stacked export containers",
-      "documents": "3D model of a document stack with a green passport on top"
+      "documents": "3D model of a document stack with a green passport on top",
+      "loading": "Loading 3D model",
+      "credit": "3D models and HDRI lighting:"
     },
     "footer": {
       "rights": "Emissions accounting for Vietnamese exporters."
