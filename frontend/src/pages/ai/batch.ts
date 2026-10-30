@@ -1,4 +1,4 @@
-/** Tiện ích cho việc tải và xử lý nhiều chứng từ cùng lúc ở trang Trợ lý AI. */
+/** Tiện ích cho việc tải và xử lý nhiều chứng từ cùng lúc ở trang Chứng từ. */
 
 export const MAX_FILES = 20;
 export const MAX_FILE_MB = 20;

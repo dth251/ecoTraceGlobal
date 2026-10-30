@@ -88,9 +88,9 @@ export function OptimizerPage() {
         !aiBatch && (
           <EmptyState
             title={t("common.empty")}
-            description="Tải chứng từ ở Trợ lý AI để AI phân tích và gợi ý giảm phát thải."
+            description="Tải chứng từ ở mục Chứng từ để AI phân tích và gợi ý giảm phát thải."
             action={
-              <Link to="/ai-assistant" className="text-sm font-semibold text-brand hover:underline">
+              <Link to="/documents" className="text-sm font-semibold text-brand hover:underline">
                 Tải chứng từ →
               </Link>
             }

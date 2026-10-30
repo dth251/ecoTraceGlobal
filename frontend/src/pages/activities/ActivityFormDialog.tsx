@@ -40,7 +40,7 @@ export function ActivityFormDialog({ open, onOpenChange, periodId, onSaved }: Ac
 
   const config = ACTIVITY_CATEGORIES[category];
 
-  // AI gợi ý Scope và mã hệ số từ mô tả hoạt động (thay cho tab Phân loại của trang Trợ lý AI)
+  // AI gợi ý Scope và mã hệ số từ mô tả hoạt động
   const handleSuggest = async () => {
     setSuggesting(true);
     setSuggestError(null);

@@ -20,8 +20,8 @@ interface BatchDoc {
   file: File;
   status: DocStatus;
   error?: string;
-  /** Đã lưu vào kỳ đang chọn (bản nháp chờ xác nhận ở mục Chứng từ) */
-  saved?: "saved" | "duplicate" | "failed";
+  /** Đã lưu vào kỳ đang chọn: "saved" là bản nháp AI chờ xác nhận, "manual" là AI không đọc được nên lưu tệp để nhập tay */
+  saved?: "saved" | "manual" | "duplicate" | "failed";
 }
 
 const STATUS_BADGE: Record<DocStatus, { variant: BadgeVariant; label: string }> = {
@@ -31,9 +31,8 @@ const STATUS_BADGE: Record<DocStatus, { variant: BadgeVariant; label: string }> 
   error: { variant: "danger", label: "Lỗi" },
 };
 
-/** Nơi kết quả của AI xuất hiện sau khi xử lý: trang Trợ lý AI chỉ nhận chứng từ, không hiển thị kết quả. */
+/** Nơi kết quả của AI xuất hiện sau khi xử lý. Chi tiết từng chứng từ nằm ngay trong danh sách bên dưới của trang Chứng từ. */
 const DESTINATIONS = [
-  { to: "/documents", title: "Chứng từ", desc: "Chi tiết từng chứng từ AI đã đọc và chỗ cần xác nhận" },
   { to: "/dashboard", title: "Tổng quan", desc: "Tổng phát thải theo Scope 1/2/3, theo tháng và theo nguồn" },
   { to: "/reports", title: "Báo cáo", desc: "Tải bảng tổng hợp của cả lô" },
   { to: "/optimizer", title: "Tối ưu", desc: "Gợi ý giảm phát thải từ số liệu vừa tổng hợp" },
@@ -53,10 +52,11 @@ export function BatchExtractPanel() {
   const canSave = !!periodId && !isLocked;
 
   /** Lưu file và bản nháp AI vào kỳ: số liệu chưa tính cho tới khi người dùng xác nhận ở mục Chứng từ. */
-  const saveToPeriod = async (file: File, result: ExtractionResponse): Promise<BatchDoc["saved"]> => {
+  const saveToPeriod = async (file: File, result: ExtractionResponse | null): Promise<BatchDoc["saved"]> => {
     if (!periodId) return undefined;
     try {
-      const doc = await documentsApi.upload(periodId, (result.doc_type as DocType) || null, file);
+      const doc = await documentsApi.upload(periodId, (result?.doc_type as DocType) || null, file);
+      if (!result) return "manual";
       await documentsApi.aiDraft(doc.id, result);
       return "saved";
     } catch (err: unknown) {
@@ -117,7 +117,12 @@ export function BatchExtractPanel() {
         results.current.set(doc.id, result);
         patch(doc.id, { status: "done", saved: canSave ? await saveToPeriod(doc.file, result) : undefined });
       } catch (err: unknown) {
-        patch(doc.id, { status: "error", error: err instanceof Error ? err.message : "Lỗi gọi AI trích xuất" });
+        // AI không đọc được: vẫn lưu tệp vào kỳ để người dùng nhập tay ở mục Chứng từ
+        patch(doc.id, {
+          status: "error",
+          error: err instanceof Error ? err.message : "Lỗi gọi AI trích xuất",
+          saved: canSave ? await saveToPeriod(doc.file, null) : undefined,
+        });
       }
     });
 
@@ -152,10 +157,10 @@ export function BatchExtractPanel() {
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
       <Card className="p-4 space-y-3">
-        <h2 className="text-base font-semibold text-slate-800">Tải lên các chứng từ cần AI phân tích</h2>
+        <h2 className="text-base font-semibold text-slate-800">Tải chứng từ lên, AI đọc giúp bạn</h2>
         <p className="text-xs text-slate-500">
           Chọn <b>nhiều chứng từ cùng lúc</b> (điện, nhiên liệu, nguyên liệu, vận chuyển...). AI đọc từng tờ và tự gắn Scope 1/2/3. Thiếu loại nào thì
-          Scope đó bằng 0, vẫn tính được.
+          Scope đó bằng 0, vẫn tính được. Tờ nào AI không đọc được vẫn được lưu để bạn nhập tay.
         </p>
 
         <div
@@ -198,6 +203,7 @@ export function BatchExtractPanel() {
                   </span>
                   <span className="flex items-center gap-2 shrink-0">
                     {d.saved === "saved" && <Badge variant="info">Đã lưu vào kỳ</Badge>}
+                    {d.saved === "manual" && <Badge variant="warning">Đã lưu, cần nhập tay</Badge>}
                     {d.saved === "duplicate" && <Badge variant="neutral">Đã có trong hệ thống</Badge>}
                     {d.saved === "failed" && <Badge variant="warning">Chưa lưu vào kỳ</Badge>}
                     <Badge variant={STATUS_BADGE[d.status].variant}>{STATUS_BADGE[d.status].label}</Badge>
@@ -221,7 +227,7 @@ export function BatchExtractPanel() {
 
         <p className={`p-2.5 rounded-md text-xs ${canSave ? "bg-brand/5 text-slate-700" : "bg-warning-light text-warning-dark"}`}>
           {canSave
-            ? `Chứng từ sẽ được lưu vào kỳ ${period?.name ?? ""} dưới dạng bản nháp AI. Bạn cần xác nhận từng chứng từ ở mục Chứng từ thì số liệu mới được tính vào kiểm kê và hộ chiếu xanh.`
+            ? `Chứng từ sẽ được lưu vào kỳ ${period?.name ?? ""} dưới dạng bản nháp AI. Bấm "Xác nhận" ở từng dòng trong danh sách bên dưới thì số liệu mới được tính vào kiểm kê và hộ chiếu xanh.`
             : isLocked
               ? "Kỳ đang chọn đã khóa: chứng từ chỉ được AI đọc và ước tính, không lưu vào kỳ."
               : "Chưa chọn kỳ báo cáo (ô trên cùng): chứng từ chỉ được AI đọc và ước tính, không lưu vào hệ thống."}
@@ -247,7 +253,7 @@ export function BatchExtractPanel() {
             <div className="rounded-md bg-success-light p-3 text-sm text-success-dark">
               <b>Xong:</b> AI đã đọc {finished.ok} chứng từ
               {finished.failed > 0 && `, ${finished.failed} chứng từ lỗi`}
-              {finished.review > 0 && `, ${finished.review} chứng từ cần bạn xem lại`}. Kết quả đã được đưa vào các mục bên dưới.
+              {finished.review > 0 && `, ${finished.review} chứng từ cần bạn xem lại`}. Từng chứng từ nằm trong danh sách bên dưới, số liệu tổng hợp ở các mục sau.
             </div>
             <Link
               to="/dashboard"
@@ -261,7 +267,7 @@ export function BatchExtractPanel() {
             <h2 className="text-base font-semibold text-slate-800">Kết quả sẽ xuất hiện ở đâu?</h2>
             <p className="text-xs text-slate-500">
               {running ? "AI đang đọc chứng từ, mỗi chứng từ mất khoảng 7 giây. " : ""}
-              Trang này chỉ dùng để tải chứng từ. Xử lý xong, kết quả nằm ở đúng mục của nó:
+              Xử lý xong, từng chứng từ hiện trong danh sách bên dưới để bạn xác nhận. Số liệu tổng hợp nằm ở đúng mục của nó:
             </p>
           </>
         )}

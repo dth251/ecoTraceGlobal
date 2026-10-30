@@ -1,10 +1,9 @@
-import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { formatEmission, reviewFieldLabel } from "@/pages/ai/batch";
 import { useAiBatchStore } from "@/stores/aiBatchStore";
 
-/** Chi tiết các chứng từ AI đã bóc tách ở lô gần nhất (trang Trợ lý AI), để xem lại cùng mục Chứng từ. */
+/** Chi tiết các chứng từ AI đã bóc tách ở lô gần nhất (khung tải chứng từ ở đầu trang Chứng từ). */
 export function AiProcessedDocuments() {
   const batch = useAiBatchStore((s) => s.batch);
   if (!batch) return null;
@@ -19,9 +18,6 @@ export function AiProcessedDocuments() {
             database.
           </p>
         </div>
-        <Link to="/ai-assistant" className="shrink-0 text-xs font-semibold text-brand hover:underline">
-          Xử lý thêm →
-        </Link>
       </div>
 
       <div className="overflow-x-auto">

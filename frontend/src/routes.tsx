@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { RequireAuth } from "@/components/auth/RequireAuth";
 import { RequireRole } from "@/components/auth/RequireRole";
 import { AppShell } from "@/components/layout/AppShell";
@@ -21,7 +21,6 @@ const ProductsPage = lazy(() => import("@/pages/products/ProductsPage"));
 const OptimizerPage = lazy(() => import("@/pages/optimizer/OptimizerPage"));
 const ReportsPage = lazy(() => import("@/pages/reports/ReportsPage"));
 const PassportsPage = lazy(() => import("@/pages/passports/PassportsPage"));
-const AiAssistantPage = lazy(() => import("@/pages/ai/AiAssistantPage"));
 const SettingsPage = lazy(() => import("@/pages/settings/SettingsPage"));
 const NotFoundPage = lazy(() => import("@/pages/errors/NotFoundPage"));
 
@@ -78,7 +77,7 @@ export function AppRoutes() {
           <Route path="/optimizer" element={<OptimizerPage />} />
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="/passports" element={<PassportsPage />} />
-          <Route path="/ai-assistant" element={<AiAssistantPage />} />
+          <Route path="/ai-assistant" element={<Navigate to="/documents" replace />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Route>
 

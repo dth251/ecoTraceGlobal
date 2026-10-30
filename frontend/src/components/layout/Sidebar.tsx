@@ -15,7 +15,6 @@ const NAV_ITEMS = [
   { to: "/optimizer", key: "nav.optimizer" },
   { to: "/reports", key: "nav.reports" },
   { to: "/passports", key: "nav.passports" },
-  { to: "/ai-assistant", key: "nav.aiAssistant" },
   { to: "/settings", key: "nav.settings" },
 ] as const;
 

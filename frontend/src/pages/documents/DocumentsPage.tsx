@@ -1,39 +1,23 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
-import { documentsApi } from "@/api/documents";
-import { DocTypeSelect } from "@/components/documents/DocTypeSelect";
 import { DocumentStatusBadge } from "@/components/documents/DocumentStatusBadge";
-import { FileDropzone } from "@/components/documents/FileDropzone";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useCurrentContext } from "@/hooks/useCurrentContext";
 import { usePermission } from "@/hooks/usePermission";
 import { formatDate } from "@/lib/format";
-import { keys } from "@/queries/keys";
 import { useDocuments } from "@/queries/useDocuments";
+import { BatchExtractPanel } from "@/pages/ai/BatchExtractPanel";
 import { AiProcessedDocuments } from "@/pages/documents/AiProcessedDocuments";
 import { PeriodActions } from "@/pages/documents/PeriodActions";
 import { Badge } from "@/components/ui/Badge";
-import type { DocType } from "@/types/domain";
 
 export function DocumentsPage() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language.startsWith("en") ? "en" : "vi";
-  const queryClient = useQueryClient();
   const { periodId, isLocked } = useCurrentContext();
   const { canEdit } = usePermission();
-  const [docType, setDocType] = useState<DocType>("ELECTRICITY_BILL");
   const docs = useDocuments(periodId);
-
-  const handleFilesAccepted = async (files: File[]) => {
-    if (!periodId) return;
-    for (const f of files) {
-      await documentsApi.upload(periodId, docType, f);
-    }
-    await queryClient.invalidateQueries({ queryKey: keys.documents(periodId) });
-  };
 
   return (
     <div className="space-y-4">
@@ -43,14 +27,7 @@ export function DocumentsPage() {
 
       <PeriodActions />
 
-      {canEdit && !isLocked && (
-        <Card>
-          <div className="mb-3 max-w-xs">
-            <DocTypeSelect value={docType} onChange={setDocType} />
-          </div>
-          <FileDropzone onFilesAccepted={handleFilesAccepted} />
-        </Card>
-      )}
+      {canEdit && !isLocked && <BatchExtractPanel />}
 
       <AiProcessedDocuments />
 
