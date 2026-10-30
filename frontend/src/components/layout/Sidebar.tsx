@@ -29,7 +29,7 @@ export function Sidebar() {
   return (
     <aside className="flex h-full w-64 shrink-0 flex-col overflow-y-auto bg-ink px-4 py-6 text-white">
       <div className="px-3">
-        <Logo dark to="/dashboard" />
+        <Logo dark />
       </div>
 
       {user && (
