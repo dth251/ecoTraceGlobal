@@ -34,9 +34,9 @@ export default {
           DEFAULT: "#027a48",
         },
         // Ba màu scope cố định trên mọi biểu đồ
-        scope1: { light: "#fde4cf", DEFAULT: "#e8590c", dark: "#a63f08" },
-        scope2: { light: "#d0ebff", DEFAULT: "#1c7ed6", dark: "#1864ab" },
-        scope3: { light: "#cff4fc", DEFAULT: "#0e7490", dark: "#155e75" },
+        scope1: { light: "#fde4d8", DEFAULT: "#eb6834", dark: "#a63f12" },
+        scope2: { light: "#dbe9fa", DEFAULT: "#2a78d6", dark: "#1c5cab" },
+        scope3: { light: "#fdefcc", DEFAULT: "#eda100", dark: "#7a5300" },
         warning: { light: "#fef3c7", DEFAULT: "#d97706", dark: "#92400e" },
         danger: { light: "#fee2e2", DEFAULT: "#dc2626", dark: "#991b1b" },
         success: { light: "#dcfce7", DEFAULT: "#16a34a", dark: "#166534" },
@@ -72,18 +72,11 @@ export default {
           "0%": { opacity: "0", transform: "translateY(12px)" },
           "100%": { opacity: "1", transform: "none" },
         },
-        // Khối phát thải bay lên từ ống khói rồi mờ dần
-        trace: {
-          "0%": { opacity: "0", transform: "translate3d(0, 0, 0)" },
-          "15%": { opacity: "1" },
-          "100%": { opacity: "0", transform: "translate3d(0, -110px, 0)" },
-        },
       },
       animation: {
         "page-in": "page-in 480ms cubic-bezier(0.22, 1, 0.36, 1) both",
         "flip-in": "flip-in 560ms cubic-bezier(0.22, 1, 0.36, 1) both",
         "fade-up": "fade-up 800ms cubic-bezier(0.22, 1, 0.36, 1) both",
-        trace: "trace 3.3s cubic-bezier(0.22, 1, 0.36, 1) infinite both",
       },
     },
   },

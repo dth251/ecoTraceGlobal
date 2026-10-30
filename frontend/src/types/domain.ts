@@ -172,7 +172,7 @@ export interface EmissionSummary {
   totalKg: number;
   byScope: Record<"scope1" | "scope2" | "scope3", number>;
   byMonth: { month: string; scope1: number; scope2: number; scope3: number }[];
-  topSources: { category: string; label: string; co2eKg: number }[];
+  topSources: { category: string; label: string; co2eKg: number; scope?: number; subCategory?: string | null }[];
   previousTotalKg: number | null;
   calculatedAt: string | null;
 }

@@ -115,7 +115,7 @@ public class DocumentEntryService {
             created.add(activities.save(a));
         }
         activityService.recalculate(period, created);
-        doc.markEntered(TenantContext.userId());
+        doc = documentService.markEntered(documentId, TenantContext.userId());
         audit.record(AuditService.UPDATE, "document", documentId, null, Map.of("entry", data));
         return response(doc, data, checked.issues(), activityService.toViews(created));
     }
@@ -134,7 +134,7 @@ public class DocumentEntryService {
         if (reason == null || reason.isBlank()) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", "reason is required");
         }
-        doc.reject(reason.trim());
+        documentService.reject(documentId, reason.trim());
         audit.record(AuditService.UPDATE, "document", documentId, null, Map.of("rejectReason", reason.trim()));
     }
 

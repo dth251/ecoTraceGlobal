@@ -34,6 +34,8 @@ const toSummary = (r: PeriodSummaryResponse): EmissionSummary => ({
     category: s.subCategory ? `${s.category}/${s.subCategory}` : s.category,
     label: s.subCategory ? `${s.category} · ${s.subCategory}` : s.category,
     co2eKg: Number(s.co2eKg),
+    scope: s.scope,
+    subCategory: s.subCategory,
   })),
   previousTotalKg: null,
   calculatedAt: r.calculatedAt,

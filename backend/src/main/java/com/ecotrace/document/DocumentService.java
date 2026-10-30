@@ -126,6 +126,21 @@ public class DocumentService {
         return new FileContent(storage.getObject(doc.getStorageKey()), doc.getMimeType(), doc.getFileName());
     }
 
+    /** Đánh dấu đã nhập và lưu tường minh (entity có thể đã bị tách khỏi persistence context bởi truy vấn xóa hàng loạt) */
+    @Transactional
+    public Document markEntered(UUID documentId, UUID userId) {
+        Document doc = require(documentId);
+        doc.markEntered(userId);
+        return documents.save(doc);
+    }
+
+    @Transactional
+    public Document reject(UUID documentId, String reason) {
+        Document doc = require(documentId);
+        doc.reject(reason);
+        return documents.save(doc);
+    }
+
     public Document require(UUID documentId) {
         return documents.findByIdAndOrganizationId(documentId, TenantContext.organizationId())
                 .orElseThrow(() -> ApiException.notFound("document", documentId));
