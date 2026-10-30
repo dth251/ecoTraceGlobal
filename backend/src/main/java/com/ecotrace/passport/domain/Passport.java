@@ -62,6 +62,21 @@ public class Passport extends BaseEntity {
     protected Passport() {
     }
 
+    public Passport(UUID organizationId, UUID periodId, UUID productId, Map<String, Object> payload,
+                    String payloadHash, String signature, String publicCode) {
+        this.organizationId = organizationId;
+        this.periodId = periodId;
+        this.productId = productId;
+        this.payload = payload;
+        this.payloadHash = payloadHash;
+        this.signature = signature;
+        this.publicCode = publicCode;
+    }
+
+    public void revoke() {
+        if (revokedAt == null) revokedAt = Instant.now();
+    }
+
     @PrePersist
     void onIssue() {
         if (issuedAt == null) issuedAt = Instant.now();

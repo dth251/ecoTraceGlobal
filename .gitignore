@@ -1,6 +1,7 @@
 # Môi trường & bí mật
 .env
 .env.*
+!.env.example
 *.local
 *.pem
 *.key
@@ -38,6 +39,7 @@ eggs/
 .eggs/
 lib/
 lib64/
+!frontend/src/lib/
 parts/
 sdist/
 var/
@@ -59,3 +61,6 @@ ai-service/output/
 *.iml
 .DS_Store
 Thumbs.db
+
+# File chứng từ lưu cục bộ khi chạy dev
+backend/storage/

@@ -91,7 +91,7 @@ export function AiAssistantPage() {
               : "border-transparent text-slate-600 hover:text-slate-900"
           }`}
         >
-          📄 AI Bóc tách Hóa đơn (OCR)
+          AI bóc tách Hóa đơn (OCR)
         </button>
         <button
           type="button"
@@ -102,7 +102,7 @@ export function AiAssistantPage() {
               : "border-transparent text-slate-600 hover:text-slate-900"
           }`}
         >
-          🏷️ Phân loại Scope & Hệ số
+          Phân loại Scope & Hệ số
         </button>
         <button
           type="button"
@@ -113,7 +113,7 @@ export function AiAssistantPage() {
               : "border-transparent text-slate-600 hover:text-slate-900"
           }`}
         >
-          💡 AI Agent Tối ưu Phát thải
+          AI tối ưu Phát thải
         </button>
       </div>
 
@@ -134,7 +134,6 @@ export function AiAssistantPage() {
                 id="ai-invoice-upload"
               />
               <label htmlFor="ai-invoice-upload" className="cursor-pointer space-y-2 block">
-                <div className="text-3xl">📥</div>
                 <div className="text-sm font-medium text-slate-700">
                   {selectedFile ? selectedFile.name : "Nhấp để chọn tệp hóa đơn"}
                 </div>
@@ -203,7 +202,7 @@ export function AiAssistantPage() {
                       <div key={idx} className="flex items-center justify-between text-xs p-1.5 hover:bg-slate-50 rounded border-b border-slate-50">
                         <div className="flex-1 pr-2">
                           <p className="font-medium text-slate-800">{line.description}</p>
-                          <p className="text-[10px] text-slate-400 font-mono">Factor: {line.factor_code}</p>
+                          <p className="text-xs text-slate-400 font-mono">Factor: {line.factor_code}</p>
                         </div>
                         <div className="text-right">
                           <span className="font-semibold text-slate-700">{line.quantity}</span> {line.unit}
@@ -246,7 +245,7 @@ export function AiAssistantPage() {
           {classifyResult && (
             <div className="p-4 bg-brand-50 border border-brand-100 rounded-lg space-y-2 mt-4">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-brand-900 uppercase">Kết quả AI Classify</span>
+                <span className="text-xs font-bold text-brand-900">Kết quả AI Classify</span>
                 <Badge variant="success">Scope {classifyResult.scope}</Badge>
               </div>
               <div className="text-sm">
@@ -256,7 +255,7 @@ export function AiAssistantPage() {
               <div className="text-xs text-slate-600 bg-white p-2.5 rounded border border-brand-100">
                 <span className="font-semibold text-slate-700">Lý giải của AI:</span> {classifyResult.reasoning}
               </div>
-              <div className="text-[11px] text-slate-400 text-right">
+              <div className="text-xs text-slate-400 text-right">
                 Độ tin cậy: {(classifyResult.confidence * 100).toFixed(0)}%
               </div>
             </div>
@@ -274,7 +273,7 @@ export function AiAssistantPage() {
               </p>
             </div>
             <Button onClick={handleOptimize} loading={optimizing} disabled={!periodId}>
-              {optimizing ? "AI đang tính toán..." : "🚀 Kích hoạt AI Optimizer"}
+              {optimizing ? "AI đang tính toán..." : "Chạy AI Optimizer"}
             </Button>
           </Card>
 
@@ -298,7 +297,7 @@ export function AiAssistantPage() {
                   <span className="text-brand font-semibold">
                     Tiềm năng giảm: -{item.reduction_potential_pct}% CO₂e
                   </span>
-                  <span className="font-mono text-slate-400 text-[11px]">Mục tiêu: {item.target_factor_code}</span>
+                  <span className="font-mono text-slate-400 text-xs">Mục tiêu: {item.target_factor_code}</span>
                 </div>
               </Card>
             ))}

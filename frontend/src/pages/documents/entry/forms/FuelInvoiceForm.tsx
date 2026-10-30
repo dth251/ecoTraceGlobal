@@ -12,7 +12,7 @@ export interface FuelInvoiceFormProps {
 
 export function FuelInvoiceForm({ initialData, disabled, onChange }: FuelInvoiceFormProps) {
   const [supplier, setSupplier] = useState(String(initialData?.supplier ?? ""));
-  const [date, setDate] = useState(String(initialData?.date ?? "2026-07-15"));
+  const [date, setDate] = useState(String(initialData?.date ?? ""));
   const [fuelType, setFuelType] = useState(String(initialData?.fuelType ?? "DIESEL"));
   const [quantity, setQuantity] = useState<number | null>(
     typeof initialData?.quantity === "number" ? initialData.quantity : null,
@@ -53,7 +53,6 @@ export function FuelInvoiceForm({ initialData, disabled, onChange }: FuelInvoice
         options={[
           { value: "DIESEL", label: "Dầu DO (Diesel)" },
           { value: "LPG", label: "Khí hóa lỏng (LPG)" },
-          { value: "COAL", label: "Than đá" },
         ]}
       />
       <NumberInput

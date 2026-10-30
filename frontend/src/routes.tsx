@@ -1,11 +1,13 @@
 import { lazy, Suspense } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { RequireAuth } from "@/components/auth/RequireAuth";
 import { RequireRole } from "@/components/auth/RequireRole";
 import { AppShell } from "@/components/layout/AppShell";
+import { AuthLayout } from "@/components/layout/AuthLayout";
 import { PublicLayout } from "@/components/layout/PublicLayout";
 import { Skeleton } from "@/components/ui/Skeleton";
 
+const LandingPage = lazy(() => import("@/pages/landing/LandingPage"));
 const LoginPage = lazy(() => import("@/pages/auth/LoginPage"));
 const RegisterPage = lazy(() => import("@/pages/auth/RegisterPage"));
 const PublicVerifyPage = lazy(() => import("@/pages/verify/PublicVerifyPage"));
@@ -27,9 +29,14 @@ export function AppRoutes() {
   return (
     <Suspense fallback={<Skeleton className="m-6 h-48" />}>
       <Routes>
-        <Route element={<PublicLayout />}>
+        <Route path="/" element={<LandingPage />} />
+
+        <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+        </Route>
+
+        <Route element={<PublicLayout />}>
           <Route path="/verify/:code" element={<PublicVerifyPage />} />
         </Route>
 
@@ -40,7 +47,6 @@ export function AppRoutes() {
             </RequireAuth>
           }
         >
-          <Route index element={<Navigate to="/dashboard" replace />} />
           <Route
             path="/onboarding"
             element={

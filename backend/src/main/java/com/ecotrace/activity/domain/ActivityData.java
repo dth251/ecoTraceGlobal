@@ -87,6 +87,32 @@ public class ActivityData extends AuditableEntity {
         this.activityDate = activityDate;
     }
 
+    /** Sửa nội dung hoạt động (nhập tay hoặc nhập lại từ chứng từ). */
+    public void update(ActivityCategory category, String subCategory, BigDecimal quantity, String unit,
+                       LocalDate activityDate) {
+        this.category = category;
+        this.subCategory = subCategory;
+        this.quantity = quantity;
+        this.unit = unit;
+        this.activityDate = activityDate;
+    }
+
+    public void setSourceDocumentId(UUID sourceDocumentId) {
+        this.sourceDocumentId = sourceDocumentId;
+    }
+
+    public void setCreatedBy(UUID createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public void setMetadata(Map<String, Object> metadata) {
+        this.metadata = metadata != null ? metadata : Map.of();
+    }
+
+    public UUID getCreatedBy() {
+        return createdBy;
+    }
+
     public UUID getOrganizationId() {
         return organizationId;
     }

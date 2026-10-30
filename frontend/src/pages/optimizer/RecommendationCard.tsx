@@ -27,7 +27,7 @@ export function RecommendationCard({ recommendation, onSimulate }: Recommendatio
         <p className="mt-1 text-xs text-slate-500">Hoàn vốn ~ {recommendation.paybackYears} năm</p>
       )}
       <div className="mt-3 flex items-center justify-between">
-        <span className="text-[11px] text-slate-400">{t("optimizer.disclaimer")}</span>
+        <span className="text-xs text-slate-400">{t("optimizer.disclaimer")}</span>
         <Button size="sm" variant="secondary" onClick={() => onSimulate(recommendation)}>
           {t("optimizer.simulate")}
         </Button>

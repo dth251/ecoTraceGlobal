@@ -1,10 +1,8 @@
 package com.ecotrace.product;
 
 import com.ecotrace.common.audit.AuditService;
-import com.ecotrace.common.exception.ApiException;
 import com.ecotrace.common.tenant.TenantContext;
 import com.ecotrace.product.domain.Product;
-import com.ecotrace.product.domain.ProductFootprint;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Tag(name = "Products & Footprints")
@@ -63,12 +60,13 @@ public class ProductController {
 
     @PostMapping("/periods/{id}/production")
     @PreAuthorize("hasAnyRole('OWNER','EDITOR')")
-    public Map<String, Object> saveProduction(@PathVariable UUID id, @RequestBody List<Map<String, Object>> items) {
-        throw ApiException.notImplemented("POST /periods/{id}/production");
+    public List<AllocationService.FootprintView> saveProduction(@PathVariable UUID id,
+                                                                @RequestBody List<AllocationService.ProductionItem> items) {
+        return allocationService.saveProduction(id, items);
     }
 
     @GetMapping("/periods/{id}/footprints")
-    public List<ProductFootprint> getFootprints(@PathVariable UUID id) {
+    public List<AllocationService.FootprintView> getFootprints(@PathVariable UUID id) {
         return allocationService.getFootprints(id);
     }
 }

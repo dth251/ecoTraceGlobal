@@ -76,6 +76,32 @@ public class Document extends AuditableEntity {
     protected Document() {
     }
 
+    public Document(UUID organizationId, UUID facilityId, UUID periodId, DocType docType, String storageKey,
+                    String fileName, String mimeType, long sizeBytes, String sha256, UUID uploadedBy) {
+        this.organizationId = organizationId;
+        this.facilityId = facilityId;
+        this.periodId = periodId;
+        this.docType = docType;
+        this.storageKey = storageKey;
+        this.fileName = fileName;
+        this.mimeType = mimeType;
+        this.sizeBytes = sizeBytes;
+        this.sha256 = sha256;
+        this.uploadedBy = uploadedBy;
+    }
+
+    public void markEntered(UUID userId) {
+        this.status = Status.ENTERED;
+        this.enteredBy = userId;
+        this.enteredAt = Instant.now();
+        this.rejectReason = null;
+    }
+
+    public void reject(String reason) {
+        this.status = Status.REJECTED;
+        this.rejectReason = reason;
+    }
+
     public UUID getOrganizationId() {
         return organizationId;
     }

@@ -31,12 +31,12 @@ export function EntryForm({
   const [formData, setFormData] = useState<Record<string, unknown>>(initialData ?? {});
   const [ackWarnings, setAckWarnings] = useState(false);
 
-  const hasBlockingErrors = issues.some((i) => i.severity === "ERROR");
+  // Backend kiểm tra lại mỗi lần lưu; chỉ chặn khi còn cảnh báo chưa xác nhận
   const hasWarnings = issues.some((i) => i.severity === "WARNING");
-  const canSubmit = !disabled && !hasBlockingErrors && (!hasWarnings || ackWarnings);
+  const canSubmit = !disabled && (!hasWarnings || ackWarnings);
 
   return (
-    <div className="flex h-full flex-col justify-between space-y-4 rounded-lg border border-slate-200 bg-white p-4">
+    <div className="card-surface flex h-full flex-col justify-between space-y-5 p-6">
       <div className="space-y-4">
         {docType === "ELECTRICITY_BILL" && (
           <ElectricityBillForm initialData={initialData} disabled={disabled} onChange={setFormData} />
@@ -54,12 +54,12 @@ export function EntryForm({
         <ValidationMessages issues={issues} />
 
         {hasWarnings && (
-          <label className="flex items-center gap-2 text-xs text-warning-dark">
+          <label className="flex items-center gap-2 text-sm text-warning-dark">
             <input
               type="checkbox"
               checked={ackWarnings}
               onChange={(e) => setAckWarnings(e.target.checked)}
-              className="rounded border-slate-300"
+              className="h-4 w-4 rounded border-slate-300 accent-brand-700"
             />
             <span>{t("entry.acknowledgeWarnings")}</span>
           </label>
@@ -67,7 +67,7 @@ export function EntryForm({
       </div>
 
       {!disabled && (
-        <div className="flex items-center justify-between border-t border-slate-100 pt-3">
+        <div className="flex items-center justify-between pt-2">
           {onReject ? (
             <Button variant="ghost" size="sm" onClick={onReject}>
               {t("entry.rejectDoc")}
@@ -76,7 +76,7 @@ export function EntryForm({
             <span />
           )}
           <div className="flex items-center gap-2">
-            <Button variant="secondary" disabled={!canSubmit} onClick={() => onSave(formData, ackWarnings)}>
+            <Button disabled={!canSubmit} onClick={() => onSave(formData, ackWarnings)}>
               {t("common.save")}
             </Button>
             {onSaveAndNext && (
