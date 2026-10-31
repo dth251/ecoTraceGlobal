@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { activitiesApi } from "@/api/activities";
 import { aiApi, type ClassifyResponse } from "@/api/ai";
@@ -15,6 +15,8 @@ export interface ActivityFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   periodId: string;
+  startDate?: string;
+  endDate?: string;
   onSaved: () => void;
 }
 
@@ -24,11 +26,18 @@ const today = () => {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
 
-export function ActivityFormDialog({ open, onOpenChange, periodId, onSaved }: ActivityFormDialogProps) {
+export function ActivityFormDialog({ open, onOpenChange, periodId, startDate, endDate, onSaved }: ActivityFormDialogProps) {
   const { t, i18n } = useTranslation();
   const [category, setCategory] = useState("ELECTRICITY");
   const [subType, setSubType] = useState("GRID");
-  const [activityDate, setActivityDate] = useState(today);
+  const [activityDate, setActivityDate] = useState(() => {
+    const td = today();
+    if (startDate && endDate) {
+      if (td >= startDate && td <= endDate) return td;
+      return startDate;
+    }
+    return td;
+  });
   const [quantity, setQuantity] = useState<number | null>(null);
   const [unit, setUnit] = useState("kWh");
   const [note, setNote] = useState("");
@@ -37,6 +46,19 @@ export function ActivityFormDialog({ open, onOpenChange, periodId, onSaved }: Ac
   const [suggestError, setSuggestError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      const td = today();
+      if (startDate && endDate) {
+        if (td >= startDate && td <= endDate) {
+          setActivityDate(td);
+        } else {
+          setActivityDate(startDate);
+        }
+      }
+    }
+  }, [open, startDate, endDate]);
 
   const config = ACTIVITY_CATEGORIES[category];
 
@@ -108,6 +130,8 @@ export function ActivityFormDialog({ open, onOpenChange, periodId, onSaved }: Ac
         <DatePicker
           label={t("activities.date")}
           value={activityDate}
+          min={startDate}
+          max={endDate}
           onChange={(e) => setActivityDate(e.target.value)}
         />
         <div className="grid grid-cols-2 gap-3">

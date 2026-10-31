@@ -18,7 +18,7 @@ export function ActivitiesPage() {
   const { t, i18n } = useTranslation();
   const lang = i18n.language.startsWith("en") ? "en" : "vi";
   const queryClient = useQueryClient();
-  const { periodId, isLocked } = useCurrentContext();
+  const { periodId, isLocked, period } = useCurrentContext();
   const { canEdit } = usePermission();
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -98,6 +98,8 @@ export function ActivitiesPage() {
           open={dialogOpen}
           onOpenChange={setDialogOpen}
           periodId={periodId}
+          startDate={period?.startDate}
+          endDate={period?.endDate}
           onSaved={() => {
             void queryClient.invalidateQueries({ queryKey: keys.activities(periodId, {}) });
             void queryClient.invalidateQueries({ queryKey: keys.summary(periodId) });

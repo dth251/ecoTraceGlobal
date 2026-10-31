@@ -7,10 +7,11 @@ import { activitiesApi } from "@/api/activities";
 import { ApiError } from "@/api/client";
 import { emissionsApi } from "@/api/emissions";
 import { ChartCard, DataTable, LegendItem } from "@/components/charts/ChartCard";
+import { EvidenceDonutChart } from "@/components/charts/EvidenceDonutChart";
 import { MonthlyTrendChart } from "@/components/charts/MonthlyTrendChart";
 import { ProductIntensityChart } from "@/components/charts/ProductIntensityChart";
-import { RankedBarChart } from "@/components/charts/RankedBarChart";
-import { ShareBar } from "@/components/charts/ShareBar";
+import { ScopePieChart } from "@/components/charts/ScopePieChart";
+import { SourceBarChart } from "@/components/charts/SourceBarChart";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorState } from "@/components/ui/ErrorState";
@@ -209,7 +210,7 @@ export function DashboardPage() {
           />
         }
       >
-        <ShareBar segments={scopeSegments} formatPercent={pct} />
+        <ScopePieChart segments={scopeSegments} totalKg={summary.totalKg} formatPercent={pct} />
         <ul className="mt-4 grid gap-x-6 gap-y-1 text-sm text-slate-600 sm:grid-cols-3">
           {SCOPES.map((s) => (
             <li key={s}>{t(`dashboard.scopeMeaning.${s}`)}</li>
@@ -249,10 +250,10 @@ export function DashboardPage() {
             />
           }
         >
-          <RankedBarChart
+          <SourceBarChart
             items={sourceItems}
             format={tco2}
-            labelFormat={(v) => `${formatNumber(v, lang, 1)} t (${pct((v * 1000) / summary.totalKg)})`}
+            totalKg={summary.totalKg}
           />
         </ChartCard>
       </div>
@@ -268,7 +269,7 @@ export function DashboardPage() {
             />
           }
         >
-          <ShareBar segments={evidenceSegments} formatPercent={pct} />
+          <EvidenceDonutChart segments={evidenceSegments} totalKg={evidenceTotal} formatPercent={pct} />
         </ChartCard>
 
         <ChartCard

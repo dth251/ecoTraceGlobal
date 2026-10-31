@@ -17,7 +17,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   const descId = error || warning || hint ? `${inputId}-desc` : undefined;
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1.5 w-full">
       {label && (
         <label htmlFor={inputId} className="text-sm font-semibold text-slate-700">
           {label}
@@ -29,25 +29,25 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         aria-invalid={!!error}
         aria-describedby={descId}
         className={clsx(
-          "w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-ink",
-          "placeholder:text-slate-400 transition-[border-color,box-shadow] duration-200 focus:outline-none focus:ring-4",
+          "w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm font-medium text-slate-800 shadow-xs transition-all",
+          "placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:ring-2",
           error
-            ? "border-danger focus:border-danger focus:ring-danger/30"
+            ? "border-danger focus:border-danger focus:ring-danger/20"
             : warning
-              ? "border-warning focus:border-warning focus:ring-warning/30"
-              : "border-slate-300 hover:border-slate-400 focus:border-brand focus:ring-brand/15",
-          "disabled:bg-slate-100 disabled:text-slate-500",
+              ? "border-warning focus:border-warning focus:ring-warning/20"
+              : "border-slate-200/90 hover:border-slate-300 focus:border-brand focus:ring-brand/20",
+          "disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-not-allowed",
           className,
         )}
         {...rest}
       />
       {error && (
-        <p id={descId} role="alert" className="text-xs text-danger">
+        <p id={descId} role="alert" className="text-xs font-medium text-danger">
           {error}
         </p>
       )}
       {!error && warning && (
-        <p id={descId} className="text-xs text-warning-dark">
+        <p id={descId} className="text-xs font-medium text-warning-dark">
           {warning}
         </p>
       )}

@@ -53,8 +53,8 @@ export function PeriodActions() {
             <h2 className="text-sm font-bold text-slate-900">Kỳ {period?.name ?? ""}</h2>
             <Badge variant={isLocked ? "warning" : "success"}>{isLocked ? "Đã khóa" : "Đang mở"}</Badge>
           </div>
-          <p className="text-xs text-slate-500">
-            Xác nhận hết chứng từ → tính phát thải → nhập sản lượng ở mục Sản phẩm → khóa kỳ → cấp hộ chiếu xanh.
+          <p className="text-xs text-slate-500 mt-0.5">
+            Quản lý trạng thái và tính toán phát thải của kỳ báo cáo.
           </p>
         </div>
         <div className="flex gap-2">

@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import { QRCodeSVG } from "qrcode.react";
 import { Co2eValue } from "@/components/emissions/Co2eValue";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -11,7 +12,6 @@ import { formatPercent } from "@/lib/format";
 import { usePublicVerification } from "@/queries/usePassports";
 import { aiApi, type PassportReadiness } from "@/api/ai";
 import { PassportReadinessView } from "@/pages/passports/PassportReadinessView";
-import { useState } from "react";
 
 export function PublicVerifyPage() {
   const { code } = useParams<{ code: string }>();
@@ -57,17 +57,22 @@ export function PublicVerifyPage() {
   const d = verification.data;
   const isValid = d.status === "VALID" && d.signatureValid;
   const lang = i18n.language.startsWith("en") ? "en" : "vi";
+  const verifyUrl = `${window.location.origin}/verify/${code ?? ""}`;
 
   return (
     <Card className="w-full max-w-md space-y-3 p-5 text-base">
-      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-        <div>
+      <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-3.5">
+        <div className="space-y-1">
           <h1 className="text-base font-bold text-slate-900">{t("verify.title")}</h1>
-          <p className="font-mono text-xs text-slate-500">{code}</p>
+          <p className="font-mono text-xs font-semibold text-emerald-700">{code}</p>
+          <Badge variant={isValid ? "success" : "danger"}>
+            {isValid ? t("verify.valid") : t("verify.revoked")}
+          </Badge>
         </div>
-        <Badge variant={isValid ? "success" : "danger"}>
-          {isValid ? t("verify.valid") : t("verify.revoked")}
-        </Badge>
+
+        <div className="shrink-0 rounded-xl border border-slate-200 bg-white p-2 shadow-sm">
+          <QRCodeSVG value={verifyUrl} size={72} level="M" includeMargin={false} />
+        </div>
       </div>
 
       <dl className="space-y-2 text-sm">
@@ -120,7 +125,7 @@ export function PublicVerifyPage() {
         </div>
       </dl>
 
-      <div className="pt-2 border-t border-slate-100">
+      <div className="border-t border-slate-100 pt-2">
         <Button
           type="button"
           variant="secondary"
@@ -132,7 +137,9 @@ export function PublicVerifyPage() {
         </Button>
       </div>
 
-      {auditError && <p className="rounded-md bg-danger-light p-2 text-xs text-danger-dark">{auditError}</p>}
+      {auditError && (
+        <p className="rounded-md bg-danger-light p-2 text-xs text-danger-dark">{auditError}</p>
+      )}
       {auditResult && (
         <div className="mt-3 rounded-lg border border-brand/20 bg-brand/5 p-3.5">
           <PassportReadinessView result={auditResult} lang={lang} />

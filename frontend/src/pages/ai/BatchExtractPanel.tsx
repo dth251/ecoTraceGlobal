@@ -31,12 +31,6 @@ const STATUS_BADGE: Record<DocStatus, { variant: BadgeVariant; label: string }> 
   error: { variant: "danger", label: "Lỗi" },
 };
 
-/** Nơi kết quả của AI xuất hiện sau khi xử lý. Chi tiết từng chứng từ nằm ngay trong danh sách bên dưới của trang Chứng từ. */
-const DESTINATIONS = [
-  { to: "/dashboard", title: "Tổng quan", desc: "Tổng phát thải theo Scope 1/2/3, theo tháng và theo nguồn" },
-  { to: "/reports", title: "Báo cáo", desc: "Tải bảng tổng hợp của cả lô" },
-  { to: "/optimizer", title: "Tối ưu", desc: "Gợi ý giảm phát thải từ số liệu vừa tổng hợp" },
-] as const;
 
 export function BatchExtractPanel() {
   const [docs, setDocs] = useState<BatchDoc[]>([]);
@@ -155,144 +149,129 @@ export function BatchExtractPanel() {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <Card className="p-4 space-y-3">
-        <h2 className="text-base font-semibold text-slate-800">Tải chứng từ lên, AI đọc giúp bạn</h2>
-        <p className="text-xs text-slate-500">
-          Chọn <b>nhiều chứng từ cùng lúc</b> (điện, nhiên liệu, nguyên liệu, vận chuyển...). AI đọc từng tờ và tự gắn Scope 1/2/3. Thiếu loại nào thì
-          Scope đó bằng 0, vẫn tính được. Tờ nào AI không đọc được vẫn được lưu để bạn nhập tay.
-        </p>
-
-        <div
-          className="border-2 border-dashed border-slate-200 rounded-lg p-5 text-center hover:bg-slate-50 transition-colors"
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={onDrop}
-        >
-          <input
-            type="file"
-            multiple
-            accept=".pdf,.png,.jpg,.jpeg,.webp"
-            onChange={onPick}
-            disabled={running}
-            className="hidden"
-            id="ai-invoice-upload"
-          />
-          <label htmlFor="ai-invoice-upload" className="cursor-pointer space-y-1.5 block">
-            <div className="text-sm font-medium text-slate-700">Nhấp để chọn hoặc kéo thả nhiều chứng từ vào đây</div>
-            <span className="block text-xs text-slate-400 [text-wrap:pretty]">
-              PDF, PNG, JPG · tối đa {MAX_FILES} chứng từ, mỗi file {MAX_FILE_MB}MB
-            </span>
-          </label>
+    <Card className="p-5 space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <h2 className="text-base font-bold text-slate-900">Bóc tách chứng từ bằng AI</h2>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Tự động nhận diện hoá đơn điện, nhiên liệu, vật tư và vận chuyển để trích xuất phát thải.
+          </p>
         </div>
+        {canSave && period && (
+          <Badge variant="neutral">Kỳ đích: {period.name}</Badge>
+        )}
+      </div>
 
-        {notices.length > 0 && (
-          <div className="p-2.5 bg-warning-light text-warning-dark rounded-md text-xs space-y-0.5">
-            {notices.map((n) => (
-              <div key={n}>{n}</div>
-            ))}
+      <div
+        className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:border-brand/40 hover:bg-slate-50/60 transition-all cursor-pointer group"
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={onDrop}
+      >
+        <input
+          type="file"
+          multiple
+          accept=".pdf,.png,.jpg,.jpeg,.webp"
+          onChange={onPick}
+          disabled={running}
+          className="hidden"
+          id="ai-invoice-upload"
+        />
+        <label htmlFor="ai-invoice-upload" className="cursor-pointer block space-y-2">
+          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-brand/10 text-brand group-hover:scale-105 transition-transform">
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
           </div>
-        )}
+          <div className="text-sm font-semibold text-slate-700">
+            Kéo thả chứng từ vào đây, hoặc <span className="text-brand underline underline-offset-2">chọn tệp</span>
+          </div>
+          <p className="text-xs text-slate-400">
+            Hỗ trợ PDF, PNG, JPG · Tối đa {MAX_FILES} tệp, tối đa {MAX_FILE_MB}MB mỗi tệp
+          </p>
+        </label>
+      </div>
 
-        {docs.length > 0 && (
-          <ul className="divide-y divide-slate-100 border border-slate-100 rounded-md max-h-64 overflow-y-auto">
-            {docs.map((d) => (
-              <li key={d.id} className="px-2.5 py-1.5 text-xs">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="truncate text-slate-700" title={d.file.name}>
-                    {d.file.name}
-                  </span>
-                  <span className="flex items-center gap-2 shrink-0">
-                    {d.saved === "saved" && <Badge variant="info">Đã lưu vào kỳ</Badge>}
-                    {d.saved === "manual" && <Badge variant="warning">Đã lưu, cần nhập tay</Badge>}
-                    {d.saved === "duplicate" && <Badge variant="neutral">Đã có trong hệ thống</Badge>}
-                    {d.saved === "failed" && <Badge variant="warning">Chưa lưu vào kỳ</Badge>}
-                    <Badge variant={STATUS_BADGE[d.status].variant}>{STATUS_BADGE[d.status].label}</Badge>
-                    {!running && (
-                      <button
-                        type="button"
-                        onClick={() => removeDoc(d.id)}
-                        className="text-slate-400 hover:text-danger"
-                        aria-label={`Bỏ ${d.file.name}`}
-                      >
-                        ✕
-                      </button>
-                    )}
-                  </span>
-                </div>
-                {d.error && <div className="mt-0.5 text-danger-dark">{d.error}</div>}
-              </li>
-            ))}
-          </ul>
-        )}
-
-        <p className={`p-2.5 rounded-md text-xs ${canSave ? "bg-brand/5 text-slate-700" : "bg-warning-light text-warning-dark"}`}>
-          {canSave
-            ? `Chứng từ sẽ được lưu vào kỳ ${period?.name ?? ""} dưới dạng bản nháp AI. Bấm "Xác nhận" ở từng dòng trong danh sách bên dưới thì số liệu mới được tính vào kiểm kê và hộ chiếu xanh.`
-            : isLocked
-              ? "Kỳ đang chọn đã khóa: chứng từ chỉ được AI đọc và ước tính, không lưu vào kỳ."
-              : "Chưa chọn kỳ báo cáo (ô trên cùng): chứng từ chỉ được AI đọc và ước tính, không lưu vào hệ thống."}
-        </p>
-
-        {error && <div className="p-2.5 bg-danger-light text-danger-dark rounded-md text-xs">{error}</div>}
-
-        <div className="flex gap-2">
-          <Button onClick={handleRun} loading={running} disabled={docs.length === 0} className="flex-1">
-            {running ? "AI đang xử lý…" : `Bắt đầu bóc tách bằng AI${docs.length ? ` (${docs.length} chứng từ)` : ""}`}
-          </Button>
-          {docs.length > 0 && !running && (
-            <Button variant="secondary" onClick={clearAll}>
-              Xóa hết
-            </Button>
-          )}
+      {notices.length > 0 && (
+        <div className="p-3 bg-warning-light text-warning-dark rounded-lg text-xs space-y-1">
+          {notices.map((n) => (
+            <div key={n}>{n}</div>
+          ))}
         </div>
-      </Card>
+      )}
 
-      <Card className="p-4 space-y-3">
-        {finished ? (
-          <>
-            <div className="rounded-md bg-success-light p-3 text-sm text-success-dark">
-              <b>Xong:</b> AI đã đọc {finished.ok} chứng từ
-              {finished.failed > 0 && `, ${finished.failed} chứng từ lỗi`}
-              {finished.review > 0 && `, ${finished.review} chứng từ cần bạn xem lại`}. Từng chứng từ nằm trong danh sách bên dưới, số liệu tổng hợp ở các mục sau.
-            </div>
-            <Link
-              to="/dashboard"
-              className="block rounded-md bg-brand px-3 py-2 text-center text-sm font-semibold text-white hover:bg-brand-800"
-            >
-              Xem tổng quan phát thải →
-            </Link>
-          </>
-        ) : (
-          <>
-            <h2 className="text-base font-semibold text-slate-800">Kết quả sẽ xuất hiện ở đâu?</h2>
-            <p className="text-xs text-slate-500">
-              {running ? "AI đang đọc chứng từ, mỗi chứng từ mất khoảng 7 giây. " : ""}
-              Xử lý xong, từng chứng từ hiện trong danh sách bên dưới để bạn xác nhận. Số liệu tổng hợp nằm ở đúng mục của nó:
-            </p>
-          </>
-        )}
-
-        <ul className="space-y-2">
-          {DESTINATIONS.map((d) => (
-            <li key={d.to}>
-              {finished ? (
-                <Link
-                  to={d.to}
-                  className="block rounded-md border border-slate-200 p-2.5 transition-colors hover:border-brand/50 hover:bg-brand/5"
-                >
-                  <div className="text-sm font-semibold text-slate-800">{d.title} →</div>
-                  <p className="text-xs text-slate-500">{d.desc}</p>
-                </Link>
-              ) : (
-                <div className="rounded-md border border-slate-100 p-2.5">
-                  <div className="text-sm font-semibold text-slate-700">{d.title}</div>
-                  <p className="text-xs text-slate-400">{d.desc}</p>
-                </div>
-              )}
+      {docs.length > 0 && (
+        <ul className="divide-y divide-slate-100 border border-slate-100 rounded-lg max-h-60 overflow-y-auto">
+          {docs.map((d) => (
+            <li key={d.id} className="px-3 py-2 text-xs hover:bg-slate-50/50">
+              <div className="flex items-center justify-between gap-3">
+                <span className="truncate text-slate-700 font-medium" title={d.file.name}>
+                  {d.file.name}
+                </span>
+                <span className="flex items-center gap-2 shrink-0">
+                  {d.saved === "saved" && <Badge variant="info">Đã lưu nháp</Badge>}
+                  {d.saved === "manual" && <Badge variant="warning">Cần nhập tay</Badge>}
+                  {d.saved === "duplicate" && <Badge variant="neutral">Đã tồn tại</Badge>}
+                  {d.saved === "failed" && <Badge variant="warning">Chưa lưu</Badge>}
+                  <Badge variant={STATUS_BADGE[d.status].variant}>{STATUS_BADGE[d.status].label}</Badge>
+                  {!running && (
+                    <button
+                      type="button"
+                      onClick={() => removeDoc(d.id)}
+                      className="text-slate-400 hover:text-danger p-0.5 rounded"
+                      aria-label={`Bỏ ${d.file.name}`}
+                    >
+                      ✕
+                    </button>
+                  )}
+                </span>
+              </div>
+              {d.error && <div className="mt-1 text-danger-dark">{d.error}</div>}
             </li>
           ))}
         </ul>
-      </Card>
-    </div>
+      )}
+
+      {finished && (
+        <div className="rounded-lg bg-emerald-50 border border-emerald-100 p-3.5 text-xs text-emerald-800 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <span className="font-bold">Đã bóc tách thành công {finished.ok} chứng từ</span>
+            {finished.failed > 0 && `, ${finished.failed} chứng từ lỗi`}
+            {finished.review > 0 && `, ${finished.review} chứng từ cần rà soát lại`}.
+            <div className="text-slate-500 mt-0.5">Dữ liệu đã tạo bản nháp trong danh sách chứng từ bên dưới.</div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/dashboard"
+              className="rounded-md bg-brand px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-800 transition-colors"
+            >
+              Xem tổng quan phát thải →
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {error && <div className="p-3 bg-danger-light text-danger-dark rounded-lg text-xs">{error}</div>}
+
+      <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+        <p className="text-xs text-slate-400">
+          {canSave
+            ? `Chứng từ sau bóc tách sẽ lưu dưới dạng bản nháp để bạn duyệt trước khi tính phát thải.`
+            : isLocked
+              ? "Kỳ đã khóa: chỉ đọc và ước tính thử, không lưu vào hệ thống."
+              : "Vui lòng chọn kỳ báo cáo ở trên để lưu chứng từ."}
+        </p>
+
+        <div className="flex items-center gap-2">
+          {docs.length > 0 && !running && (
+            <Button variant="secondary" size="sm" onClick={clearAll}>
+              Xóa danh sách
+            </Button>
+          )}
+          <Button onClick={handleRun} loading={running} disabled={docs.length === 0} size="sm">
+            {running ? "AI đang xử lý…" : `Bắt đầu bóc tách${docs.length ? ` (${docs.length})` : ""}`}
+          </Button>
+        </div>
+      </div>
+    </Card>
   );
 }

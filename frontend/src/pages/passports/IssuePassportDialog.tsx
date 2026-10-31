@@ -6,14 +6,14 @@ import { Button } from "@/components/ui/Button";
 import { Dialog } from "@/components/ui/Dialog";
 import { Select } from "@/components/ui/Select";
 import { PassportReadinessView } from "@/pages/passports/PassportReadinessView";
-import type { Product } from "@/types/domain";
+import type { Passport, Product } from "@/types/domain";
 
 export interface IssuePassportDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   periodId: string;
   products: Product[];
-  onIssued: () => void;
+  onIssued: (issued?: Passport) => void;
 }
 
 export function IssuePassportDialog({
@@ -42,8 +42,8 @@ export function IssuePassportDialog({
     if (!targetId) return;
     setIssueError(null);
     try {
-      await passportsApi.issue(periodId, targetId);
-      onIssued();
+      const issued = await passportsApi.issue(periodId, targetId);
+      onIssued(issued);
       onOpenChange(false);
     } catch (err: unknown) {
       setIssueError(err instanceof Error ? err.message : "Không cấp được hộ chiếu");
@@ -60,7 +60,11 @@ export function IssuePassportDialog({
           options={products.map((p) => ({ value: p.id, label: p.name }))}
         />
 
-        {readiness.isLoading && <p className="text-xs text-slate-500">{lang === "en" ? "Checking requirements…" : "Đang xét điều kiện cấp…"}</p>}
+        {readiness.isLoading && (
+          <p className="text-xs text-slate-500">
+            {lang === "en" ? "Checking requirements…" : "Đang xét điều kiện cấp…"}
+          </p>
+        )}
         {readiness.isError && (
           <p className="rounded-md bg-danger-light p-2 text-xs text-danger-dark">
             {lang === "en" ? "Cannot check requirements: " : "Không xét được điều kiện cấp: "}
@@ -68,7 +72,9 @@ export function IssuePassportDialog({
           </p>
         )}
         {readiness.data && <PassportReadinessView result={readiness.data} lang={lang} />}
-        {issueError && <p className="rounded-md bg-danger-light p-2 text-xs text-danger-dark">{issueError}</p>}
+        {issueError && (
+          <p className="rounded-md bg-danger-light p-2 text-xs text-danger-dark">{issueError}</p>
+        )}
 
         <div className="flex justify-end gap-2">
           <Button variant="secondary" onClick={() => onOpenChange(false)}>
